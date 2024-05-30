@@ -1,0 +1,7 @@
+body{
+    text-align: center;
+}
+
+#canv{
+    background-image: url("../../js/img/back.png");
+}

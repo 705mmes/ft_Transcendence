@@ -1,0 +1,8 @@
+version: '3'
+services:
+
+  nginx:
+    container_name: nginx
+    build:
+        context: .
+        dockerfile: containers/nginx/Dockerfile
