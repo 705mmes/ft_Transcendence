@@ -7,9 +7,9 @@ services:
       context: .
       dockerfile: containers/nginx/Dockerfile
     ports:
-      - "80:80"
+      - "8080:80"
       - "443:443"
     volumes:
       - ./containers/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
-      - ./containers/nginx/pong:/game/html
-    restart: unless-stopped
+      - ./containers/nginx/pong:/game
+    restart: on-failure
