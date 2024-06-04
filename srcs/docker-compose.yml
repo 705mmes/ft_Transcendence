@@ -11,5 +11,5 @@ services:
       - "443:443"
     volumes:
       - ./containers/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
-      - ./containers/nginx/pong:/game
+      - ./containers/nginx/pong:/var/www/game/
     restart: on-failure
