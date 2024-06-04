@@ -1,17 +1,17 @@
 let canevas = document.getElementById("canv");
 let canvcont = canevas.getContext("2d");
 
-let img1 = new twix(0, 300, "../images/raquette.jpg", 2000);
-let img2 = new twix(2040 - 61, 300, "../images/raquette.jpg", 2000);
-let ballon = new balle(1020, 540, "../images/maltesers.png", 1000);
+let img1 = new twix(0, 300, "../images/raquetteR.png", 1000);
+let img2 = new twix(2040 - 74, 300, "../images/raquetteL.png", 1000);
+let ballon = new balle(1020, 540, "../images/maltesers.png", 500);
 
-let oldtime;
+let oldtime = Date.now();
 let ms;
+let game_begin = 0;
 
 
 function main()
 {
-    oldtime = Date.now();
     document.addEventListener("keyup", lowkeyup);
     document.addEventListener("keydown", lowkeydown);
     const interid = setInterval(rien, 1000/60);
@@ -51,8 +51,11 @@ function lowkeydown(key){
         img1.up = true;
     else if (key.code == "KeyS")
         img1.down = true;
-    if (key.code == "Space" && (img1.score == 10 || img2.score == 10))
+    if (key.code == "Space" && (img1.score == 3 || img2.score == 3 || game_begin == 0))
+    {
+        game_begin = 2;
         reseting();
+    }
 }
 
 function lowkeyup(key){
@@ -71,25 +74,32 @@ function lowkeyup(key){
 
 function rien()
 {
-    if (img1.score < 10 && img2.score < 10)
-    {
-
-        let newtime = Date.now();
-        ms = (newtime - oldtime) / 1000;
+    let newtime = Date.now();
+    ms = (newtime - oldtime) / 1000;
+    if (game_begin == 2)
+        countdown(ms, newtime);
+    else if (game_begin == 1)
+    {  
         oldtime = newtime;
-        img2.moving(ms);
-        img1.moving(ms);
-        ballon.move(ms);
-        canvcont.clearRect(0, 0, canevas.clientWidth, canevas.clientHeight);
-        ballon.drawing(canvcont);
-        img2.drawing(canvcont);
-        img1.drawing(canvcont);
-    }
-    else if (img1.score >= 10 || img2.score >= 10)
-        drawwin(img1, img2);
-    drawscore();
+        if (img1.score < 3 && img2.score < 3 && game_begin == 1)
+        {
+            
+            img2.moving(ms);
+            img1.moving(ms);
+            ballon.move(ms);
+            canvcont.clearRect(0, 0, canevas.clientWidth, canevas.clientHeight);
+            ballon.drawing(canvcont);
+            img2.drawing(canvcont);
+            img1.drawing(canvcont);
+        }
+        else if (img1.score >= 3 || img2.score >= 3)
+            drawwin(img1, img2);
+        drawscore();
+    }  
+    if (game_begin == 0)
+            oldtime = newtime;
 }
-
+        
 function reseting()
 {
     ballon.x = 1020;
@@ -97,6 +107,28 @@ function reseting()
     img2.reset();
     ballon.resetballs();
     img1.reset();
+}
+
+function countdown(ms, newtime)
+{
+    let countdown;
+    if (ms < 4)
+    {
+        countdown = 3 - Math.floor(ms);
+        canvcont.font = "300px serif";
+        canvcont.fillStyle = "Black";
+        canvcont.clearRect(0, 0, canevas.clientWidth, canevas.clientHeight);
+        ballon.drawing(canvcont);
+        img2.drawing(canvcont);
+        img1.drawing(canvcont);
+        canvcont.fillText(countdown.toString(), (canevas.clientWidth / 2) - 100, (canevas.clientHeight / 2) + 150);
+        console.log(countdown);
+    }
+    else
+    {
+        oldtime = newtime;
+        game_begin = 1;
+    }
 }
 
 main();

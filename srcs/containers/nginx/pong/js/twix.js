@@ -4,7 +4,7 @@ class twix
     {
         this.x = x;
         this.y = y;
-        this.height = 473;
+        this.height = 223;
         this.speed = speed;
         this.img = new Image();
         this.img.src = str;
@@ -41,12 +41,12 @@ class twix
     {
         if (this.up == true)
         {
-            if (this.y - (500 * ms) >= 0)
+            if (this.y - (this.speed * ms) >= 0)
                 this.y -= this.speed * ms;
         }
         if (this.down == true)
         {
-            if (canevas.clientHeight >= this.y + this.height + (500 * ms))
+            if (canevas.clientHeight >= (this.y + this.height) + (this.speed * ms))
                 this.y += this.speed * ms;
         }
     }
