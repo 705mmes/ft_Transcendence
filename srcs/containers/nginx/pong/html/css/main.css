@@ -1,15 +1,23 @@
 body
 {
+    height: 100%;
+    width: 100%;
     text-align: center;
     align-items: center;
 }
 
 #canv
 {
+    height: 30%;
+    width: 80%;
+    max-width: 80%;
+    max-height: 30%;
+    min-width: 80%;
+    min-height: 30%;
     position: relative;
-    top: 150px;
-    right: 150px;
+    right:0%;
     background-image: url("../../images/back.png");
+    background-size:cover;
     border: 1px black;
     z-index: 1;
 }
@@ -20,10 +28,12 @@ body
     position: relative;
     padding: 20px 44px;
     border: none;
+    height: 75px;
+    width: 225px;
     outline: none;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0,0 .1);
-    font-size: 20px;
+    font-size: 150%;
     font-weight: 500;
     cursor: pointer;
     z-index: 1;  
@@ -31,16 +41,16 @@ body
 
 #register
 {
-    bottom:1000px;
-    left: 210px;
+    bottom: 10%;
+    right: 25%;
     background-color: #8b6242;
     color: #362315;
 }
 
 #login
 {
-    bottom:1000px;
-    left: 1900px;
+    bottom: 10%;
+    left: 25%;
     background-color: #8b6242;
     color: #362315;
 }
@@ -128,8 +138,21 @@ body
 .popupbox label #username + span
 {
     position: absolute;
-    left: 150px;
+    left: 31%;
     top: 77px;
+}
+
+.popupbox label #Lusername + span
+{
+    position: absolute;
+    left: 31%;
+    top: 77px;
+}
+
+.popupbox label #Lusername:placeholder-shown + span
+{
+    top: 97px;
+    font-size:0.9em;
 }
 
 .popupbox label #username:placeholder-shown + span
@@ -141,7 +164,7 @@ body
 .popupbox label #mail + span
 {
     position: absolute;
-    left: 150px;
+    left: 31%;
     top: 147px;
 }
 
@@ -154,7 +177,7 @@ body
 .popupbox label #Password + span
 {
     position: absolute;
-    left: 150px;
+    left: 31%;
     top: 225px;
 }
 
@@ -167,7 +190,7 @@ body
 .popupbox label #Password2 + span
 {
     position: absolute;
-    left: 150px;
+    left: 31%;
     top: 147px;
 }
 
@@ -180,7 +203,7 @@ body
 .popupbox label #RPassword + span
 {
     position: absolute;
-    left: 150px;
+    left: 31%;
     top: 297px;
 }
 

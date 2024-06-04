@@ -16,7 +16,9 @@ class twix
     reset(canvcont)
     {
         this.score = 0;
-        this.y = 300;
+        this.y = canevas.height / 2;
+        if (this.x != 0)
+            this.x = canevas.width - 74;
     }
 
     drawing(canvcont) 
@@ -41,12 +43,15 @@ class twix
     {
         if (this.up == true)
         {
+            console.log("y :", this.y)
+            console.log("height", canevas.height);
+            console.log("width", canevas.width);
             if (this.y - (this.speed * ms) >= 0)
                 this.y -= this.speed * ms;
         }
         if (this.down == true)
         {
-            if (canevas.clientHeight >= (this.y + this.height) + (this.speed * ms))
+            if (canevas.height >= (this.y + this.height) + (this.speed * ms))
                 this.y += this.speed * ms;
         }
     }

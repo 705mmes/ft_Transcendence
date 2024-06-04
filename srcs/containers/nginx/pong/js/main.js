@@ -1,14 +1,15 @@
 let canevas = document.getElementById("canv");
 let canvcont = canevas.getContext("2d");
 
-let img1 = new twix(0, 300, "../images/raquetteR.png", 1000);
-let img2 = new twix(2040 - 74, 300, "../images/raquetteL.png", 1000);
-let ballon = new balle(1020, 540, "../images/maltesers.png", 500);
+let fontsize = 80 / canevas.width;
+
+let img1 = new twix(0, canevas.height / 2, "../images/raquetteR.png", 1000);
+let img2 = new twix(canevas.width - 74, canevas.height / 2, "../images/raquetteL.png", 1000);
+let ballon = new balle(canevas.width / 2, canevas.height / 2, "../images/maltesers.png", 500);
 
 let oldtime = Date.now();
 let ms;
 let game_begin = 0;
-
 
 function main()
 {
@@ -20,24 +21,26 @@ function main()
 function drawwin(img1, img2)
 {
     let text;
-    canvcont.font = "48px serif";
-    if (img1.score >= 10)
+    let actualfontsize = fontsize * canevas.width;
+    canvcont.font = (actualfontsize) + "px serif";
+    if (img1.score >= 3)
         text = "WINNER is player 1";
     else
         text = "WINNER is player 2";
     console.log(text);
     canvcont.fillStyle = "Black";
-    canvcont.fillText(text, (canevas.clientWidth / 2.5), canevas.clientHeight / 2);
+    canvcont.fillText(text, (canevas.width / 2.5), canevas.height / 2);
 }
 
 function drawscore()
 {
-    canvcont.font = "48px serif";
+    let actualfontsize = fontsize * canevas.width;
+    canvcont.font = (actualfontsize) + "px serif";
     let text = img1.score;
     let text2 = img2.score;
     canvcont.fillStyle = "Black";
-    canvcont.fillText(text, 510, 50);
-    canvcont.fillText(text2, 1530, 50);
+    canvcont.fillText(text, canevas.width / 4, actualfontsize);
+    canvcont.fillText(text2, (canevas.width / 4) * 3, actualfontsize);
 }
 
 function lowkeydown(key){
@@ -87,7 +90,7 @@ function rien()
             img2.moving(ms);
             img1.moving(ms);
             ballon.move(ms);
-            canvcont.clearRect(0, 0, canevas.clientWidth, canevas.clientHeight);
+            canvcont.clearRect(0, 0, canevas.width, canevas.height);
             ballon.drawing(canvcont);
             img2.drawing(canvcont);
             img1.drawing(canvcont);
@@ -102,8 +105,8 @@ function rien()
         
 function reseting()
 {
-    ballon.x = 1020;
-    ballon.y = 540;
+    ballon.x = canevas.width / 2;
+    ballon.y = canevas.height / 2;
     img2.reset();
     ballon.resetballs();
     img1.reset();
@@ -112,16 +115,18 @@ function reseting()
 function countdown(ms, newtime)
 {
     let countdown;
+    let actualfontsize = fontsize * canevas.width;
     if (ms < 4)
     {
         countdown = 3 - Math.floor(ms);
-        canvcont.font = "300px serif";
+        canvcont.font = (actualfontsize * 3) + "px serif";
         canvcont.fillStyle = "Black";
-        canvcont.clearRect(0, 0, canevas.clientWidth, canevas.clientHeight);
+        canvcont.clearRect(0, 0, canevas.width, canevas.height);
         ballon.drawing(canvcont);
         img2.drawing(canvcont);
         img1.drawing(canvcont);
-        canvcont.fillText(countdown.toString(), (canevas.clientWidth / 2) - 100, (canevas.clientHeight / 2) + 150);
+        console.log(actualfontsize);
+        canvcont.fillText(countdown.toString(),(canevas.width / 2) - 40, (canevas.height / 2) + 40);
         console.log(countdown);
     }
     else
