@@ -1,3 +1,8 @@
+create:
+	mkdir ../tr_vol
+	mkdir ../tr_vol/database
+	sudo docker-compose --env-file srcs/.env -f srcs/docker-compose.yml up -d --build
+
 up:
 	sudo docker-compose --env-file srcs/.env -f srcs/docker-compose.yml up -d --build
 	
@@ -10,8 +15,12 @@ stop:
 down:
 	sudo docker-compose -f srcs/docker-compose.yml down
 
+clean: down
+	sudo rm -rf ../tr_vol
+	sudo docker volume rm srcs_database_vol
+
 ps:
-	sudo docker-compose -f srcs/docker-compose.yml ps
+	sudo docker ps
 
 logs:
 	sudo docker-compose -f srcs/docker-compose.yml logs
@@ -19,4 +28,4 @@ logs:
 top:
 	sudo docker-compose -f srcs/docker-compose.yml top
 
-re:	down clean up logs
+re:	clean up logs
