@@ -14,6 +14,10 @@ const login = document.getElementById("loginsubmit");
 const registerform = document.getElementById("registration");
 const registersubmit = document.getElementById("registersubmit");
 
+popr.mouseenter = () => {
+	popbox.classList.add('hover')
+}
+
 popr.onclick = () => {
 	poprbox.classList.add('on');
 }

@@ -10,10 +10,10 @@ body
 {
     height: 30%;
     width: 80%;
-    max-width: 80%;
-    max-height: 30%;
-    min-width: 80%;
-    min-height: 30%;
+    max-width: 90%;
+    max-height: 40%;
+    min-width: 60%;
+    min-height: 15%;
     position: relative;
     right:0%;
     background-image: url("../../images/back.png");
@@ -26,12 +26,17 @@ body
 .popupboutton
 {
     position: relative;
-    padding: 20px 44px;
-    border: none;
-    height: 75px;
-    width: 225px;
+    padding: 2% 5%;
+    height: 30%;
+    width: 20%;
+    border: solid black;
+    border-width: 3.5px;
+    min-height: 10%;
+    max-height: 40%;
+    min-width: 10%;
+    max-width: 20%;
     outline: none;
-    border-radius: 8px;
+    border-radius: 30px;
     box-shadow: 0 0 10px rgba(0, 0, 0,0 .1);
     font-size: 150%;
     font-weight: 500;
@@ -39,11 +44,18 @@ body
     z-index: 1;  
 }
 
+.popupboutton.hover
+{
+    background-image: url("../../images/Register2.gif");
+    background-size: cover;
+}
+
 #register
 {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     bottom: 10%;
     right: 25%;
-    background-color: #8b6242;
+    background-color: #362315;
     color: #362315;
 }
 
@@ -77,6 +89,7 @@ body
     pointer-events: auto;
     transition: .4s ease;
 }
+
 
 .popupcontainer .popupbox
 {
