@@ -2,10 +2,11 @@ version: '3'
 
 services:
   nginx:
+    image: nginx:latest
     container_name: nginx
     build:
-      context: .
-      dockerfile: containers/nginx/Dockerfile
+       context: .
+       dockerfile: containers/nginx/Dockerfile
     ports:
       - "8080:80"
       - "443:443"
