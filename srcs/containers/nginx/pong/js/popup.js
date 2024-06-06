@@ -12,11 +12,17 @@ const loginform = document.getElementById("loginform");
 const login = document.getElementById("loginsubmit");
 
 const registerform = document.getElementById("registration");
-const registersubmit = document.getElementById("registersubmit");
+const registersubmited = document.getElementById("registersubmit");
 
-popr.mouseenter = () => {
-	popbox.classList.add('hover')
-}
+popr.addEventListener("mouseenter", (e) => {
+	console.log("alo");
+	popr.classList.add('hover');
+})
+
+popr.addEventListener("mouseleave", (e) => {
+	console.log("alo");
+	popr.classList.remove('hover');
+})
 
 popr.onclick = () => {
 	poprbox.classList.add('on');
@@ -39,6 +45,6 @@ login.onclick = () =>{
 	loginform.submit();
 }
 
-registerform.onclick = () => {
-	registersubmit.submit();
+registersubmited.onclick = () => {
+	registerform.submit();
 }
