@@ -44,20 +44,27 @@ body
     z-index: 1;  
 }
 
-.popupboutton.hover
-{
-    background-image: url("../../images/Register2.gif");
-    background-size: cover;
-}
-
 #register
 {
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     bottom: 10%;
     right: 25%;
-    background-color: #362315;
+    background-image: url("../../images/staticregister.png");
+    background-size: cover;
     color: #362315;
+    z-index: 1;
 }
+#registerhover
+{
+    background-image: url("../../images/Register2.gif");
+    background-size: cover;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    bottom: 10%;
+    right: 25%;
+    color: #362315;
+    z-index: 1;
+}
+
 
 #login
 {

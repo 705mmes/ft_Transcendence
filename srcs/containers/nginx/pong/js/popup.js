@@ -16,12 +16,12 @@ const registersubmited = document.getElementById("registersubmit");
 
 popr.addEventListener("mouseenter", (e) => {
 	console.log("alo");
-	popr.classList.add('hover');
+	popr.id = "registerhover";
 })
 
 popr.addEventListener("mouseleave", (e) => {
 	console.log("alo");
-	popr.classList.remove('hover');
+	popr.id = "register";
 })
 
 popr.onclick = () => {
