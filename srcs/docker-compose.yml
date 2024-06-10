@@ -31,7 +31,8 @@ services:
     build:
       context: .
       dockerfile: containers/django/Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
+    #command: ls -al containers/django
+    command: python3 containers/django/tr_test/manage.py runserver 0.0.0.0:8000
     container_name: django
     volumes:
       - .:/work_dir

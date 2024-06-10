@@ -1,12 +1,9 @@
-FROM django:latest
-
+FROM python:latest
 WORKDIR /work_dir
+ENV PYTHONUNBUFFERED=1
 
-#COPY ./containers/django/requirements.txt /work_dir/
-#RUN python3 -m pip install django
+COPY ./containers/django/requirements.txt /work_dir/
+RUN pip install Django==5.0.6 -r requirements.txt
 
-COPY . /work_dir/
-
-EXPOSE 8000
-
-CMD ["python3", "./tr_test/manage.py", "runserver", "0.0.0.0:8000"]
+COPY ./containers/django/tr_test/ /work_dir
+CMD ["python3", "./work_dir/manage.py", "runserver", "0.0.0.0:8000"]
