@@ -11,16 +11,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 import os
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME'),
-        'USER': os.environ.get('DB_USER'),
-        'PASSWORD': os.environ.get('DB_PASS'),
-        'HOST': 'smunio.42.fr',
-        'PORT': 5432, 
-    }
-}
 
 from pathlib import Path
 
@@ -61,7 +51,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'tr_site.urls'
+ROOT_URLCONF = 'tr_test.urls'
 
 TEMPLATES = [
     {
@@ -79,7 +69,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'tr_site.wsgi.application'
+WSGI_APPLICATION = 'tr_test.wsgi.application'
 
 
 # Database
@@ -87,8 +77,12 @@ WSGI_APPLICATION = 'tr_site.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('DB_USER'),
+        'PASSWORD': os.environ.get('DB_PASS'),
+        'HOST': 'smunio.42.fr',
+        'PORT': 5432, 
     }
 }
 
