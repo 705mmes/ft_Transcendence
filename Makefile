@@ -18,7 +18,7 @@ down:
 clean: down
 	sudo rm -rf ../tr_vol
 	sudo docker volume rm srcs_database_vol
-	sudo systemctl stop nginx
+	sudo systemctl stop nginx postgresql
 
 ps:
 	sudo docker-compose -f srcs/docker-compose.yml ps
