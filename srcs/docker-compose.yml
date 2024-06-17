@@ -13,8 +13,8 @@ services:
       - ./containers/nginx/conf/nginx.conf:/etc/nginx/nginx.conf
       - ./containers/nginx/pong:/var/www/game/
     restart: on-failure
-    # networks:
-    #   - transcendence
+    networks:
+      - transcendence
   database:
     container_name: postgres
     # build:
@@ -29,11 +29,10 @@ services:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_DB=${DB_NAME}
     volumes:
-    #  - ./containers/postgres/data:/var/lib/postgresql/data
       - database_vol:/var/lib/postgresql/data
     env_file: .env
-    # networks:
-    #   - transcendence
+    networks:
+      - transcendence
   django:
     image: django:latest
     build:
@@ -53,8 +52,8 @@ services:
     env_file: .env
     depends_on:
       - database
-    # networks:
-    #   - transcendence
+    networks:
+      - transcendence
 volumes:
   database_vol:
     driver: local
@@ -62,6 +61,6 @@ volumes:
       type: 'none'
       o: 'bind'
       device: '/home/smunio/tr_vol/database'
-# networks:
-#   transcendence:
-#     driver: bridge
+networks:
+  transcendence:
+    driver: bridge
