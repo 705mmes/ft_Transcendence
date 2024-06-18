@@ -15,12 +15,10 @@ const registerform = document.getElementById("registration");
 const registersubmited = document.getElementById("registersubmit");
 
 popr.addEventListener("mouseenter", (e) => {
-	console.log("alo");
 	popr.id = "registerhover";
 })
 
 popr.addEventListener("mouseleave", (e) => {
-	console.log("alo");
 	popr.id = "register";
 })
 
@@ -41,10 +39,26 @@ quitbox.onclick = () => {
 	popbox.classList.remove('on');
 }
 
+loginform.addEventListener('submit', function(event){
+	event.preventDefault();
+	isregistered = 1;
+	PageDisplay()
+	popbox.classList.remove('on');
+});
+
+registerform.addEventListener('submit', function(event){
+	event.preventDefault();
+	isregistered = 1;
+	PageDisplay();
+	poprbox.classList.remove('on');
+});
+
+
 login.onclick = () =>{
-	loginform.submit();
+	//loginform.submit();
 }
 
 registersubmited.onclick = () => {
-	registerform.submit();
+	isregistered = 1
+	//registerform.submit();
 }
