@@ -14,6 +14,8 @@ const login = document.getElementById("loginsubmit");
 const registerform = document.getElementById("registration");
 const registersubmited = document.getElementById("registersubmit");
 
+const canvdiv = document.getElementById("canv");
+
 popr.addEventListener("mouseenter", (e) => {
 	popr.id = "registerhover";
 })
