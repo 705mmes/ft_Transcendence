@@ -49,7 +49,7 @@ function AddGameCanvas()
     let ballesrc = document.createElement('script');
     ballesrc.setAttribute('src', '../js/balle.js');
     document.getElementById("scripts").appendChild(ballesrc);
-    
+
     let mainsrc = document.createElement('script');
     mainsrc.setAttribute('src', '../js/main.js');
     document.getElementById("scripts").appendChild(mainsrc);

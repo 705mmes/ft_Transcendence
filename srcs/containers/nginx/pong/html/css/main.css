@@ -81,7 +81,7 @@ body
     font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
     color: #362315;
     z-index: 1;
-    animation: pulsing 2s ease 0s infinite normal forwards;
+    animation: pulsing .8s ease 0s infinite normal forwards;
 }
 
 
