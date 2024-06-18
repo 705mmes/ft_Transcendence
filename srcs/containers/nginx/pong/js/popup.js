@@ -14,13 +14,13 @@ const login = document.getElementById("loginsubmit");
 const registerform = document.getElementById("registration");
 const registersubmited = document.getElementById("registersubmit");
 
+const canvdiv = document.getElementById("canv");
+
 popr.addEventListener("mouseenter", (e) => {
-	console.log("alo");
 	popr.id = "registerhover";
 })
 
 popr.addEventListener("mouseleave", (e) => {
-	console.log("alo");
 	popr.id = "register";
 })
 
@@ -42,9 +42,15 @@ quitbox.onclick = () => {
 }
 
 login.onclick = () =>{
-	loginform.submit();
+	pop.classList.add('off');
+	popr.classList.add('off');
+	canvdiv.classList.add('on');
+	//loginform.submit();
 }
 
 registersubmited.onclick = () => {
-	registerform.submit();
+	pop.classList.add('off');
+	popr.classList.add('off');
+	canvdiv.classList.add('on');
+	//registerform.submit();
 }
