@@ -4,9 +4,9 @@ services:
   web:
     container_name: web
     build:
-      context: ./containers/django
+      context: ./containers/transcendence
       dockerfile: Dockerfile.prod
-    command: gunicorn hello_django.wsgi:application --bind 0.0.0.0:8000
+    command: gunicorn transcendence.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_volume:/home/app/web/staticfiles
     expose:

@@ -1,0 +1,23 @@
+{% load static %}
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>MULTIVERSUS</title>
+		<link rel="stylesheet" href="{% static 'css/main.css' %}">
+	</head>
+	<body>
+		<h1>MULTIVERSUS <br></h1>
+		<button class="popupboutton" id="register">Sign in</button>
+		<div class="popupcontainer" id="registration_container"></div>
+		<button class="popupboutton" id="login">Log in</button>
+		<div class="popupcontainer" id="login_container"></div>
+		<br> <br>
+		<div class="game" id="gamecanvas"></div>
+		<div id="scripts">
+			<script src="{% static 'js/page_display.js'%}"></script>
+			<script src="{% static 'js/send_form.js'%}"></script>
+		</div>
+	</body>
+</html>

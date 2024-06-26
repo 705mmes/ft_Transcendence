@@ -13,10 +13,10 @@ services:
     env_file: .env
   web:
     container_name: web
-    build: ./containers/django
+    build: ./containers/transcendence
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./django/:/usr/src/django/
+      - ./containers/transcendence/:/usr/src/django/
     ports:
       - 8000:8000
     env_file:
