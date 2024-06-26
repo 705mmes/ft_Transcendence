@@ -1,25 +1,19 @@
-create:
-	mkdir ../tr_vol
-	mkdir ../tr_vol/database
-	sudo docker-compose --env-file srcs/.env -f srcs/docker-compose.yml up -d --build --remove-orphans
+up:
+	sudo docker-compose --env-file srcs/.env -f srcs/docker-compose.yml up -d --build
 
 prod:
 	sudo docker-compose -f srcs/docker-compose.prod.yml up -d --build
-
-up:
-	sudo docker-compose --env-file srcs/.env -f srcs/docker-compose.yml up -d --build --remove-orphans
 	
 restart:
-	sudo docker-compose -f srcs/docker-compose.yml restart
+	sudo docker-compose -f srcs/docker-compose.prod.yml restart
 
 stop:
-	sudo docker-compose -f srcs/docker-compose.yml stop
+	sudo docker-compose -f srcs/docker-compose.prod.yml stop
 
 down:
-	sudo docker-compose -f srcs/docker-compose.yml down
+	sudo docker-compose -f srcs/docker-compose.prod.yml down
 
 clean: down
-	-sudo docker-compose -f srcs/docker-compose.prod.yml down
 	-sudo docker volume rm srcs_postgres_data
 	-sudo docker network rm srcs_default
 	-sudo rm -rf ../tr_vol
@@ -27,12 +21,12 @@ clean: down
 	-sudo launchctl stop nginx postgresql
 
 ps:
-	sudo docker-compose -f srcs/docker-compose.yml ps
+	sudo docker-compose -f srcs/docker-compose.prod.yml ps
 
 logs:
-	sudo docker-compose -f srcs/docker-compose.yml logs
+	sudo docker-compose -f srcs/docker-compose.prod.yml logs
 
 top:
-	sudo docker-compose -f srcs/docker-compose.yml top
+	sudo docker-compose -f srcs/docker-compose.prod.yml top
 
 re:	clean create logs ps
