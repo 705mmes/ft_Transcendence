@@ -29,4 +29,4 @@ logs:
 top:
 	sudo docker-compose -f srcs/docker-compose.prod.yml top
 
-re:	clean create logs ps
+re:	clean up logs ps
