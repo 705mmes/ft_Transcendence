@@ -1,0 +1,19 @@
+{% load static %}
+
+<button class="popupboutton" id="register">Sign in</button>
+<div class="popupcontainer" id="registration_container">
+    <div id="registration_box" class="popupbox">
+        {% include 'authentication/registration_popup.html' %}
+    </div>
+</div>
+
+<button class="popupboutton" id="login">Log in</button>
+<div class="popupcontainer" id="login_container">
+    <div id="login_box" class="popupbox">
+        {% include 'authentication/login_popup.html' %}
+    </div>
+</div>
+
+<script class="auth_script" src="{% static 'js/authentication/page_display.js' %}"></script>
+<script class="auth_script" src="{% static 'js/authentication/send_form.js' %}"></script>
+<script class="auth_script" src="{% static 'js/authentication/popup_handler.js' %}"></script>
