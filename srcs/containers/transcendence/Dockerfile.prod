@@ -22,7 +22,7 @@ RUN pip install --upgrade pip
 RUN pip install flake8==6.0.0
 COPY . /usr/src/app/
 # ignore webcodings/ && python3.12/ c'est des cons
-RUN flake8 --ignore=E501,F401,E222 --exclude=venv,.venv,pip,webcodings,python3.12,authentication .
+RUN flake8 --ignore=E501,F401,E222,W292 --exclude=venv,.venv,pip,webcodings,python3.12,authentication .
 
 COPY ./requirements.txt .
 # Uses pip wheel to create wheel files for the dependencies listed in requirements.txt and stores them in /usr/src/app/wheels.

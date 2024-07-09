@@ -14,24 +14,36 @@ services:
     env_file:
       - ./.prod.env
     depends_on:
-      - db
-  db:
-    container_name: db
+      - postgres
+############################
+  postgres:
+    container_name: postgres
     image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.prod.db.env
+############################
   pgadmin:
     image: dpage/pgadmin4
-    container_name: pgadmin4
-    restart: always
-    ports:
-      - "8888:80"
+    container_name: pgadmin
+    # environment:
+    #   PGADMIN_DEFAULT_EMAIL: neo@dansmatrix.com
+    #   PGADMIN_DEFAULT_PASSWORD: dansmatrix
+    #   POSTGRES_DB: tr_database
+    #   POSTGRES_USER: neo
+    #   POSTGRES_PASSWORD: dansmatrix
     env_file:
       - ./.prod.db.env
+    ports:
+      - "80:80"
+    depends_on:
+      - postgres
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+      - ./pgadmin_setup:/pgadmin_setup
+    entrypoint: ["/pgadmin_setup/entrypoint.sh"]
+############################
   nginx:
     volumes:
       - static_volume:/home/app/web/staticfiles

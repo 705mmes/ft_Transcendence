@@ -2,7 +2,7 @@ up:
 	sudo docker-compose --env-file srcs/.env -f srcs/docker-compose.yml up -d --build
 
 prod:
-	sudo docker-compose -f srcs/docker-compose.prod.yml up -d --build
+	sudo docker-compose -f srcs/docker-compose.prod.yml up --build
 	
 restart:
 	sudo docker-compose -f srcs/docker-compose.prod.yml restart
@@ -15,7 +15,6 @@ down:
 
 clean: down
 	-sudo docker volume rm srcs_postgres_data srcs_pgadmin_data srcs_static_volume
-	-sudo rm -rf ../tr_vol
 	-sudo systemctl stop nginx postgresql
 	-sudo launchctl stop nginx postgresql
 
@@ -27,5 +26,8 @@ logs:
 
 top:
 	sudo docker-compose -f srcs/docker-compose.prod.yml top
+
+fclean: clean
+	sudo docker system prune -af
 
 re:	clean up logs ps
