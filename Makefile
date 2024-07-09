@@ -14,8 +14,7 @@ down:
 	sudo docker-compose -f srcs/docker-compose.prod.yml down
 
 clean: down
-	-sudo docker volume rm srcs_postgres_data
-	-sudo docker network rm srcs_default
+	-sudo docker volume rm srcs_postgres_data srcs_pgadmin_data srcs_static_volume
 	-sudo rm -rf ../tr_vol
 	-sudo systemctl stop nginx postgresql
 	-sudo launchctl stop nginx postgresql

@@ -22,6 +22,16 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - ./.prod.db.env
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4
+    restart: always
+    ports:
+      - "8888:80"
+    env_file:
+      - ./.prod.db.env
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
   nginx:
     volumes:
       - static_volume:/home/app/web/staticfiles
@@ -35,3 +45,4 @@ services:
 volumes:
   postgres_data:
   static_volume:
+  pgadmin_data:
