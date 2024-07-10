@@ -1,8 +1,14 @@
-up:
+build:
 	sudo docker-compose --env-file srcs/.env -f srcs/docker-compose.yml up -d --build
+	
+up:
+	sudo docker-compose --env-file srcs/.env -f srcs/docker-compose.yml up -d
 
 prod:
 	sudo docker-compose -f srcs/docker-compose.prod.yml up --build
+
+prud:
+	sudo docker-compose -f srcs/docker-compose.prod.yml up
 	
 restart:
 	sudo docker-compose -f srcs/docker-compose.prod.yml restart
