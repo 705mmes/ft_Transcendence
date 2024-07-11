@@ -1,7 +1,28 @@
+{#{% load static %}#}
+{##}
+{#<h1>LOG IN</h1>#}
+{#<form id="loginform">#}
+{#    {% csrf_token %}#}
+{#    <label>#}
+{#        {{ login_form.username }}#}
+{#        <span>Username</span>#}
+{#        <br><br>#}
+{#    </label>#}
+{#    <label>#}
+{#        {{ login_form.password }}#}
+{#        <span>Password</span>#}
+{#        <br><br>#}
+{#    </label>#}
+{#    <label>#}
+{#        <button class="close" id="Lclose">X</button>#}
+{#        <button class="submit" type="submit" id="loginsubmit">Log me in</button>#}
+{#    </label>#}
+{#</form>#}
+
 {% load static %}
 
 <h1>LOG IN</h1>
-<form id="loginform">
+<form id="loginform" method="POST" action="{% url 'login_session' %}">
     {% csrf_token %}
     <label>
         {{ login_form.username }}

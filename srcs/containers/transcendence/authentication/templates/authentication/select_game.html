@@ -1,0 +1,21 @@
+{% extends "index.html" %}
+{% load static %}
+
+{% block content %}
+<h1>Select Game Mode</h1>
+<button onclick="location.href='{% url 'game' 'local' %}'">Local Game</button>
+<form id="online-game-form">
+    <input type="text" id="room-name-input" placeholder="Enter Room Name">
+    <button type="submit">Create/Join Online Game</button>
+</form>
+
+<script>
+    document.getElementById('online-game-form').onsubmit = function(e) {
+        e.preventDefault();
+        var roomName = document.getElementById('room-name-input').value;
+        if (roomName) {
+            location.href = '{% url 'game' 'dummy' %}'.replace('dummy', roomName);
+        }
+    };
+</script>
+{% endblock %}

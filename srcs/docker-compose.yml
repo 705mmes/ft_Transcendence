@@ -14,6 +14,7 @@ services:
   web:
     container_name: web
     build: ./containers/transcendence
+#    command: daphne -p 8000 transcendence.asgi:application
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./containers/transcendence/:/usr/src/django/
@@ -25,3 +26,4 @@ services:
       - postgres
 volumes:
   postgres_data:
+
