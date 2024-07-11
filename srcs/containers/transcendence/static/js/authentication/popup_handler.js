@@ -26,14 +26,14 @@ document.getElementById("Lclose").onclick = () => {
 
 document.getElementById("loginform").addEventListener('submit', function(event){
 	event.preventDefault();
-	send_login_form(this);
+	send_login_form(this, 'login_session/');
 	document.getElementById("login_container").classList.remove('on');
 });
 
 
 document.getElementById("registration").addEventListener('submit', function(event){
 	event.preventDefault();
-	PageDisplay();
+	send_login_form(this, 'register_session/');
 	document.getElementById("registration_container").classList.remove('on');
 });
 

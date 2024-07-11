@@ -1,22 +1,25 @@
+{% load static %}
+
 <h1>SIGN IN</h1>
         <form id="registration">
+            {% csrf_token %}
             <label>
-                <input class="popuptext" id="username" type="text" placeholder="" required=""></input>
+                {{ registration_form.username }}
                 <span>Username</span>
                 <br><br>
             </label>
             <label>
-                    <input class="popuptext" id="mail" type="email" placeholder="" required=""></input>
-                    <span>Email</span>
-                    <br><br>
+                {{ registration_form.email }}
+                <span>Email</span>
+                <br><br>
                 </label>
             <label>
-                <input class="popuptext" id="Password" type="password" placeholder="" required=""></input>
+                {{ registration_form.password1 }}
                 <span>Password</span>
                 <br><br>
             </label>
             <label>
-                <input class="popuptext" id="RPassword" type="password" placeholder="" required=""></input>
+                {{ registration_form.password2 }}
                 <span>Confirm Password</span>
                 <br><br>
             </label>

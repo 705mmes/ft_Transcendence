@@ -1,9 +1,9 @@
-async function send_login_form(value)
+async function send_login_form(value, url)
 {
     try
     {
         const formdata = new FormData(value);
-        let response = await fetch('login_session/', {
+        let response = await fetch(url, {
 
             method: 'POST',
             body: formdata,

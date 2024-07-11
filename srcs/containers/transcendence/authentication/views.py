@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from authentication.forms import LoginForm
+from authentication.forms import LoginForm, RegistrationForm
+from .models import User
 from django.http import HttpResponse
 from django.contrib.auth import login, authenticate, logout
 
@@ -8,11 +9,27 @@ from django.contrib.auth import login, authenticate, logout
 def authentication(request):
     context = {
         'login_form': LoginForm,
+        'registration_form': RegistrationForm,
     }
     if (request.user.is_authenticated):
         return render(request, 'authentication/game.html')
     else:
        return render(request, 'authentication/auth_page.html', context)
+
+def register(request):
+    if (request.method == 'POST'):
+        print('Registration')
+        form = RegistrationForm(request.POST)
+        if (form.is_valid()):
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password1']
+            User.objects.create_user(username=username, password=password)
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return (render(request, 'authentication/game.html'))
+            else:
+                return (HttpResponse('Error'))
 
 def login_session(request):
     if (request.method == 'POST'):
@@ -31,7 +48,10 @@ def login_session(request):
 
 def logout_btn(request):
     logout(request)
-    context = {'login_form': LoginForm}
+    context = {
+        'login_form': LoginForm,
+        'registration_form': RegistrationForm,
+    }
     return render(request, 'authentication/btn_page.html', context)
 
 def game(request):
