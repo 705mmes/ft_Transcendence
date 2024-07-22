@@ -12,6 +12,7 @@ then
 fi
 
 # python manage.py flush --no-input -> if we want to empty the db
+python manage.py makemigrations
 python manage.py migrate
 
 exec "$@"

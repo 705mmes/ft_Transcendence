@@ -1,14 +1,18 @@
-version: '3.9'
-
 services:
   web:
     container_name: web
     build:
       context: ./containers/transcendence
       dockerfile: Dockerfile.prod
-    command: gunicorn transcendence.wsgi:application --bind 0.0.0.0:8000
+    command: python manage.py runserver 0.0.0.0:8000
+    # command: gunicorn transcendence.wsgi:application --bind 0.0.0.0:8000
     volumes:
       - static_volume:/home/app/web/staticfiles
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_USER: neo
+      DATABASE_PASSWORD: dansmatrix
+      DATABASE_NAME: tr_database
     expose:
       - 8000
     env_file:
@@ -21,28 +25,32 @@ services:
     image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    env_file:
-      - ./.prod.db.env
-############################
-  pgadmin:
-    image: dpage/pgadmin4
-    container_name: pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: neo@dansmatrix.com
-      PGADMIN_DEFAULT_PASSWORD: dansmatrix
       POSTGRES_DB: tr_database
       POSTGRES_USER: neo
       POSTGRES_PASSWORD: dansmatrix
     env_file:
       - ./.prod.db.env
-    ports:
-      - "80:80"
-    depends_on:
-      - postgres
-    volumes:
-      - pgadmin_data:/var/lib/pgadmin
-      - ./pgadmin_setup:/pgadmin_setup
-    entrypoint: ["/pgadmin_setup/entrypoint.sh"]
+############################
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   container_name: pgadmin
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: neo@dansmatrix.com
+  #     PGADMIN_DEFAULT_PASSWORD: dansmatrix
+  #     POSTGRES_DB: tr_database
+  #     POSTGRES_USER: neo
+  #     POSTGRES_PASSWORD: dansmatrix
+  #   env_file:
+  #     - ./.prod.db.env
+  #   ports:
+  #     - "80:80"
+  #   depends_on:
+  #     - postgres
+  #   volumes:
+  #     - pgadmin_data:/var/lib/pgadmin
+  #     - ./pgadmin_setup:/pgadmin_setup
+  #   entrypoint: ["/pgadmin_setup/entrypoint.sh"]
 ############################
   nginx:
     volumes:
@@ -57,4 +65,4 @@ services:
 volumes:
   postgres_data:
   static_volume:
-  pgadmin_data:
+  # pgadmin_data:

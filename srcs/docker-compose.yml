@@ -1,20 +1,23 @@
-version: '3.9'
-
 services:
   postgres:
-    image: postgres:15
     container_name: postgres
+    image: postgres:15
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
-      - POSTGRES_USER=neo
-      - POSTGRES_PASSWORD=dansmatrix
-      - POSTGRES_DB=tr_database
+      POSTGRES_DB: tr_database
+      POSTGRES_USER: neo
+      POSTGRES_PASSWORD: dansmatrix
     env_file: .env
   web:
     container_name: web
     build: ./containers/transcendence
     command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_USER: neo
+      DATABASE_PASSWORD: dansmatrix
+      DATABASE_NAME: tr_database
     volumes:
       - ./containers/transcendence/:/usr/src/django/
     ports:

@@ -1,3 +1,4 @@
 docker-compose exec db psql --username=neo --dbname=tr_database  
 docker-compose -f srcs/docker-compose.prod.yml exec web python manage.py migrate --noinput
 docker-compose -f srcs/docker-compose.prod.yml exec web python manage.py collectstatic --no-input --clear
+    # command: gunicorn transcendence.wsgi:application --bind 0.0.0.0:8000
