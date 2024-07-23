@@ -1,23 +1,17 @@
 build:
-	docker-compose --env-file srcs/.env -f srcs/docker-compose.yml up -d --build
+	docker-compose --env-file srcs/.env -f srcs/docker-compose.yml up --build
 	
 up:
-	docker-compose --env-file srcs/.env -f srcs/docker-compose.yml up -d
+	docker-compose --env-file srcs/.env -f srcs/docker-compose.yml up
 
-prod:
-	docker-compose -f srcs/docker-compose.prod.yml up --build
-
-prud:
-	docker-compose -f srcs/docker-compose.prod.yml up
-	
 restart:
-	docker-compose -f srcs/docker-compose.prod.yml restart
+	docker-compose -f srcs/docker-compose.yml restart
 
 stop:
-	docker-compose -f srcs/docker-compose.prod.yml stop
+	docker-compose -f srcs/docker-compose.yml stop
 
 down:
-	docker-compose -f srcs/docker-compose.prod.yml down
+	docker-compose -f srcs/docker-compose.yml down
 
 clean: down
 	- docker volume rm srcs_postgres_data srcs_pgadmin_data srcs_static_volume
@@ -25,13 +19,13 @@ clean: down
 	- launchctl stop nginx postgresql
 
 ps:
-	docker-compose -f srcs/docker-compose.prod.yml ps
+	docker-compose -f srcs/docker-compose.yml ps
 
 logs:
-	docker-compose -f srcs/docker-compose.prod.yml logs
+	docker-compose -f srcs/docker-compose.yml logs
 
 top:
-	docker-compose -f srcs/docker-compose.prod.yml top
+	docker-compose -f srcs/docker-compose.yml top
 
 fclean: clean
 	docker system prune -af
