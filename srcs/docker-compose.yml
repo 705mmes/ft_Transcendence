@@ -3,7 +3,7 @@ services:
     container_name: web
     build:
       context: ./containers/transcendence
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - static_volume:/home/app/web/staticfiles
