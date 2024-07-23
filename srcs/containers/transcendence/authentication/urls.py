@@ -11,5 +11,4 @@ urlpatterns = [
     path('scripts/', views.scripts),
     path('profile/', views.profile),
     path('player_data/', views.player_data),
-
 ]

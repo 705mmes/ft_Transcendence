@@ -70,6 +70,9 @@ def profile(request):
 
 def player_data(request):
     player = request.user
-    form = RegistrationForm()
-    form.username = player.username
-    form.email = player.email
+    context = {
+        'username': player.username,
+        'email': player.email,
+    }
+    playerform = RegistrationForm(context)
+    return render(request, 'authentication/player_form.html', {'registration_form': playerform, 'player': player})

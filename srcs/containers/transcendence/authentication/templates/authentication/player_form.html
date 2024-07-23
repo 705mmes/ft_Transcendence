@@ -1,0 +1,20 @@
+{% load static %}
+
+<form id="registration">
+    {% csrf_token %}
+    <label>
+        {{ registration_form.username }}
+        <span>username : {{ player.username }}</span>
+        <br><br>
+    </label>
+    <label>
+        {{ registration_form.email }}
+        <span>Email</span>
+        <br><br>
+        </label>
+    <label>
+        {{ registration_form.password1 }}
+        <span>Password</span>
+        <br><br>
+    </label>
+</form>
