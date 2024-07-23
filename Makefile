@@ -15,8 +15,8 @@ down:
 
 clean: down
 	- docker volume rm srcs_postgres_data srcs_pgadmin_data srcs_static_volume
-	- systemctl stop nginx postgresql
-	- launchctl stop nginx postgresql
+	# - systemctl stop nginx postgresql
+	# - launchctl stop nginx postgresql
 
 ps:
 	docker-compose -f srcs/docker-compose.yml ps
