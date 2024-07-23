@@ -1,5 +1,35 @@
-function load_script_form_fetch(list_script)
+let game_script_cache = fetch_scripts('scripts/', 'game_script');
+let game_class_script_cache = fetch_scripts('scripts/', 'game_class_script');
+let homepage_script_cache = fetch_scripts('scripts/', 'auth_script');
+let logout_script_cache = fetch_scripts('scripts/', 'home_script');
+
+async function fetch_scripts(url, class_name)
 {
+    let script_div = document.createElement('div');
+    await fetching_html(url, script_div);
+    let script_list = script_div.getElementsByClassName(class_name);
+    return (script_list);
+}
+
+
+
+if (document.getElementById('canv'))
+{
+    load_script_form_fetch(logout_script_cache);
+    load_script_form_fetch(game_script_cache);
+
+
+}
+else
+{
+    load_script_form_fetch(game_class_script_cache);
+    load_script_form_fetch(homepage_script_cache);
+}
+
+async function load_script_form_fetch(cache)
+{
+
+    let list_script = await cache;
     for (let i = 0; i < list_script.length; i++)
     {
         const newScript = document.createElement('script');
@@ -10,12 +40,7 @@ function load_script_form_fetch(list_script)
         else
             newScript.innerHTML = list_script[i].innerHTML;
         document.body.appendChild(newScript);
-    }
 
-    // Supprime les elements script qui ont ete fetch juste au dessus, qui sont donc inutile,
-    // Faut les del dans le sens inverse parce que sinon tu perd le file dans la liste trop tard pour expliquer comprendra qui pourra
-    for (let i = list_script.length - 1; i >= 0; i--) {
-        list_script[i].remove();
     }
 }
 

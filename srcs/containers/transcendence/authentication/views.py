@@ -16,6 +16,7 @@ def authentication(request):
     else:
        return render(request, 'authentication/auth_page.html', context)
 
+
 def register(request):
     if (request.method == 'POST'):
         print('Registration')
@@ -23,7 +24,8 @@ def register(request):
         if (form.is_valid()):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
-            User.objects.create_user(username=username, password=password)
+            email = form.cleaned_data['email']
+            User.objects.create_user(username=username, password=password, email=email)
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
@@ -56,3 +58,18 @@ def logout_btn(request):
 
 def game(request):
     return render(request, 'authentication/canvas.html')
+
+def scripts(request):
+    return render(request, 'authentication/scripts.html')
+
+def game(request):
+    return render(request, 'authentication/canvas.html')
+
+def profile(request):
+    return render(request, 'authentication/profile.html')
+
+def player_data(request):
+    player = request.user
+    form = RegistrationForm()
+    form.username = player.username
+    form.email = player.email

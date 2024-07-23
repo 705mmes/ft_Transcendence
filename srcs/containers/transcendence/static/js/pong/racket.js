@@ -1,6 +1,6 @@
 class racket
 {
-    constructor(x, y, str, speed)
+    constructor(x, y, str, speed, canevas)
     {
         this.x = x;
         this.y = y;
@@ -11,17 +11,18 @@ class racket
         this.up = false;
         this.down = false
         this.score = 0;
+        this.canevas = canevas
     }
 
     reset(canvcont)
     {
         this.score = 0;
-        this.y = canevas.height / 2;
-        if (this.x != 0)
-            this.x = canevas.width - 74;
+        this.y = this.canevas.height / 2;
+        if (this.x !== 0)
+            this.x = this.canevas.width - 74;
     }
 
-    drawing(canvcont) 
+    drawing(canvcont)
     {
         canvcont.drawImage(this.img, this.x, this.y);
     }
@@ -40,14 +41,14 @@ class racket
 
     moving(ms)
     {
-        if (this.up == true)
+        if (this.up === true)
         {
             if (this.y - (this.speed * ms) >= 0)
                 this.y -= this.speed * ms;
         }
-        if (this.down == true)
+        if (this.down === true)
         {
-            if (canevas.height >= (this.y + this.height) + (this.speed * ms))
+            if (this.canevas.height >= (this.y + this.height) + (this.speed * ms))
                 this.y += this.speed * ms;
         }
     }

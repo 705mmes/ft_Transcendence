@@ -25,6 +25,7 @@ async function AddGameCanvas()
     await fetching_html('game/', div_content);
     delete_script_by_class_name("auth_script");
 
-    const scripts = div_content.getElementsByTagName('script');
-    load_script_form_fetch(scripts);
+    load_script_form_fetch(logout_script_cache);
+    load_script_form_fetch(game_script_cache);
+
 }
