@@ -1,4 +1,4 @@
-document.getElementById("logout_button").addEventListener('submit', function(event){
+document.getElementById("logout").addEventListener('click', function(event){
     event.preventDefault();
 })
 

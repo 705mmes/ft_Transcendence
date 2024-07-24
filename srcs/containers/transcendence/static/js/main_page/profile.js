@@ -12,9 +12,29 @@ async function to_profile_page()
     await fetching_html('player_data/', div_truc);
 }
 
+document.getElementById('profile').addEventListener('click', function(event){
+  event.preventDefault();
+})
 
-if(document.getElementById('profile')) {
-    document.getElementById('profile').onclick = () => {
-        to_profile_page();
-    }
+document.getElementById('profile').onclick = () => {
+    to_profile_page();
+}
+
+async function to_game()
+{
+    let div_content = document.getElementById('content');
+    await fetching_html('game/', div_content);
+
+
+    load_script_form_fetch(game_script_cache);
+    load_script_form_fetch(logout_script_cache);
+}
+
+
+document.getElementById('home').addEventListener('click', function(event){
+  event.preventDefault();
+})
+
+document.getElementById('home').onclick = () => {
+    to_game();
 }

@@ -275,9 +275,24 @@ body
 
 .navbar
 {
-    display: inline;
+    list-style: none;
+    display: inline-block;
     overflow: hidden;
+    background-color: #1b1b1b;
 }
+
+.navbar a
+{
+    float:right;
+    padding: 10px 16px;
+}
+
+.navbar a:hover
+{
+    background-color: #006b1b;
+}
+
+/* button */
 
 .popupboutton
 {

@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get("DEBUG", default=0))
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:5000', 'http://127.0.0.1:5000', 'http://10.13.3.9:5000']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:5000', 'http://127.0.0.1:5000', 'http://10.13.3.9:5000', 'http://0.0.0.0:8000']
 
 # ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 ALLOWED_HOSTS =  [
