@@ -37,58 +37,7 @@ body
     z-index: 1;
 }
 
-.popupboutton
-{
-    padding: 2% 5%;
-    height: 30%;
-    width: 20%;
-    border: solid black;
-    border-width: 5%;
-    outline: none;
-    border-radius: 30px;
-    box-shadow: 0 0 10px rgba(0, 0, 0,0 .1);
-    font-size: 150%;
-    font-weight: 500;
-    margin: 15%;
-    cursor: pointer;
-    z-index: 1;
-    opacity: 1;
-}
 
-.popupboutton.off
-{
-    margin: 0%;
-    opacity: 0;
-    pointer-events: none;
-}
-
-#register
-{
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    margin: 15%;
-    background-image: url("../js/images/staticregister.png");
-    background-size: cover;
-    color: #362315;
-    z-index: 1;
-}
-
-#registerhover
-{
-    background-image: url("../js/images/Register2.gif");
-    background-size: cover;
-    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-    color: #362315;
-    z-index: 1;
-    animation: pulsing 1.2s ease 0s infinite normal forwards;
-}
-
-
-#login
-{
-    margin: 10%;
-    background-color: #8b6242;
-    color: #362315;
-}
 
 .popupcontainer
 {
@@ -323,16 +272,65 @@ body
 
 /* navbar css */
 
-ul
+
+.navbar
 {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    background-color: #1b1b1b;
+    display: inline;
+    overflow: hidden;
 }
 
-li
+.popupboutton
 {
-    float: left;
     padding: 2% 5%;
+    height: 30%;
+    width: 20%;
+    min-width: 20%;
+    min-height: 30%;
+    border: solid black;
+    border-width: 5%;
+    outline: none;
+    border-radius: 30px;
+    box-shadow: 0 0 10px rgba(0, 0, 0,0 .1);
+    font-size: 150%;
+    font-weight: 500;
+    margin: 15%;
+    cursor: pointer;
+    z-index: 1;
+    opacity: 1;
+}
+
+.popupboutton.off
+{
+    margin: 0%;
+    opacity: 0;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+#register
+{
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    margin: 15%;
+    background-image: url("../js/images/staticregister.png");
+    background-size: cover;
+    color: #362315;
+    z-index: 1;
+}
+
+#registerhover
+{
+    background-image: url("../js/images/Register2.gif");
+    background-size: cover;
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+    color: #362315;
+    z-index: 1;
+    animation: pulsing 1.2s ease 0s infinite normal forwards;
+}
+
+
+#login
+{
+    margin: 10%;
+    background-color: #8b6242;
+    color: #362315;
 }
