@@ -1,7 +1,7 @@
-#!/bin/sh
+#!/bin/bash
+set -e
 
-if [ "$DATABASE" = "postgres" ]
-then
+if [ "$DATABASE" = "postgres" ]; then
     echo "Waiting for postgres..."
 
     while ! nc -z $SQL_HOST $SQL_PORT; do
@@ -10,11 +10,11 @@ then
 
     echo "PostgreSQL started"
 fi
-# python manage.py makemigrations
-# python manage.py migrate
-python3 manage.py collectstatic --noinput
 
-# Create superuser if it doesn't exist
+python manage.py makemigrations
+python manage.py migrate
+python manage.py collectstatic --noinput
+
 if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_EMAIL" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
     python manage.py shell -c "
 from django.contrib.auth import get_user_model;
