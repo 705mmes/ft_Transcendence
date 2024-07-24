@@ -39,7 +39,6 @@ body
 
 .popupboutton
 {
-    position: relative;
     padding: 2% 5%;
     height: 30%;
     width: 20%;
@@ -320,4 +319,20 @@ body
     {
         transform: scale(1);
     }
+}
+
+/* navbar css */
+
+ul
+{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    background-color: #1b1b1b;
+}
+
+li
+{
+    float: left;
+    padding: 2% 5%;
 }

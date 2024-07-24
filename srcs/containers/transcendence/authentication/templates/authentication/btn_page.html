@@ -1,13 +1,15 @@
 {% load static %}
 
-<button class="popupboutton" id="register">Sign in</button>
+<ul>
+    <li><button class="popupboutton" id="register">Sign in</button></li>
+    <li><button class="popupboutton" id="login">Log in</button></li>
+</ul>
+
 <div class="popupcontainer" id="registration_container">
     <div id="registration_box" class="popupbox">
         {% include 'authentication/registration_popup.html' %}
     </div>
 </div>
-
-<button class="popupboutton" id="login">Log in</button>
 <div class="popupcontainer" id="login_container">
     <div id="login_box" class="popupbox">
         {% include 'authentication/login_popup.html' %}

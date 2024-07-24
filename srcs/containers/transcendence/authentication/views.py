@@ -56,9 +56,6 @@ def logout_btn(request):
     }
     return render(request, 'authentication/btn_page.html', context)
 
-def game(request):
-    return render(request, 'authentication/canvas.html')
-
 def scripts(request):
     return render(request, 'authentication/scripts.html')
 
