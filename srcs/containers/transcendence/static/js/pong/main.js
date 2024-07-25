@@ -1,7 +1,7 @@
 function main()
 {
 
-    let socket = new WebSocket('ws://localhost:8000/ws/game/testroom/');
+    let socket = new WebSocket('ws://localhost:8000/ws/game/');
 
     socket.onopen = function(e) {
       console.log("[open] Connection established");

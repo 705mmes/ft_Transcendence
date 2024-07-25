@@ -23,7 +23,7 @@ pps:
 	docker-compose -f srcs/docker-compose.prod.yml ps
 
 clean: down pdown
-	- docker volume rm srcs_postgres_data srcs_pgadmin_data srcs_static_volume
+	- docker volume rm srcs_postgres_data srcs_static_volume
 
 fclean: clean
 	docker system prune -af
