@@ -356,3 +356,21 @@ body
     background-color: #8b6242;
     color: #362315;
 }
+
+.float-container {
+    display: flex;
+    border: 3px solid #fff;
+    padding: 10px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.float-child {
+    flex: 1; /* Allow the child elements to take equal space */
+    padding: 10px;
+    border: 2px solid red;
+}
+
+button {
+    width: auto; /* Ensure the button has appropriate width */
+}

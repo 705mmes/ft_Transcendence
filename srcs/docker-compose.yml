@@ -39,6 +39,8 @@ services:
       - 6379
     networks:
       - transcendence
+    depends_on:
+      - web
 
 volumes:
   postgres_data:

@@ -1,7 +1,10 @@
 function main()
 {
-
-    let socket = new WebSocket('ws://localhost:8000/ws/game/');
+    const socket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/authentication/is_connected/'
+        );
 
     socket.onopen = function(e) {
       console.log("[open] Connection established");

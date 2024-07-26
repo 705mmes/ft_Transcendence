@@ -1,0 +1,24 @@
+{% load static %}
+
+<h1>Social</h1>
+<ul id="user-list">
+    {% for user in all_users %}
+    <li class="user">
+        <div class="float-container">
+            <div class="float-child">
+                {{ user.username }}
+            </div>
+            <div class="float-child">
+                {% if user.is_connected %}
+                    Online
+                {% else %}
+                    Offline
+                {% endif %}
+            </div>
+            <div class="float-child">
+                <button type="button">Add friend</button>
+            </div>
+        </div>
+    </li>
+    {% endfor %}
+</ul>

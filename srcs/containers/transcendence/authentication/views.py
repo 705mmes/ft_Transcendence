@@ -33,6 +33,7 @@ def register(request):
             else:
                 return (HttpResponse('Error'))
 
+
 def login_session(request):
     if (request.method == 'POST'):
         form = LoginForm(request.POST)
@@ -48,6 +49,7 @@ def login_session(request):
             else:
                 return (HttpResponse('Error'))
 
+
 def logout_btn(request):
     logout(request)
     context = {
@@ -56,8 +58,10 @@ def logout_btn(request):
     }
     return render(request, 'authentication/btn_page.html', context)
 
+
 def profile(request):
     return render(request, 'authentication/profile.html')
+
 
 def player_data(request):
     player = request.user
@@ -67,3 +71,8 @@ def player_data(request):
     }
     playerform = RegistrationForm(context)
     return render(request, 'authentication/player_form.html', {'registration_form': playerform, 'player': player})
+
+
+def social(request):
+    all_users = User.objects.all()
+    return render(request, 'authentication/social.html', {'all_users': all_users})

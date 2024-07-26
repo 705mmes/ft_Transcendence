@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   web:
     container_name: web
@@ -48,6 +46,16 @@ services:
       - web
     networks:
       - transcendence
+
+  redis:
+    container_name: redis
+    image: redis:latest
+    expose:
+      - 6379
+    networks:
+      - transcendence
+    depends_on:
+      - web
 
 networks:
   transcendence:
