@@ -12,9 +12,9 @@ def authentication(request):
         'registration_form': RegistrationForm,
     }
     if (request.user.is_authenticated):
-        return render(request, 'authentication/game.html')
+        return render(request, 'game/game.html')
     else:
-       return render(request, 'authentication/auth_page.html', context)
+        return render(request, 'authentication/auth_page.html', context)
 
 
 def register(request):
@@ -29,7 +29,7 @@ def register(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 login(request, user)
-                return (render(request, 'authentication/game.html'))
+                return (render(request, 'game/game.html'))
             else:
                 return (HttpResponse('Error'))
 
@@ -44,7 +44,7 @@ def login_session(request):
             print(request.POST['password'])
             if user is not None:
                 login(request, user)
-                return (render(request, 'authentication/game.html'))
+                return (render(request, 'game/game.html'))
             else:
                 return (HttpResponse('Error'))
 
@@ -55,12 +55,6 @@ def logout_btn(request):
         'registration_form': RegistrationForm,
     }
     return render(request, 'authentication/btn_page.html', context)
-
-def scripts(request):
-    return render(request, 'authentication/scripts.html')
-
-def game(request):
-    return render(request, 'authentication/canvas.html')
 
 def profile(request):
     return render(request, 'authentication/profile.html')

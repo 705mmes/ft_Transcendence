@@ -1,7 +1,7 @@
-let game_script_cache = fetch_scripts('scripts/', 'game_script');
-let game_class_script_cache = fetch_scripts('scripts/', 'game_class_script');
-let homepage_script_cache = fetch_scripts('scripts/', 'auth_script');
-let logout_script_cache = fetch_scripts('scripts/', 'home_script');
+let game_script_cache = fetch_scripts('game/scripts/', 'game_script');
+let game_class_script_cache = fetch_scripts('game/scripts/', 'game_class_script');
+let homepage_script_cache = fetch_scripts('game/scripts/', 'auth_script');
+let logout_script_cache = fetch_scripts('game/scripts/', 'home_script');
 
 async function fetch_scripts(url, class_name)
 {
@@ -17,8 +17,6 @@ if (document.getElementById('canv'))
 {
     load_script_form_fetch(logout_script_cache);
     load_script_form_fetch(game_script_cache);
-
-
 }
 else
 {
