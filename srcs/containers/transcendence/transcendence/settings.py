@@ -26,12 +26,13 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get("DEBUG", default=0))
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:5000', 'http://127.0.0.1:5000', 'http://10.13.3.9:5000', 'http://0.0.0.0:8000', 'http://192.168.1.17']
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-# ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
-ALLOWED_HOSTS =  [
-    '*'
-]
+CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://127.0.0.1', 'http://10.13.3.9', 'http://0.0.0.0', 'http://192.168.1.17']
+
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.13.3.9', '192.168.1.17']
+
 
 # Application definition
 

@@ -28,5 +28,11 @@ ps:
 pps:
 	docker-compose -f srcs/docker-compose.prod.yml ps
 
+logs:
+	docker-compose -f srcs/docker-compose.yml logs
+
+plogs:
+	docker-compose -f srcs/docker-compose.prod.yml logs
+	
 prune:
 	docker system prune -af

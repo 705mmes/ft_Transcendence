@@ -21,9 +21,8 @@ services:
       DATABASE_PASSWORD: dansmatrix
       DATABASE_NAME: tr_database
     volumes:
-      - ./containers/transcendence:/usr/src/django  # Map local directory to container directory
+      - ./containers/transcendence:/usr/src/django
       - static_volume:/home/app/web/staticfiles
-  # Collect static files here (if needed)
     ports:
       - 8000:8000
     env_file:
