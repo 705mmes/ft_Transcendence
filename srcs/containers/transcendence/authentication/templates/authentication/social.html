@@ -1,9 +1,11 @@
+{% extends "index.html" %}
 {% load static %}
 
-<h1>Social</h1>
-<ul id="friend-list">
-    <form id="friend-list-form">
-  <input type="search" id="query" name="q" placeholder="Search...">
-  <button>Search</button>
-</form>
-</ul>
+<div class="form-container">
+  <title>Social</title>
+  <h1>Social</h1>
+        <form id="friend-list-form">
+            <input type="search" id="query" name="username" placeholder="Search...">
+            <button type="submit">Search</button>
+        </form>
+    </div>
