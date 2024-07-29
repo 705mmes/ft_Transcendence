@@ -374,3 +374,22 @@ body
 button {
     width: auto; /* Ensure the button has appropriate width */
 }
+
+.form-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 500px;
+    width: 100%;
+}
+
+#friend-list-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#friend-list-form input,
+#friend-list-form button {
+    margin: 5px;
+}
