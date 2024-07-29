@@ -76,3 +76,4 @@ def player_data(request):
 def social(request):
     all_users = User.objects.all()
     return render(request, 'authentication/social.html', {'all_users': all_users})
+

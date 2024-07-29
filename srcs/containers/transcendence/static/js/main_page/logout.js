@@ -11,7 +11,8 @@ async function logout()
     delete_script_by_class_name('home_script');
 
     // Permet de recup les script dans le html fetch et de les append au body pour les load
-    load_script_form_fetch(homepage_script_cache);
+    await load_script_form_fetch(homepage_script_cache);
+    history.pushState(null,null,'/');
 }
 
 document.getElementById("logout").onclick = () =>

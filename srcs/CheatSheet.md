@@ -20,8 +20,8 @@ Makefile cmds:
     -make prune
 
 Connect:
-	http://<HOST_IP>:8000 -> dev
-	https://<SERVER_IP>:443 -> prod
+	http://<IP>:8000 -> dev
+	https://<IP>:443 -> prod
 
 Debug dockers:
 

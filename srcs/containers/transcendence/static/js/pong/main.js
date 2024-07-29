@@ -1,33 +1,5 @@
 function main()
 {
-    const socket = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/authentication/is_connected/'
-        );
-
-    socket.onopen = function(e) {
-      console.log("[open] Connection established");
-      console.log("Sending to server");
-      socket.send(JSON.stringify({'message': 'Hello Server!'}));
-    };
-
-    socket.onmessage = function(event) {
-      console.log(`[message] Data received from server: ${event.data}`);
-    };
-
-    socket.onclose = function(event) {
-      if (event.wasClean) {
-        console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
-      } else {
-        console.log('[close] Connection died');
-      }
-    };
-
-    socket.onerror = function(error) {
-      console.log(`[error] ${error.message}`);
-    };
-
     let canevas = document.getElementById("canv");
 
     let utils = {

@@ -28,11 +28,12 @@ DEBUG = bool(os.environ.get("DEBUG", default=0))
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost', 'http://127.0.0.1', 'http://10.13.3.9', 'http://0.0.0.0', 'http://192.168.1.17']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://10.13.3.9:8000', 'http://0.0.0.0:8000', 'http://192.168.1.17:8000']
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
-# ALLOWED_HOSTS = ['localhost', '127.0.0.1', '10.13.3.9', '192.168.1.17']
+# ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = ['*']
 
+WEBSOCKET_URL = os.getenv('VITE_WEBSOCKET_URL')
 
 # Application definition
 

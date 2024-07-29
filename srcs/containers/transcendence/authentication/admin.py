@@ -4,4 +4,9 @@ from django.contrib import admin
 # listings/admin.py
 from authentication.models import User
 
-admin.site.register(User)
+
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('username', 'is_connected')
+
+
+admin.site.register(User, UserAdmin)

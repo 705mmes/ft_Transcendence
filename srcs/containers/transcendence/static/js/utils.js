@@ -12,16 +12,23 @@ async function fetch_scripts(url, class_name)
 }
 
 
+reload_scripts();
 
-if (document.getElementById('canv'))
+async function reload_scripts()
 {
-    load_script_form_fetch(logout_script_cache);
-    load_script_form_fetch(game_script_cache);
-}
-else
-{
-    load_script_form_fetch(game_class_script_cache);
-    load_script_form_fetch(homepage_script_cache);
+    if (document.getElementById('canv'))
+    {
+        await load_script_form_fetch(logout_script_cache);
+        await load_script_form_fetch(game_script_cache);
+        if (!document.getElementById('content'))
+            history.pushState(null,null,'/');
+        navigate('game/')
+    }
+    else
+    {
+        await load_script_form_fetch(game_class_script_cache);
+        await load_script_form_fetch(homepage_script_cache);
+    }
 }
 
 async function load_script_form_fetch(cache)
@@ -42,11 +49,11 @@ async function load_script_form_fetch(cache)
     }
 }
 
-async function fetching_html(url, element)
+async function fetching_html(link, element)
 {
     try
     {
-        const response = await fetch(url);
+        const response = await fetch(link);
         if (!response.ok)
             throw new TypeError("HTML fetch failed");
         element.innerHTML = await response.text();
@@ -63,4 +70,14 @@ function delete_script_by_class_name(name)
     for (let i = list_script.length - 1; i >= 0; i--) {
         list_script[i].remove();
     }
+}
+
+function navigate(link)
+{
+
+    link = '/' + link;
+        console.log(link);
+    if(window.location.pathname !== link)
+        history.pushState(null,null, link);
+    console.log(window.location.pathname);
 }

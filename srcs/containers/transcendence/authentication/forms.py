@@ -1,4 +1,5 @@
 from django import forms
+from .models import User
 from . import models
 
 
@@ -11,6 +12,9 @@ class RegistrationForm(forms.Form):
     email = forms.CharField(max_length=300, label='mail', widget=forms.TextInput(attrs={'id': 'mail', 'class': 'popuptext', 'placeholder': ""}))
     password1 = forms.CharField(max_length=64, label='Password', widget=forms.TextInput(attrs={'id': 'Password', 'class': 'popuptext', 'placeholder': "", 'type': 'password'}))
     password2 = forms.CharField(max_length=64, label='Password2', widget=forms.TextInput(attrs={'id': 'RPassword', 'class': 'popuptext', 'placeholder': "", 'type': 'password'}))
+
+class UserSearchForm(forms.Form):
+    query = forms.CharField(label='Search Users', max_length=100)
 
     # def passwords_match(self):
     #     password1 = self.cleaned_data.get("password1")

@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     is_connected = models.BooleanField(default=False)
-    friends = models.ManyToManyField('self', blank=True)
+    friends = models.ManyToManyField('self', blank=True, symmetrical=False)
 
     def __str__(self):
         return self.username
