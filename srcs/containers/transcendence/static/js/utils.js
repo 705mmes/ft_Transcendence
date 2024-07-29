@@ -77,7 +77,7 @@ function navigate(link)
 
     link = '/' + link;
         console.log(link);
+    console.log(window.location.pathname);
     if(window.location.pathname !== link)
         history.pushState(null,null, link);
-    console.log(window.location.pathname);
 }

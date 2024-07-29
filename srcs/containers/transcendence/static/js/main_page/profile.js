@@ -25,8 +25,8 @@ document.getElementById('profile').onclick = () => {
 async function to_game()
 {
     let div_content = document.getElementById('content');
-    navigate('game/');
-    await fetching_html('game/', div_content);
+        navigate('game/');
+    await fetching_html('', div_content);
 
 
     await load_script_form_fetch(game_script_cache);
