@@ -6,17 +6,20 @@ let socket;
 
 // Function to get or create a WebSocket connection
 function getWebSocket() {
+    console.log("WebSocket script !")
     if (!socket || socket.readyState === WebSocket.CLOSED) {
 
         // Initialize the WebSocket connection
-        const websocketUrl = "{{ WEBSOCKET_URL }}";
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const websocketUrl = `${protocol}//${window.location.host}/ws/authentication/social/`;
+        console.log(websocketUrl);
         socket = new WebSocket(websocketUrl);
 
         // Event handler for when the WebSocket connection opens
         socket.onopen = function (e) {
             console.log("[open] Connection established");
             console.log("Sending to server");
-            socket.send(JSON.stringify({'message': 'Hello Server!'}));
+            socket.send(JSON.stringify({'action': 'friend_list_stp'}));
         };
 
         // Event handler for when a message is received from the WebSocket
@@ -55,4 +58,4 @@ function getWebSocket() {
 }
 
 // Export the getWebSocket function
-export { getWebSocket };
+window.getWebSocket = getWebSocket;

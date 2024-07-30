@@ -23,15 +23,12 @@ class ActiveConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        message_recu = text_data_json["message"]
-        message = "beuteu"
+        # message_recu = text_data_json["message"]
+        action = text_data_json["action"]
+        if action == 'friend_list_pls':
+            text_data = json.dumps({"friend_list": "Leon"})
+        #   Friend_list.get(self.scope['user'])
 
-        text_data = json.dumps({"friend_list": message})
-        print(f"Message Recu: {message_recu}")
-
-        user = self.scope['user']
-        user.friends.add('neo')
-        print(user.friends)
-        print(user.friends.all())
+        print(f"Message Recu: {action}")
 
         self.send(text_data)
