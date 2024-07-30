@@ -357,20 +357,6 @@ body
     color: #362315;
 }
 
-.float-container {
-    display: flex;
-    border: 3px solid #fff;
-    padding: 10px;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.float-child {
-    flex: 1; /* Allow the child elements to take equal space */
-    padding: 10px;
-    border: 2px solid red;
-}
-
 button {
     width: auto; /* Ensure the button has appropriate width */
 }
@@ -379,7 +365,7 @@ button {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 500px;
+    height: 100%;
     width: 100%;
 }
 
@@ -387,6 +373,7 @@ button {
     display: flex;
     flex-direction: column;
     align-items: center;
+    height: 200%;
 }
 
 #friend-list-form input,
