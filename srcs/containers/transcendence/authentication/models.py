@@ -8,6 +8,7 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
+
 class FriendRequest(models.Model):
     request = models.ForeignKey(User, related_name='request', on_delete=models.CASCADE)
     pending = models.ForeignKey(User, related_name='pending', on_delete=models.CASCADE)
@@ -16,9 +17,5 @@ class FriendRequest(models.Model):
         unique_together = ('request', 'pending')
 
 
-
-# class FriendList(models.Model):
-#     friends = models.ForeignKey(User, on_delete=models.CASCADE,related_name='friends', blank=True)
-#     class Meta:
-#         unique_together = ()
-
+class FriendList(models.Model):
+    friends = models.ForeignKey(User, related_name='friends', on_delete=models.CASCADE)

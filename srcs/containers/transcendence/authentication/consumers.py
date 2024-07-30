@@ -1,13 +1,14 @@
 import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
-from .models import User
+from .models import User, FriendRequest, FriendList
+from django.core import serializers
 
 
 class ActiveConsumer(WebsocketConsumer):
     def connect(self):
 
-        print(f"Connecting to : {self.scope['user'].username}")
+        print(f"Connecting to : {self.scope['user']}")
 
         self.accept()
         self.scope['user'].is_connected = True
@@ -25,9 +26,15 @@ class ActiveConsumer(WebsocketConsumer):
         text_data_json = json.loads(text_data)
         # message_recu = text_data_json["message"]
         action = text_data_json["action"]
-        if action == 'friend_list_pls':
-            text_data = json.dumps({"friend_list": "Leon"})
-        #   Friend_list.get(self.scope['user'])
+        if action == 'friend_list_stp':
+            text_data = json.dumps({"action": "friend_list", "friend": "Leon", "pending": "Arthur", "request": "dilo"})
+        if action == 'show_all_users':
+            # my_friends = FriendList
+            # all_user = User.objects.all()
+            # users_value = User.values('username', 'is_connected')
+            # text_data = serializers.serialize('json', users_value)
+            print(text_data)
+
 
         print(f"Message Recu: {action}")
 

@@ -19,7 +19,7 @@ function getWebSocket() {
         socket.onopen = function (e) {
             console.log("[open] Connection established");
             console.log("Sending to server");
-            socket.send(JSON.stringify({'action': 'friend_list_stp'}));
+            socket.send(JSON.stringify({'action': 'show_all_users'}));
         };
 
         // Event handler for when a message is received from the WebSocket
@@ -41,21 +41,8 @@ function getWebSocket() {
         socket.onerror = function (error) {
             console.log(`[error] ${error.message}`);
         };
-
-        function requestFriendList() {
-            const msg = JSON.stringify({action: 'get_friend_list'});
-            socket.send(msg);
-        }
-
-        if (window.location.pathname === '/social/') {
-            if (socket) {
-                console.log('WebSocket opened on social page');
-                requestFriendList();
-            }
-        }
     }
     return socket;
+
 }
 
-// Export the getWebSocket function
-window.getWebSocket = getWebSocket;

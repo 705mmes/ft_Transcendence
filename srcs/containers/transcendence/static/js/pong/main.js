@@ -1,6 +1,6 @@
 function main()
 {
-    socket = window.getWebSocket()
+    // socket = window.getWebSocket()
     let canevas = document.getElementById("canv");
 
     let utils = {

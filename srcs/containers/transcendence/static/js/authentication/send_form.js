@@ -22,4 +22,3 @@ async function send_login_form(value, url)
     }
 
 }
-
