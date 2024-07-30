@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from authentication.models import User
+
 def canvas(request):
     return render(request, 'game/canvas.html')
 
@@ -12,5 +14,5 @@ def social(request):
     all_users = User.objects.all()
     return render(request, 'authentication/social.html', {'all_users': all_users})
 
-def chat(request):
-    return render(request, 'chat/chat.html')
+def room(request, room_name):
+    return render(request, "chat/room.html", {"room_name": room_name})

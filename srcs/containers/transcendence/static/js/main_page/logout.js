@@ -18,5 +18,6 @@ async function logout()
 
 document.getElementById("logout").onclick = () =>
 {
+        socket.close();
         logout();
 }

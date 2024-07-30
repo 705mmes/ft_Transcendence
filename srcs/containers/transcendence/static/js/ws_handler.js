@@ -2,7 +2,6 @@
 // ws_handler.js
 
 // Declare the WebSocket variable
-let socket;
 
 // Function to get or create a WebSocket connection
 function getWebSocket() {
@@ -36,7 +35,6 @@ function getWebSocket() {
                 // Optionally, implement reconnection logic here
             }
         };
-
         // Event handler for when an error occurs
         socket.onerror = function (error) {
             console.log(`[error] ${error.message}`);
@@ -46,3 +44,8 @@ function getWebSocket() {
 
 }
 
+window.addEventListener('beforeunload', () => {
+    if (socket) {
+        socket.close();
+    }
+});
