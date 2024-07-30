@@ -367,13 +367,15 @@ button {
     justify-content: center;
     height: 100%;
     width: 100%;
+    margin-top: -50px;
 }
 
 #friend-list-form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    height: 200%;
+    height: 100%;
+    margin-top: -20px;
 }
 
 #friend-list-form input,
