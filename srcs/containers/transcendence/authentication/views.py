@@ -62,6 +62,9 @@ def logout_btn(request):
 def profile(request):
     return render(request, 'authentication/profile.html')
 
+def profile_page(request):
+    return render(request, 'authentication/profile_page.html')
+
 
 def player_data(request):
     player = request.user

@@ -6,8 +6,8 @@ urlpatterns = [
     path('', views.authentication),
     path('login_session/', views.login_session),
     path('register_session/', views.register),
-    path('game/logout_btn/', views.logout_btn),
-    path('game/profile/', views.profile),
-    path('game/player_data/', views.player_data),
-    path('game/social/', views.social),
+    path('logout_btn/', views.logout_btn),
+    path('profile/', views.profile),
+    path('player_data/', views.player_data),
+    path('social/', views.social),
 ]

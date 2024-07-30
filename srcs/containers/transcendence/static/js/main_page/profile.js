@@ -1,12 +1,13 @@
 
 async function to_profile_page()
 {
+    history.pushState(null,null,'/');
     let div_content = document.getElementById('content');
     await fetching_html('profile/', div_content);
 
 
     delete_script_by_class_name('game_scripts');
-    delete_script_by_class_name('logout_scripts');
+    delete_script_by_class_name('home_script');
 
     await load_script_form_fetch(logout_script_cache);
     let div_truc = document.getElementById('yourinfo');
@@ -24,13 +25,16 @@ document.getElementById('profile').onclick = () => {
 
 async function to_game()
 {
+    history.pushState(null,null,'/');
+    delete_script_by_class_name('game_script');
+    delete_script_by_class_name('home_script');
     let div_content = document.getElementById('content');
-        navigate('game/');
-    await fetching_html('', div_content);
+    await fetching_html('canvas/', div_content);
 
 
     await load_script_form_fetch(game_script_cache);
     await load_script_form_fetch(logout_script_cache);
+    navigate('game/');
 }
 
 

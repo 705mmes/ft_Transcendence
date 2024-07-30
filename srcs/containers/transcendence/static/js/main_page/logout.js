@@ -4,6 +4,7 @@ document.getElementById("logout").addEventListener('click', function(event){
 
 async function logout()
 {
+    history.pushState(null,null,'/');
     let div_content = document.getElementById('content');
     await fetching_html('logout_btn/', div_content);
 

@@ -21,6 +21,7 @@ function DisplayCanvas() {
 
 async function AddGameCanvas()
 {
+    history.pushState(null,null,'/');
     let div_content = document.getElementById('content');
     await fetching_html('game/', div_content);
 

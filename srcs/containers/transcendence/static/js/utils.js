@@ -1,8 +1,20 @@
+
+let moveback = window.location.pathname
+if (window.location.pathname !== '/')
+{
+    history.pushState(null,null,'/');
+}
+
 let game_script_cache = fetch_scripts('game/scripts/', 'game_script');
 let game_class_script_cache = fetch_scripts('game/scripts/', 'game_class_script');
 let homepage_script_cache = fetch_scripts('game/scripts/', 'auth_script');
 let logout_script_cache = fetch_scripts('game/scripts/', 'home_script');
 
+if (moveback !== '/')
+{
+    console.log('moveback :', moveback);
+    history.pushState(null,null,moveback);
+}
 async function fetch_scripts(url, class_name)
 {
     let script_div = document.createElement('div');
@@ -23,6 +35,10 @@ async function reload_scripts()
         if (!document.getElementById('content'))
             history.pushState(null,null,'/');
         navigate('game/')
+    }
+    else if(document.getElementById('info'))
+    {
+        await load_script_form_fetch(logout_script_cache);
     }
     else
     {
@@ -74,7 +90,6 @@ function delete_script_by_class_name(name)
 
 function navigate(link)
 {
-
     link = '/' + link;
         console.log(link);
     console.log(window.location.pathname);

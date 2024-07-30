@@ -5,6 +5,6 @@ from . import views
 
 urlpatterns = [
     path('', views.game),
+    path('canvas/', views.canvas),
     path('scripts/', views.scripts),
-    path('game/scripts/', views.scripts),
 ]
