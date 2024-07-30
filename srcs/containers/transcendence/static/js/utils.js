@@ -1,4 +1,3 @@
-
 let socket;
 let moveback = window.location.pathname
 if (window.location.pathname !== '/')
@@ -11,6 +10,7 @@ let game_class_script_cache = fetch_scripts('game/scripts/', 'game_class_script'
 let homepage_script_cache = fetch_scripts('game/scripts/', 'auth_script');
 let logout_script_cache = fetch_scripts('game/scripts/', 'home_script');
 let ws_script_cache = fetch_scripts('game/scripts', 'ws_script');
+
 if (moveback !== '/')
 {
     console.log('moveback :', moveback);
@@ -24,28 +24,22 @@ async function fetch_scripts(url, class_name)
     return (script_list);
 }
 
-
 reload_scripts();
 
 async function reload_scripts()
 {
     await load_script_form_fetch(game_class_script_cache);
-    if (window.location.pathname !== '/')
-    {
-        await  load_script_form_fetch(ws_script_cache);
-        getWebSocket();
-    }
     if (document.getElementById('canv'))
     {
-        await load_script_form_fetch(logout_script_cache);
         await load_script_form_fetch(game_script_cache);
         if (!document.getElementById('content'))
             history.pushState(null,null,'/');
         navigate('game/')
     }
-    else if(document.getElementById('info'))
+    if (window.location.pathname !== '/')
     {
         await load_script_form_fetch(logout_script_cache);
+        await  load_script_form_fetch(ws_script_cache);
     }
     else
     {

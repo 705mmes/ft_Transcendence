@@ -44,8 +44,11 @@ function getWebSocket() {
 
 }
 
-window.addEventListener('beforeunload', () => {
-    if (socket) {
-        socket.close();
-    }
-});
+
+// window.addEventListener('beforeunload', () => {
+//     if (socket) {
+//         socket.close();
+//     }
+// });
+
+getWebSocket();

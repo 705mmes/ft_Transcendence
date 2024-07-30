@@ -17,7 +17,6 @@ function RemoveLoginRegistration()
 function DisplayCanvas() {
     RemoveLoginRegistration();
     load_script_form_fetch(ws_script_cache);
-    getWebSocket();
     AddGameCanvas();
 }
 

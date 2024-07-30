@@ -1,3 +1,4 @@
+{% load static %}
 <!-- chat/templates/chat/index.html -->
 <!DOCTYPE html>
 <html>
@@ -6,6 +7,8 @@
     <title>Chat Rooms</title>
 </head>
 <body>
+<h1>CHATROOM</h1>
+{% include "authentication/navbar.html" %}
     What chat room would you like to enter?<br>
     <input id="room-name-input" type="text" size="100"><br>
     <input id="room-name-submit" type="button" value="Enter">

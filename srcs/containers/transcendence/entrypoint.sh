@@ -12,10 +12,10 @@ then
 fi
 
 #empty db
-#python manage.py flush --no-input
-
 python manage.py makemigrations
 python manage.py migrate
+python manage.py flush --no-input
+
 
 # Create superuser if it doesn't exist
 if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_EMAIL" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
