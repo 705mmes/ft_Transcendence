@@ -28,6 +28,7 @@ reload_scripts();
 
 async function reload_scripts()
 {
+    await load_script_form_fetch(game_class_script_cache);
     if (document.getElementById('canv'))
     {
         await load_script_form_fetch(logout_script_cache);
@@ -42,7 +43,6 @@ async function reload_scripts()
     }
     else
     {
-        await load_script_form_fetch(game_class_script_cache);
         await load_script_form_fetch(homepage_script_cache);
     }
 }
@@ -69,6 +69,7 @@ async function fetching_html(link, element)
 {
     try
     {
+        console.log(link);
         const response = await fetch(link);
         if (!response.ok)
             throw new TypeError("HTML fetch failed");
