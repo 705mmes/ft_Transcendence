@@ -60,21 +60,16 @@ def logout_btn(request):
 
 
 def profile(request):
-    return render(request, 'authentication/profile.html')
-
-def profile_page(request):
-    return render(request, 'authentication/profile_page.html')
-
-
-def player_data(request):
     player = request.user
     context = {
         'username': player.username,
         'email': player.email,
     }
     playerform = RegistrationForm(context)
-    return render(request, 'authentication/player_form.html', {'registration_form': playerform, 'player': player})
+    return render(request, 'authentication/profile.html', {'registration_form': playerform, 'player': player})
 
+def profile_page(request):
+    return render(request, 'authentication/profile_page.html')
 
 def social(request):
     all_users = User.objects.all()

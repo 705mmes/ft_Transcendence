@@ -8,6 +8,5 @@ urlpatterns = [
     path('register_session/', views.register),
     path('logout_btn/', views.logout_btn),
     path('profile/', views.profile),
-    path('player_data/', views.player_data),
     path('social/', views.social),
 ]
