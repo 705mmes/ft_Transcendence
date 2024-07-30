@@ -9,11 +9,10 @@
 		<link rel="stylesheet" href="{% static 'css/main.css' %}">
 	</head>
 	<body>
-		<h1>MULTIVERSUS <br></h1>
 		<div id="content">
 			{% block content %} {% endblock %}
 		</div>
 		<script class="utils_script" src="{% static 'js/utils.js' %}"></script>
-        <script class="utils_script" src="{% static  'js/ws_handler.js' %}"></script>
+		<script class="ws_script" src="{% static 'js/ws_handler.js' %}"></script>
 	</body>
 </html>
