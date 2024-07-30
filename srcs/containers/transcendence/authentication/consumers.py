@@ -2,6 +2,7 @@ import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
 from .models import User, FriendList
+from django.db.models import Q
 from django.core import serializers
 
 
@@ -30,12 +31,9 @@ class ActiveConsumer(WebsocketConsumer):
         if action == 'friend_list_stp':
             text_data = json.dumps({"action": "friend_list", "friend": "Leon", "pending": "Arthur", "request": "dilo"})
         if action == 'show_all_users':
-            test = FriendList.objects.all()
-            print(test)
-            # my_friends = FriendList
-            # all_user = User.objects.all()
-            # users_value = User.values('username', 'is_connected')
-            # text_data = serializers.serialize('json', users_value)
+            friends = FriendList.objects.filter(Q(user1=user) | Q(user2=user))
+            print(friends)
+            text_data = serializers.serialize('json', friends)
             print(text_data)
 
 

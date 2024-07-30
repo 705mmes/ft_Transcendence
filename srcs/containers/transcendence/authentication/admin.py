@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 # listings/admin.py
-from authentication.models import User, FriendList
+from .models import User, FriendList
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -10,7 +10,7 @@ class UserAdmin(admin.ModelAdmin):
 
 
 class FriendListAdmin(admin.ModelAdmin):
-    list_display = ()
+    list_display = ('user1', 'user2')
 
 
 admin.site.register(User, UserAdmin)

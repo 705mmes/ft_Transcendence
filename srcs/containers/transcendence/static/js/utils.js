@@ -10,6 +10,7 @@ let game_class_script_cache = fetch_scripts('game/scripts/', 'game_class_script'
 let homepage_script_cache = fetch_scripts('game/scripts/', 'auth_script');
 let logout_script_cache = fetch_scripts('game/scripts/', 'home_script');
 let ws_script_cache = fetch_scripts('game/scripts', 'ws_script');
+let social_ws_script_cache = fetch_scripts('game/scripts', 'social_ws_script');
 
 if (moveback !== '/')
 {
@@ -40,6 +41,12 @@ async function reload_scripts()
     {
         await load_script_form_fetch(logout_script_cache);
         await  load_script_form_fetch(ws_script_cache);
+    }
+    console.log("Ici : " + window.location.pathname)
+    if (window.location.pathname === 'social/')
+    {
+        console.log("HELP ME YOU INDIAN FUCK")
+        await load_script_form_fetch(social_ws_script_cache);
     }
     else
     {
@@ -91,9 +98,9 @@ function delete_script_by_class_name(name)
 
 function navigate(link)
 {
-    link = '/' + link;
-        console.log(link);
-    console.log(window.location.pathname);
+    // link = '/' + link;
+    //     console.log(link);
+    // console.log(window.location.pathname);
     if(window.location.pathname !== link)
         history.pushState(null,null, link);
 }
