@@ -51,9 +51,26 @@ class ActiveConsumer(WebsocketConsumer):
         requested = FriendRequest.objects.filter(requester=user)
         my_request_list = {}
         print(requested)
+        for request in requested:
+            requested_user = User.objects.filter(username=request.recipient.username).get()
+            my_request_list['username'] = requested_user.username
+            my_request_list['is_active'] = requested_user.is_connected
+            json_data = json.dumps(my_request_list)
+            print(json_data)
+            self.send(json_data)
 
     def send_recipient_list(self):
-        pass
+        user = self.scope['user']
+        requested = FriendRequest.objects.filter(recipient=user)
+        my_recipient_list = {}
+        print(requested)
+        for request in requested:
+            recipient_user = User.objects.filter(username=request.requester.username).get()
+            my_recipient_list['username'] = recipient_user.username
+            my_recipient_list['is_active'] = recipient_user.is_connected
+            json_data = json.dumps(my_recipient_list)
+            print(json_data)
+            self.send(json_data)
 
 # message_recu = text_data_json["message"]
 # print(f"json user: {serializers.serialize('json', my_friend_list)}")
