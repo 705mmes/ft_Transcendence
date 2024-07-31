@@ -22,14 +22,14 @@ function DisplayCanvas() {
 
 async function AddGameCanvas()
 {
-    history.pushState(null,null,'/');
+    navigate_to_load('/');
     let div_content = document.getElementById('content');
     await fetching_html('game/', div_content);
 
 
     delete_script_by_class_name("auth_script");
 
-    await load_script_form_fetch(logout_script_cache);
+    await load_script_form_fetch(navbar_script_cache);
     await load_script_form_fetch(game_script_cache);
     navigate('game/');
 

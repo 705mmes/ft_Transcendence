@@ -1,10 +1,12 @@
 document.getElementById("logout").addEventListener('click', function(event){
     event.preventDefault();
+    socket.close();
+    logout();
 })
 
 async function logout()
 {
-    history.pushState(null,null,'/');
+    navigate_to_load('/');
     let div_content = document.getElementById('content');
     await fetching_html('logout_btn/', div_content);
 
@@ -13,11 +15,5 @@ async function logout()
 
     // Permet de recup les script dans le html fetch et de les append au body pour les load
     await load_script_form_fetch(homepage_script_cache);
-    history.pushState(null,null,'/');
-}
-
-document.getElementById("logout").onclick = () =>
-{
-        socket.close();
-        logout();
+    navigate('/');
 }

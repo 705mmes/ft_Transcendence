@@ -1,20 +1,24 @@
+
 let socket;
+let page_number = 0;
+let current_page ;
 let moveback = window.location.pathname
 if (window.location.pathname !== '/')
 {
-    history.pushState(null,null,'/');
+    navigate_to_load('/');
 }
 
 let game_script_cache = fetch_scripts('game/scripts/', 'game_script');
 let game_class_script_cache = fetch_scripts('game/scripts/', 'game_class_script');
-let homepage_script_cache = fetch_scripts('game/scripts/', 'auth_script');
-let logout_script_cache = fetch_scripts('game/scripts/', 'home_script');
+let authentication_script_cache = fetch_scripts('game/scripts/', 'auth_script');
+let navbar_script_cache = fetch_scripts('game/scripts/', 'home_script');
+let navigation_script_cache = fetch_scripts('game/scripts/', 'navigation_script');
 let ws_script_cache = fetch_scripts('game/scripts', 'ws_script');
 
 if (moveback !== '/')
 {
     console.log('moveback :', moveback);
-    history.pushState(null,null,moveback);
+    navigate_to_load(moveback)
 }
 async function fetch_scripts(url, class_name)
 {
@@ -29,21 +33,22 @@ reload_scripts();
 async function reload_scripts()
 {
     await load_script_form_fetch(game_class_script_cache);
+    await load_script_form_fetch(navigation_script_cache);
     if (document.getElementById('canv'))
     {
         await load_script_form_fetch(game_script_cache);
         if (!document.getElementById('content'))
             history.pushState(null,null,'/');
-        navigate('game/')
+        navigate_to_load('game/')
     }
     if (window.location.pathname !== '/')
     {
-        await load_script_form_fetch(logout_script_cache);
+        await load_script_form_fetch(navbar_script_cache);
         await  load_script_form_fetch(ws_script_cache);
     }
     else
     {
-        await load_script_form_fetch(homepage_script_cache);
+        await load_script_form_fetch(authentication_script_cache);
     }
 }
 
@@ -81,6 +86,7 @@ async function fetching_html(link, element)
     }
 }
 
+
 function delete_script_by_class_name(name)
 {
     const list_script = document.getElementsByClassName(name);
@@ -89,11 +95,17 @@ function delete_script_by_class_name(name)
     }
 }
 
-function navigate(link)
+function navigate_to_load(link)
 {
-    link = '/' + link;
-        console.log(link);
+    console.log("page nb: ", page_number);
+    if (link[0] !== '/')
+        link = '/' + link;
     console.log(window.location.pathname);
     if(window.location.pathname !== link)
-        history.pushState(null,null, link);
+        history.pushState({page : page_number},null, link);
+    page_number++;
+    current_page = page_number;
 }
+
+
+
