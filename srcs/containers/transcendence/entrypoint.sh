@@ -22,16 +22,23 @@ if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_EMAIL" ] && [ 
     python manage.py shell -c "
 from django.contrib.auth import get_user_model;
 User = get_user_model();
+from authentication.models import FriendList
 if not User.objects.filter(username='$DJANGO_SUPERUSER_USERNAME').exists():
-    User.objects.create_superuser('$DJANGO_SUPERUSER_USERNAME', '$DJANGO_SUPERUSER_EMAIL', '$DJANGO_SUPERUSER_PASSWORD'),
+    neo = User.objects.create_superuser('$DJANGO_SUPERUSER_USERNAME', '$DJANGO_SUPERUSER_EMAIL', '$DJANGO_SUPERUSER_PASSWORD'),
 if not User.objects.filter(username='ludo').exists():
-    User.objects.create_user(username='ludo', email='ludo@maildeludo.com', password='fefe')
+    ludo = User.objects.create_user(username='ludo', email='ludo@maildeludo.com', password='fefe')
 if not User.objects.filter(username='leon').exists():
-    User.objects.create_user(username='leon', email='leon@maildeludo.com', password='caca')
+    leon = User.objects.create_user(username='leon', email='leon@maildeludo.com', password='caca')
 if not User.objects.filter(username='abel').exists():
-    User.objects.create_user(username='abel', email='abel@maildeludo.com', password='caca')
+    abel = User.objects.create_user(username='abel', email='abel@maildeludo.com', password='caca')
 if not User.objects.filter(username='dcandan').exists():
-    User.objects.create_user(username='dcandan', email='dcandan@maildeludo.com', password='caca')
+    dcandan = User.objects.create_user(username='dcandan', email='dcandan@maildeludo.com', password='caca')
+#if not FriendList.objects.filter(user1=leon, user2=ludo).exists():
+#    FriendList.objects.create(user1=leon, user2=ludo)
+#if not FriendList.objects.filter(user1=leon, user2=abel).exists():
+#    FriendList.objects.create(user1=leon, user2=abel)
+#if not FriendList.objects.filter(user1=ludo, user2=dcandan).exists():
+#    FriendList.objects.create(user1=ludo, user2=dcandan)
 "
 fi
 

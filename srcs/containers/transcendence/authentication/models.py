@@ -25,11 +25,5 @@ class FriendList(models.Model):
     user1 = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, related_name='user_1', on_delete=models.CASCADE, blank=True)
     user2 = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, related_name='user_2', on_delete=models.CASCADE, blank=True)
 
-    # class Meta:
-    #     unique_together = ('user_1', 'user_2')
-
-    # def username(self):
-    #     return self.user1.username
-
     def __str__(self):
-        return f"{self.user1.username} - {self.user2.username}"
+        return f"{self.user2.username}"
