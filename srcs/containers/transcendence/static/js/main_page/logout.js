@@ -10,6 +10,8 @@ async function logout()
     let div_content = document.getElementById('content');
     await fetching_html('logout_btn/', div_content);
 
+    if (document.getElementsByClassName('social_ws_script'))
+        delete_script_by_class_name('social_ws_script');
     delete_script_by_class_name('game_script');
     delete_script_by_class_name('home_script');
 

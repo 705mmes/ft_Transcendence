@@ -18,7 +18,7 @@ function getWebSocket() {
         socket.onopen = function (e) {
             console.log("[open] Connection established");
             console.log("Sending to server");
-            socket.send(JSON.stringify({'action': 'show_all_users'}));
+            socket.send(JSON.stringify({'action': 'request_list_stp'}));
         };
 
         // Event handler for when a message is received from the WebSocket

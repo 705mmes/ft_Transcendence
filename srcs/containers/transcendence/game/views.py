@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from authentication.models import User
+from authentication.forms import LoginForm, RegistrationForm
 
 def canvas(request):
     return render(request, 'game/canvas.html')

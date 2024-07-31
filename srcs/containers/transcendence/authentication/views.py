@@ -66,12 +66,14 @@ def profile(request):
         'email': player.email,
     }
     playerform = RegistrationForm(context)
-    return render(request, 'authentication/profile.html', {'registration_form': playerform, 'player': player})
+    if (request.user.is_authenticated):
+        return render(request, 'authentication/profile.html', {'registration_form': playerform, 'player': player})
+    else:
+        return render(request, 'authentication/auth_page.html', context)
 
 def profile_page(request):
     return render(request, 'authentication/profile_page.html')
 
 def social(request):
-    all_users = User.objects.all()
-    return render(request, 'authentication/social.html', {'all_users': all_users})
+    return render(request, 'authentication/social.html')
 
