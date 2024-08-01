@@ -34,16 +34,16 @@ if not User.objects.filter(username='abel').exists():
     abel = User.objects.create_user(username='abel', email='abel@maildeludo.com', password='caca')
 if not User.objects.filter(username='dcandan').exists():
     dcandan = User.objects.create_user(username='dcandan', email='dcandan@maildeludo.com', password='caca')
-if not FriendRequest.objects.filter(requester=leon, recipient=ludo):
-    FriendRequest.objects.create(requester=leon, recipient=ludo)
-if not FriendRequest.objects.filter(requester=leon, recipient=dcandan):
-    FriendRequest.objects.create(requester=leon, recipient=dcandan)
-#if not FriendList.objects.filter(user1=leon, user2=ludo).exists():
-#    FriendList.objects.create(user1=leon, user2=ludo)
-#if not FriendList.objects.filter(user1=leon, user2=abel).exists():
-#    FriendList.objects.create(user1=leon, user2=abel)
-#if not FriendList.objects.filter(user1=ludo, user2=dcandan).exists():
-#    FriendList.objects.create(user1=ludo, user2=dcandan)
+#if not FriendRequest.objects.filter(requester=leon, recipient=ludo):
+#    FriendRequest.objects.create(requester=leon, recipient=ludo)
+#if not FriendRequest.objects.filter(requester=leon, recipient=dcandan):
+#    FriendRequest.objects.create(requester=leon, recipient=dcandan)
+if not FriendList.objects.filter(user1=leon, user2=ludo).exists():
+    FriendList.objects.create(user1=leon, user2=ludo)
+if not FriendList.objects.filter(user1=leon, user2=abel).exists():
+    FriendList.objects.create(user1=leon, user2=abel)
+if not FriendList.objects.filter(user1=ludo, user2=dcandan).exists():
+    FriendList.objects.create(user1=ludo, user2=dcandan)
 "
 fi
 

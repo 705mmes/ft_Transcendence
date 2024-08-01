@@ -26,51 +26,53 @@ class ActiveConsumer(WebsocketConsumer):
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         action = text_data_json["action"]
-        if action == 'friend_list_stp':
-            self.send_friend_list()
-        elif action == 'request_list_stp':
-            self.send_request_list()
-        elif action == 'recipient_list_stp':
-            self.send_recipient_list()
+        if action == 'social_list':
+            self.send_social()
         print(f"Message Recu: {action}")
 
-    def send_friend_list(self):
+    def send_social(self):
+        user = self.scope['user']
+        friends = FriendList.objects.filter(Q(user1=user) | Q(user2=user))
+        list_social = {}
+        list_social['social_list'] = {}
+        list_social['social_list']['friends'] = self.friend_list()
+        list_social['social_list']['requested'] = self.request_list()
+        list_social['social_list']['received'] = self.recipient_list()
+        json_data = json.dumps(list_social)
+        print(json_data)
+        self.send(json_data)
+
+
+
+    def friend_list(self):
         user = self.scope['user']
         friends = FriendList.objects.filter(Q(user1=user) | Q(user2=user))
         my_friend_list = {}
         for friend in friends:
             friend_user = User.objects.filter(username=friend).get()
-            my_friend_list['username'] = friend_user.username
-            my_friend_list['is_active'] = friend_user.is_connected
-            json_data = json.dumps(my_friend_list)
-            print(json_data)
-            self.send(json_data)
+            my_friend_list[friend_user.username] = {'is_connected': friend_user.is_connected}
+        print(f"friends: {my_friend_list}")
+        return my_friend_list
 
-    def send_request_list(self):
+    def request_list(self):
         user = self.scope['user']
         requested = FriendRequest.objects.filter(requester=user)
         my_request_list = {}
-        print(requested)
         for request in requested:
             requested_user = User.objects.filter(username=request.recipient.username).get()
-            my_request_list['username'] = requested_user.username
-            my_request_list['is_active'] = requested_user.is_connected
-            json_data = json.dumps(my_request_list)
-            print(json_data)
-            self.send(json_data)
+            my_request_list[requested_user.username] = {'is_connected': requested_user.is_connected}
+        print(f"Request: {my_request_list}")
+        return my_request_list
 
-    def send_recipient_list(self):
+    def recipient_list(self):
         user = self.scope['user']
-        requested = FriendRequest.objects.filter(recipient=user)
+        recipient = FriendRequest.objects.filter(recipient=user)
         my_recipient_list = {}
-        print(requested)
-        for request in requested:
-            recipient_user = User.objects.filter(username=request.requester.username).get()
-            my_recipient_list['username'] = recipient_user.username
-            my_recipient_list['is_active'] = recipient_user.is_connected
-            json_data = json.dumps(my_recipient_list)
-            print(json_data)
-            self.send(json_data)
+        for receiver in recipient:
+            recipient_user = User.objects.filter(username=receiver.requester.username).get()
+            my_recipient_list[recipient_user.username] = {'is_connected': recipient_user.is_connected}
+        print(f"Receive: {my_recipient_list}")
+        return my_recipient_list
 
 # message_recu = text_data_json["message"]
 # print(f"json user: {serializers.serialize('json', my_friend_list)}")
