@@ -66,10 +66,7 @@ def profile(request):
         'email': player.email,
     }
     playerform = RegistrationForm(context)
-    if (request.user.is_authenticated):
-        return render(request, 'authentication/profile.html', {'registration_form': playerform, 'player': player})
-    else:
-        return render(request, 'authentication/auth_page.html', context)
+    return render(request, 'authentication/profile.html', {'registration_form': playerform, 'player': player})
 
 def profile_page(request):
     return render(request, 'authentication/profile_page.html')

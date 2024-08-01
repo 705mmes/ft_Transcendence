@@ -12,6 +12,7 @@ async function logout()
 
     if (document.getElementsByClassName('social_ws_script'))
         delete_script_by_class_name('social_ws_script');
+    delete_script_by_class_name('ws_script');
     delete_script_by_class_name('game_script');
     delete_script_by_class_name('home_script');
 
