@@ -1,78 +1,75 @@
-// social_ws_handler.js
-
 console.log("social_ws_handler.js is loaded");
 
+function response() {
+    if (!socket) {
+        console.error("Socket is not initialized.");
+        return;
+    }
+
+    if (socket.readyState === WebSocket.OPEN) {
+        console.log("WebSocket connection established.");
+        request_user_list();
+    };
+
+    socket.onclose = function(event) {
+        console.log(`WebSocket connection closed: ${event.reason}`);
+    };
+
+    socket.onerror = function(error) {
+        console.error(`WebSocket error: ${error.message}`);
+    };
+
+    socket.onmessage = function(event) {
+        console.log(`[message] Data received from server: ${event.data}`);
+        
+        try {
+            let data = JSON.parse(event.data);
+            if (data && data.social_list) {
+                let socialList = data.social_list;
+                let friends = socialList.friends;
+                let friendListContainer = data.socialList;
+
+                if (!friendListContainer) {
+                    console.error("Friend list container not found.");
+                    return;
+                }
+
+                // Clear the list before populating it with new data
+                friendListContainer.innerHTML = '';
+
+                // Iterate through the friends data and create list items
+                for (let friend in friends) {
+                    if (friends.hasOwnProperty(friend)) {
+                        let listItem = document.createElement('li');
+                        listItem.textContent = `${friend}: ${friends[friend].is_connected ? 'Online' : 'Offline'}`;
+                        friendListContainer.appendChild(listItem);
+                        console.log(`listItem.textContent: ${listItem.textContent}`);
+                    }
+                }
+            } else {
+                console.error("Invalid data format received from server.");
+            }
+        } catch (e) {
+            console.error("Failed to parse message data: ", e);
+        }
+    };
+}
+
 function request_user_list() {
-    console.log("about to request");
     console.log(`Current pathname: ${window.location.pathname}`);
     if (window.location.pathname === '/social/') {
-        console.log("requesting...");
-        socket.send(JSON.stringify({ 'action': 'social_list' }));
-        console.log("Request sent.");
+        console.log("Requesting social list...");
+        if (socket.readyState === WebSocket.OPEN) {
+            socket.send(JSON.stringify({ 'action': 'social_list' }));
+            console.log("Request sent.");
+        } else {
+            console.error("WebSocket is not open. Unable to send request.");
+        }
     } else {
         console.log("Pathname is not '/social/', request not sent.");
     }
 }
 
-console.log("Calling request_user_list function.");
-request_user_list();
+console.log("Calling response function");
+response();
 
-
-// document.addEventListener("DOMContentLoaded", function() {
-//     console.log("DOM fully loaded and parsed.");
-
-//     if (typeof socket === 'undefined') {
-//         console.error("Socket is not defined.");
-//         return;
-//     }
-
-//     if (socket.readyState !== WebSocket.OPEN) {
-//         console.error("WebSocket connection not open.");
-//         return;
-//     }
-
-//     console.log("WebSocket connection is established.");
-
-//     socket.onmessage = function(event) {
-//         console.log(`[message] Data received from server: ${event.data}`);
-        
-//         let data = JSON.parse(event.data);
-//         let socialList = data.social_list;
-//         let friends = socialList.friends;
-//         let friendListContainer = document.getElementById('friend-list');
-
-//         if (!friendListContainer) {
-//             console.error("Friend list container not found.");
-//             return;
-//         }
-
-//         //Clearing the list before populating it with new data ensures that the displayed list is updated to reflect the latest state.
-//         friendListContainer.innerHTML = '';
-        
-//         for (let friend in friends) {
-//             if (friends.hasOwnProperty(friend)) {
-//                 let listItem = document.createElement('li');
-//                 listItem.textContent = `${friend}: ${friends[friend].is_connected ? 'Online' : 'Offline'}`;
-//                 friendListContainer.appendChild(listItem);
-//                 console.log(`listItem.textContent: ${listItem.textContent}`);
-//             }
-//         }
-//     };
-
-//     function request_user_list() {
-//         console.log("about to request");
-//         console.log(`Current pathname: ${window.location.pathname}`);
-//         if (window.location.pathname === '/social/') {
-//             console.log("requesting...");
-//             socket.send(JSON.stringify({ 'action': 'social_list' }));
-//             console.log("Request sent.");
-//         } else {
-//             console.log("Pathname is not '/social/', request not sent.");
-//         }
-//     }
-
-//     console.log("Calling request_user_list function.");
-//     request_user_list();
-// });
-
-console.log("End of social_ws_handler.js script.");
