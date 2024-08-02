@@ -1,7 +1,4 @@
 
-// ws_handler.js
-
-// Declare the WebSocket variable
 
 // Function to get or create a WebSocket connection
 function getWebSocket() {

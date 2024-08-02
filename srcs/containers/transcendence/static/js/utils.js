@@ -14,7 +14,7 @@ let authentication_script_cache = fetch_scripts('game/scripts/', 'auth_script');
 let navbar_script_cache = fetch_scripts('game/scripts/', 'home_script');
 let navigation_script_cache = fetch_scripts('game/scripts/', 'navigation_script');
 let ws_script_cache = fetch_scripts('game/scripts', 'ws_script');
-let social_ws_script_cache = fetch_scripts('game/scripts', 'social_ws_script');
+let social_ws_script_cache = fetch_scripts('game/scripts', 'ws_script_social');
 
 if (moveback !== '/')
 {
@@ -47,10 +47,7 @@ async function reload_scripts()
         await load_script_form_fetch(navbar_script_cache);
         await  load_script_form_fetch(ws_script_cache);
         if (window.location.pathname === '/social/')
-        {
-            console.log("if i speak...")
             await load_script_form_fetch(social_ws_script_cache);
-        }
     }
     else
     {
