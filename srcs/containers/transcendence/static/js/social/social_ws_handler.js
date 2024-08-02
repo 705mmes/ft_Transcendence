@@ -1,23 +1,7 @@
 console.log("social_ws_handler.js is loaded");
 
 function response() {
-    if (!socket) {
-        console.error("Socket is not initialized.");
-        return;
-    }
-
-    if (socket.readyState === WebSocket.OPEN) {
-        console.log("WebSocket connection established.");
-        request_user_list();
-    };
-
-    socket.onclose = function(event) {
-        console.log(`WebSocket connection closed: ${event.reason}`);
-    };
-
-    socket.onerror = function(error) {
-        console.error(`WebSocket error: ${error.message}`);
-    };
+    checkSocketStatus();
 
     socket.onmessage = function(event) {
         console.log(`[message] Data received from server: ${event.data}`);
@@ -27,7 +11,7 @@ function response() {
             if (data && data.social_list) {
                 let socialList = data.social_list;
                 let friends = socialList.friends;
-                let friendListContainer = data.socialList;
+                let friendListContainer = document.getElementById('friendListContainer'); // Ensure this ID matches your HTML
 
                 if (!friendListContainer) {
                     console.error("Friend list container not found.");
@@ -67,6 +51,32 @@ function request_user_list() {
         }
     } else {
         console.log("Pathname is not '/social/', request not sent.");
+    }
+}
+
+function checkSocketStatus() {
+    if (!socket) {
+        console.error("Socket is not initialized.");
+        return;
+    }
+
+    switch (socket.readyState) {
+        case WebSocket.CONNECTING:
+            console.log("WebSocket is connecting...");
+            break;
+        case WebSocket.OPEN:
+            console.log("WebSocket connection is open.");
+			request_user_list();
+            break;
+        case WebSocket.CLOSING:
+            console.log("WebSocket is closing...");
+            break;
+        case WebSocket.CLOSED:
+            console.log("WebSocket connection is closed.");
+            break;
+        default:
+            console.error("Unknown WebSocket state.");
+            break;
     }
 }
 
