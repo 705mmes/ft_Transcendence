@@ -3,6 +3,13 @@ from .models import User
 from . import models
 
 
+class ModifiedProfileForm(forms.Form):
+    username = forms.CharField(max_length=64, label='Username', required=False)
+    email = forms.CharField(max_length=300, label='mail', required=False)
+    #password1 = forms.CharField(max_length=64, label='Password')
+    profile_picture = forms.ImageField(label='profile_picture', required=False)
+
+
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=64, label='Username', widget=forms.TextInput(attrs={'id':'Lusername', 'class':'popuptext', 'placeholder':""}))
     password = forms.CharField(max_length=64, label='Password', widget=forms.TextInput(attrs={'id':'Password2', 'class':'popuptext', 'placeholder':"", 'type':'password'}))

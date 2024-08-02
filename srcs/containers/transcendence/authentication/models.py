@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    profile_picture = models.ImageField(default='images/smunio.jpg')
+    profile_picture = models.ImageField(upload_to='', default='images/smunio.jpg')
     is_connected = models.BooleanField(default=False)
 
     def __str__(self):

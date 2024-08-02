@@ -14,7 +14,7 @@ async function send_login_form(value, url)
         let test = await response.text()
         if (test === "Error")
             throw new TypeError("Wrong identifiant");
-        DisplayCanvas(test);
+        DisplayCanvas();
     }
     catch (error)
     {
