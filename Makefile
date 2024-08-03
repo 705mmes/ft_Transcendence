@@ -33,6 +33,6 @@ logs:
 
 plogs:
 	docker-compose -f srcs/docker-compose.prod.yml logs
-	
+
 prune:
 	docker system prune -af

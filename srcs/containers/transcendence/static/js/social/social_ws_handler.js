@@ -1,44 +1,5 @@
 console.log("social_ws_handler.js is loaded");
 
-function response() {
-    checkSocketStatus();
-
-    socket.onmessage = function(event) {
-        console.log(`[message] Data received from server: ${event.data}`);
-        
-        try {
-            let data = JSON.parse(event.data);
-            if (data && data.social_list) {
-                let socialList = data.social_list;
-                let friends = socialList.friends;
-                let friendListContainer = document.getElementById('friendListContainer'); // Ensure this ID matches your HTML
-
-                if (!friendListContainer) {
-                    console.error("Friend list container not found.");
-                    return;
-                }
-
-                // Clear the list before populating it with new data
-                friendListContainer.innerHTML = '';
-
-                // Iterate through the friends data and create list items
-                for (let friend in friends) {
-                    if (friends.hasOwnProperty(friend)) {
-                        let listItem = document.createElement('li');
-                        listItem.textContent = `${friend}: ${friends[friend].is_connected ? 'Online' : 'Offline'}`;
-                        friendListContainer.appendChild(listItem);
-                        console.log(`listItem.textContent: ${listItem.textContent}`);
-                    }
-                }
-            } else {
-                console.error("Invalid data format received from server.");
-            }
-        } catch (e) {
-            console.error("Failed to parse message data: ", e);
-        }
-    };
-}
-
 function request_user_list() {
     console.log(`Current pathname: ${window.location.pathname}`);
     if (window.location.pathname === '/social/') {
@@ -78,6 +39,66 @@ function checkSocketStatus() {
             console.error("Unknown WebSocket state.");
             break;
     }
+}
+
+function response() {
+    checkSocketStatus();
+
+    socket.onmessage = function(event) {
+        console.log(`[message] Data received from server: ${event.data}`);
+        
+        try {
+            let data = JSON.parse(event.data);
+            if (data && data.social_list) {
+                let socialList = data.social_list;
+                let friends = socialList.friends;
+                let friendListContainer = document.getElementById('friendListContainer'); // Ensure this ID matches your HTML
+
+                if (!friendListContainer) {
+                    console.error("Friend list container not found.");
+                    return;
+                }
+
+                // ensures that you remove any old or stale data from the friend list container.
+                friendListContainer.innerHTML = '';
+
+                for (let friend in friends) {
+                    // checks whether the friends object contains a property with the name specified by the friend variable
+                    if (friends.hasOwnProperty(friend)) {
+                        // Create the list item container
+                        let listItem = document.createElement('li');
+                        listItem.className = 'friend-item';
+            
+                        // Create the friend name element
+                        let friendName = document.createElement('span');
+                        friendName.className = 'friend-name';
+                        friendName.textContent = friend;
+            
+                        // Create the connection status dot
+                        let connectionStatus = document.createElement('span');
+                        connectionStatus.className = 'connection-status';
+                        if (friends[friend].is_connected) {
+                            connectionStatus.classList.add('connected');
+                        } else {
+                            connectionStatus.classList.add('disconnected');
+                        }
+            
+                        // Append the name and connection status to the list item
+                        listItem.appendChild(friendName);
+                        listItem.appendChild(connectionStatus);
+            
+                        // Append the list item to the friend list container
+                        friendListContainer.appendChild(listItem);
+                        // EASY AS HELL
+                    }
+                }
+            } else {
+                console.error("Invalid data format received from server.");
+            }
+        } catch (e) {
+            console.error("Failed to parse message data: ", e);
+        }
+    };
 }
 
 console.log("Calling response function");
