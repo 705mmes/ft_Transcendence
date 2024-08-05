@@ -41,20 +41,14 @@ async function reload_scripts(page, flag)
     }
     if (page !== '/')
     {
-        if (flag === 1)
-        {
-            navigate_to_load('/');
-            await  load_script_form_fetch(ws_script_cache);
-        }
         await load_script_form_fetch(navbar_script_cache);
+        await  load_script_form_fetch(ws_script_cache);
         if (page === '/social/')
             await load_script_form_fetch(social_script_cache);
         else if (page === '/profile/')
             await load_script_form_fetch(profile_script_cache);
         else if (page === '/game/')
             await load_script_form_fetch(game_script_cache);
-        if (flag === 1)
-            navigate(page);
     }
     else
         await load_script_form_fetch(authentication_script_cache);
@@ -94,7 +88,6 @@ async function fetching_html(link, element)
     }
 }
 
-
 function delete_script_by_class_name(name)
 {
     const list_script = document.getElementsByClassName(name);
@@ -105,15 +98,10 @@ function delete_script_by_class_name(name)
 
 function navigate_to_load(link)
 {
-    console.log("page nb: ", page_number);
     if (link[0] !== '/')
         link = '/' + link;
-    console.log(window.location.pathname);
     if(window.location.pathname !== link)
         history.pushState({page : page_number},null, link);
     page_number++;
     current_page = page_number;
 }
-
-
-

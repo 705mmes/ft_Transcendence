@@ -41,12 +41,14 @@ class ActiveConsumer(WebsocketConsumer):
         user = self.scope['user']
         friends = FriendList.objects.filter(Q(user1=user) | Q(user2=user))
         my_friend_list = {}
+        my_friend_list['friend_list'] = {}
+        my_friend_list['friend_list']['friends'] = {}
         for friend in friends:
             if (friend.user1 != user):
                 friend_user = User.objects.filter(username=friend.user1.username).get()
             else:
                 friend_user = User.objects.filter(username=friend.user2.username).get()
-            my_friend_list[friend_user.username] = {'is_connected': friend_user.is_connected}
+            my_friend_list['friend_list']['friends'][friend_user.username] = {'is_connected': friend_user.is_connected}
         json_data = json.dumps(my_friend_list)
         print(json_data)
         self.send(json_data)

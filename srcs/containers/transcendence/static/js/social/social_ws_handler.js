@@ -1,11 +1,11 @@
 console.log("social_ws_handler.js is loaded");
 
-function request_user_list() {
+function request_friend_list() {
     console.log(`Current pathname: ${window.location.pathname}`);
     if (window.location.pathname === '/social/') {
         console.log("Requesting social list...");
         if (socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify({ 'action': 'social_list' }));
+            socket.send(JSON.stringify({ 'action': 'friend_list' }));
             console.log("Request sent.");
         } else {
             console.error("WebSocket is not open. Unable to send request.");
@@ -27,7 +27,7 @@ function checkSocketStatus() {
             break;
         case WebSocket.OPEN:
             console.log("WebSocket connection is open.");
-			request_user_list();
+			request_friend_list();
             break;
         case WebSocket.CLOSING:
             console.log("WebSocket is closing...");
@@ -46,15 +46,17 @@ function response() {
 
     socket.onmessage = function(event) {
         console.log(`[message] Data received from server: ${event.data}`);
-        
+
         try {
             let data = JSON.parse(event.data);
-            if (data && data.social_list) {
-                let socialList = data.social_list;
-                let friends = socialList.friends;
+            console.log(data);
+            if (data && data.friend_list)
+            {
+                let friendList = data.friend_list;
+                let friends = friendList.friends;
                 let friendListContainer = document.getElementById('friendListContainer'); // Ensure this ID matches your HTML
-
-                if (!friendListContainer) {
+                if (!friendListContainer)
+                {
                     console.error("Friend list container not found.");
                     return;
                 }
@@ -92,7 +94,9 @@ function response() {
                         // EASY AS HELL
                     }
                 }
-            } else {
+            }
+            else
+            {
                 console.error("Invalid data format received from server.");
             }
         } catch (e) {
