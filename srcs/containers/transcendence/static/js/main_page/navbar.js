@@ -56,7 +56,10 @@ async function to_unspecified_page(page)
     delete_script_by_class_name('navbar_script');
 
     if (page === 'social/')
+    {
         await load_script_form_fetch(social_ws_script_cache);
+        await load_script_form_fetch(social_script_cache);
+    }
     else if (page === 'profile/')
         await load_script_form_fetch(profile_script_cache);
     await load_script_form_fetch(navbar_script_cache);

@@ -24,11 +24,14 @@ class ActiveConsumer(WebsocketConsumer):
 
     # Receive message from WebSocket
     def receive(self, text_data):
+        print("Message recu sur ws social !")
         text_data_json = json.loads(text_data)
-        action = text_data_json["action"]
+        action = text_data_json['action']
         if action == 'social_list':
             self.send_social()
-        print(f"Message Recu: {action}")
+        elif action == 'friend_request':
+            self.create_request(text_data_json['username'])
+        print(f"Message Recu, action: {action}")
 
     def send_social(self):
         user = self.scope['user']
@@ -42,14 +45,18 @@ class ActiveConsumer(WebsocketConsumer):
         print(json_data)
         self.send(json_data)
 
-
-
     def friend_list(self):
         user = self.scope['user']
         friends = FriendList.objects.filter(Q(user1=user) | Q(user2=user))
+        print(friends)
         my_friend_list = {}
         for friend in friends:
-            friend_user = User.objects.filter(username=friend).get()
+            if (friend.user1 != user):
+                friend_user = User.objects.filter(username=friend.user1.username).get()
+            else:
+                friend_user = User.objects.filter(username=friend.user2.username).get()
+            print(f"friend: {friend} & user: {user}")
+            print(friend_user)
             my_friend_list[friend_user.username] = {'is_connected': friend_user.is_connected}
         print(f"friends: {my_friend_list}")
         return my_friend_list
@@ -73,6 +80,16 @@ class ActiveConsumer(WebsocketConsumer):
             my_recipient_list[recipient_user.username] = {'is_connected': recipient_user.is_connected}
         print(f"Receive: {my_recipient_list}")
         return my_recipient_list
+
+    def create_request(self, username):
+        requester = self.scope['user']
+        recipient = User.objects.filter(username=username)
+        if recipient.exists():
+            FriendRequest.objects.create(requester=requester, recipient=recipient.get())
+            print(f"Friend request create between {requester} and {recipient}")
+        else:
+            print("User not found !")
+
 
 # message_recu = text_data_json["message"]
 # print(f"json user: {serializers.serialize('json', my_friend_list)}")

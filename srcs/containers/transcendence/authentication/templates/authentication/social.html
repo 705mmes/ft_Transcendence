@@ -4,13 +4,19 @@
 {% block content %}
     <h1>Social</h1>
     {% include "authentication/navbar.html" %}
+    <link rel="stylesheet" href="{% static 'css/social.css' %}">
     <div class="form-container">
         <form id="friend-list-form">
             <input type="search" id="query" name="username" placeholder="Search...">
-            <button type="submit">Search</button>
+            <button type="submit" id="friend_invite">Invite</button>
         </form>
+        <div class="button">
+            <button type="button" id="friends">Friends</button>
+            <button type="button" id="request">Requests</button>
+            <button type="button" id="pending">Pending</button>
+        </div>
         <ul id="friendListContainer">
             <!-- Friend list items will be appended here -->
         </ul>
-    </div>    
+    </div>
 {% endblock %}
