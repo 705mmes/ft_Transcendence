@@ -27,39 +27,45 @@ class ActiveConsumer(WebsocketConsumer):
         print("Message recu sur ws social !")
         text_data_json = json.loads(text_data)
         action = text_data_json['action']
-        if action == 'social_list':
-            self.send_social()
+        if action == 'friend_list':
+            self.send_friend_list()
+        elif action == 'request_list':
+            self.send_request_list()
+        elif action == 'pending_list':
+            self.send_pending_list()
         elif action == 'friend_request':
             self.create_request(text_data_json['username'])
         print(f"Message Recu, action: {action}")
 
-    def send_social(self):
+    def send_friend_list(self):
         user = self.scope['user']
         friends = FriendList.objects.filter(Q(user1=user) | Q(user2=user))
-        list_social = {}
-        list_social['social_list'] = {}
-        list_social['social_list']['friends'] = self.friend_list()
-        list_social['social_list']['requested'] = self.request_list()
-        list_social['social_list']['received'] = self.recipient_list()
-        json_data = json.dumps(list_social)
-        print(json_data)
-        self.send(json_data)
-
-    def friend_list(self):
-        user = self.scope['user']
-        friends = FriendList.objects.filter(Q(user1=user) | Q(user2=user))
-        print(friends)
         my_friend_list = {}
         for friend in friends:
             if (friend.user1 != user):
                 friend_user = User.objects.filter(username=friend.user1.username).get()
             else:
                 friend_user = User.objects.filter(username=friend.user2.username).get()
-            print(f"friend: {friend} & user: {user}")
-            print(friend_user)
             my_friend_list[friend_user.username] = {'is_connected': friend_user.is_connected}
-        print(f"friends: {my_friend_list}")
-        return my_friend_list
+        json_data = json.dumps(my_friend_list)
+        print(json_data)
+        self.send(json_data)
+
+# list_social['requested_list'] = self.request_list()
+# list_social['received_list'] = self.recipient_list()
+
+    # def friend_list(self):
+    #     user = self.scope['user']
+    #     friends = FriendList.objects.filter(Q(user1=user) | Q(user2=user))
+    #     my_friend_list = {}
+    #     for friend in friends:
+    #         if (friend.user1 != user):
+    #             friend_user = User.objects.filter(username=friend.user1.username).get()
+    #         else:
+    #             friend_user = User.objects.filter(username=friend.user2.username).get()
+    #         my_friend_list[friend_user.username] = {'is_connected': friend_user.is_connected}
+    #     print(f"friends: {my_friend_list}")
+    #     return my_friend_list
 
     def request_list(self):
         user = self.scope['user']
@@ -68,7 +74,6 @@ class ActiveConsumer(WebsocketConsumer):
         for request in requested:
             requested_user = User.objects.filter(username=request.recipient.username).get()
             my_request_list[requested_user.username] = {'is_connected': requested_user.is_connected}
-        print(f"Request: {my_request_list}")
         return my_request_list
 
     def recipient_list(self):
@@ -78,7 +83,6 @@ class ActiveConsumer(WebsocketConsumer):
         for receiver in recipient:
             recipient_user = User.objects.filter(username=receiver.requester.username).get()
             my_recipient_list[recipient_user.username] = {'is_connected': recipient_user.is_connected}
-        print(f"Receive: {my_recipient_list}")
         return my_recipient_list
 
     def create_request(self, username):
@@ -87,8 +91,10 @@ class ActiveConsumer(WebsocketConsumer):
         if recipient.exists():
             FriendRequest.objects.create(requester=requester, recipient=recipient.get())
             print(f"Friend request create between {requester} and {recipient}")
+            # Send info back to the user
         else:
             print("User not found !")
+            # Send info back to the user
 
 
 # message_recu = text_data_json["message"]
