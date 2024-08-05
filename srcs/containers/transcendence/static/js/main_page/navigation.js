@@ -11,18 +11,33 @@ function change_page_name(page)
     if (page === 'game/canvas/')
         return ('game/');
     else if (page === 'logout_btn/')
-        return ('/');
+        return ('');
     else
         return (page);
 }
 
-async function to_unspecified_page(page)
+function reset_script(page)
+{
+    let script_list = ['game_script', 'social_script', 'navbar_script', 'profile_script']
+
+    for(let a = 0; a <= 3; a++)
+    {
+        if (document.getElementsByClassName(script_list[a]))
+            delete_script_by_class_name(script_list[a]);
+    }
+    console.log(page);
+    if (page === '/')
+           delete_script_by_class_name('ws_script');
+}
+
+
+
+async function back_to_unspecified_page(page)
 {
     navigate('/');
     let div_content = document.getElementById('content');
     await fetching_html(page, div_content);
 
-    page = change_page_name(page);
     reset_script(page)
 
     reload_scripts(page, 0);
