@@ -40,18 +40,16 @@ class ActiveConsumer(WebsocketConsumer):
     def send_friend_list(self):
         user = self.scope['user']
         friends = FriendList.objects.filter(Q(user1=user) | Q(user2=user))
-        my_friend_list = {}
-        my_friend_list['friend_list'] = {}
-        my_friend_list['friend_list']['friends'] = {}
+        my_friend_list = {'action': 'friend_list', 'friend_list': {'friends': {}}}
+        # my_friend_list = {}
+        # my_friend_list['friend_list'] = {}
+        # my_friend_list['friend_list']['friends'] = {}
         for friend in friends:
-            if (friend.user1 != user):
-                friend_user = User.objects.filter(username=friend.user1.username).get()
-            else:
-                friend_user = User.objects.filter(username=friend.user2.username).get()
+            friend_user = friend.user1 if friend.user1 != user else friend.user2
             my_friend_list['friend_list']['friends'][friend_user.username] = {'is_connected': friend_user.is_connected}
+        
         json_data = json.dumps(my_friend_list)
-        print(json_data)
-        self.send(json_data)
+        self.send(text_data=json_data)
 
 # list_social['requested_list'] = self.request_list()
 # list_social['received_list'] = self.recipient_list()
