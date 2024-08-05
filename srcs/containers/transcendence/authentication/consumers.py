@@ -41,13 +41,9 @@ class ActiveConsumer(WebsocketConsumer):
         user = self.scope['user']
         friends = FriendList.objects.filter(Q(user1=user) | Q(user2=user))
         my_friend_list = {'action': 'friend_list', 'friend_list': {'friends': {}}}
-        # my_friend_list = {}
-        # my_friend_list['friend_list'] = {}
-        # my_friend_list['friend_list']['friends'] = {}
         for friend in friends:
             friend_user = friend.user1 if friend.user1 != user else friend.user2
             my_friend_list['friend_list']['friends'][friend_user.username] = {'is_connected': friend_user.is_connected}
-        
         json_data = json.dumps(my_friend_list)
         self.send(text_data=json_data)
 
@@ -67,22 +63,24 @@ class ActiveConsumer(WebsocketConsumer):
     #     print(f"friends: {my_friend_list}")
     #     return my_friend_list
 
-    def request_list(self):
+    def send_request_list(self):
         user = self.scope['user']
         requested = FriendRequest.objects.filter(requester=user)
-        my_request_list = {}
+        my_request_list = {'action': 'request_list', 'request_list': {'request': {}}}
         for request in requested:
             requested_user = User.objects.filter(username=request.recipient.username).get()
-            my_request_list[requested_user.username] = {'is_connected': requested_user.is_connected}
+            my_request_list['request_list']['request'][requested_user.username] = {'is_connected': requested_user.is_connected}
+        print(my_request_list)
         return my_request_list
 
-    def recipient_list(self):
+    def send_pending_list(self):
         user = self.scope['user']
         recipient = FriendRequest.objects.filter(recipient=user)
-        my_recipient_list = {}
+        my_recipient_list = {'action': 'request_list', 'request_list': {'request': {}}}
         for receiver in recipient:
             recipient_user = User.objects.filter(username=receiver.requester.username).get()
-            my_recipient_list[recipient_user.username] = {'is_connected': recipient_user.is_connected}
+            my_recipient_list['request_list']['request'][recipient_user.username] = {'is_connected': recipient_user.is_connected}
+        print(my_recipient_list)
         return my_recipient_list
 
     def create_request(self, username):
