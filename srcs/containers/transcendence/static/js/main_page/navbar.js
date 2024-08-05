@@ -1,67 +1,13 @@
 document.getElementById("logout").addEventListener('click', function(event){
     event.preventDefault();
     socket.close();
-    logout();
+    to_unspecified_page('logout_btn/');
 })
-
-async function logout()
-{
-    navigate_to_load('/');
-    let div_content = document.getElementById('content');
-    await fetching_html('logout_btn/', div_content);
-
-    if (document.getElementsByClassName('social_ws_script'))
-        delete_script_by_class_name('social_ws_script');
-    delete_script_by_class_name('ws_script');
-    delete_script_by_class_name('game_script');
-    delete_script_by_class_name('navbar_script');
-
-    // Permet de recup les script dans le html fetch et de les append au body pour les load
-    await load_script_form_fetch(authentication_script_cache);
-    navigate('/');
-}
-
-async function to_game()
-{
-    navigate_to_load('/');
-    if (document.getElementsByClassName('game_script'))
-        delete_script_by_class_name('game_script');
-    if (document.getElementsByClassName('social_ws_script'))
-        delete_script_by_class_name('social_ws_script');
-    delete_script_by_class_name('navbar_script');
-    let div_content = document.getElementById('content');
-
-    await fetching_html('game/canvas/', div_content);
-
-    await load_script_form_fetch(game_script_cache);
-    await load_script_form_fetch(navbar_script_cache);
-
-    navigate('game/');
-}
 
 document.getElementById('home').addEventListener('click', function(event){
   event.preventDefault();
-  to_game();
+  to_unspecified_page('game/canvas/');
 })
-
-async function to_unspecified_page(page)
-{
-    navigate_to_load('/');
-    let div_content = document.getElementById('content');
-    await fetching_html(page, div_content);
-
-    if (document.getElementsByClassName('social_ws_script'))
-        delete_script_by_class_name('social_ws_script');
-    delete_script_by_class_name('game_scripts');
-    delete_script_by_class_name('navbar_script');
-
-    if (page === 'social/')
-        await load_script_form_fetch(social_ws_script_cache);
-    else if (page === 'profile/')
-        await load_script_form_fetch(profile_script_cache);
-    await load_script_form_fetch(navbar_script_cache);
-    navigate(page);
-}
 
 document.getElementById('profile').addEventListener('click', function(event){
   event.preventDefault();
@@ -78,4 +24,29 @@ document.getElementById('chat').addEventListener('click', function(event){
   to_unspecified_page('chat/');
 })
 
+async function to_unspecified_page(page)
+{
+    navigate_to_load('/');
+    let div_content = document.getElementById('content');
+    await fetching_html(page, div_content);
+
+    page = change_page_name(page);
+    reset_script(page)
+
+    reload_scripts(page, 0);
+    navigate(page);
+}
+
+function reset_script(page)
+{
+    let script_list = ['game_scripts', 'social_ws_script', 'navbar_script', 'profile_script']
+
+    for(let a = 0; a < 2; a++)
+    {
+        if (document.getElementsByClassName(script_list[a]))
+            delete_script_by_class_name(script_list[a]);
+    }
+    if (page === 'logout_btn/')
+           delete_script_by_class_name('ws_script');
+}
 

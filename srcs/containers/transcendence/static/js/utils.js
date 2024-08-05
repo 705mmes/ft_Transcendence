@@ -30,37 +30,32 @@ async function fetch_scripts(url, class_name)
     return (script_list);
 }
 
-reload_scripts();
+reload_scripts(window.location.pathname, 1);
 
-async function reload_scripts()
+async function reload_scripts(page, flag)
 {
-    await load_script_form_fetch(game_class_script_cache);
-    await load_script_form_fetch(navigation_script_cache);
-    if (document.getElementById('canv'))
+    if(flag === 1)
     {
-        await load_script_form_fetch(game_script_cache);
-        if (!document.getElementById('content'))
-            history.pushState(null,null,'/');
-        navigate_to_load('game/')
+        await load_script_form_fetch(game_class_script_cache);
+        await load_script_form_fetch(navigation_script_cache);
     }
-    if (window.location.pathname !== '/')
+    if (page !== '/')
     {
+        if (flag === 1)
+            navigate_to_load('/');
         await load_script_form_fetch(navbar_script_cache);
         await  load_script_form_fetch(ws_script_cache);
-        if (window.location.pathname === '/social/')
-        {
-            console.log("if i speak...")
+        if (page === '/social/')
             await load_script_form_fetch(social_ws_script_cache);
-        }
-        else if (window.location.pathname === '/profile/')
-        {
+        else if (page === '/profile/')
             await load_script_form_fetch(profile_script_cache);
-        }
+        else if (page === '/game/')
+            await load_script_form_fetch(game_script_cache);
+        if (flag === 1)
+            navigate(page);
     }
     else
-    {
         await load_script_form_fetch(authentication_script_cache);
-    }
 }
 
 async function load_script_form_fetch(cache)
