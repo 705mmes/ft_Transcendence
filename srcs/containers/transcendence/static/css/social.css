@@ -61,14 +61,14 @@ button {
 
 .name {
     font-size: 18px;
-	margin-right: 10px;
+	margin-right: auto;
 }
 
 .connection-status {
     width: 15px;
     height: 15px;
     border-radius: 50%;
-	margin-right: 200px;
+	margin-right: 10px;
     display: inline-block;
 }
 
@@ -133,7 +133,7 @@ button {
 .accept-button,
 .deny-button,
 .cancel-button {
-    margin-left: 2px;
+    margin-right: 2px;
     padding: 5px 10px;
     cursor: pointer;
     border: none;

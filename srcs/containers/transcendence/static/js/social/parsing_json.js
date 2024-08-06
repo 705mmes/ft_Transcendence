@@ -1,3 +1,6 @@
+
+console.log("parsing_json.js loaded");
+
 function clearAndCheckContainer(containerId) {
     let container = document.getElementById(containerId);
     if (!container) {
@@ -20,8 +23,8 @@ function createListItem(name, isConnected) {
     connectionStatus.className = 'connection-status';
     connectionStatus.classList.add(isConnected ? 'connected' : 'disconnected');
 
-    listItem.appendChild(nameElement);
     listItem.appendChild(connectionStatus);
+    listItem.appendChild(nameElement);
 
     return listItem;
 }
@@ -32,14 +35,16 @@ function addButtons(listItem, name, listType) {
         inviteButton.className = 'invite-button';
         inviteButton.textContent = 'Invite to game';
         inviteButton.addEventListener('click', function() {
-            console.log('Invite to game clicked for', name);
+            const message = JSON.stringify({ action: "invite to game", "username": username });
+    		socket.send(message);
         });
 
         let removeButton = document.createElement('button');
         removeButton.className = 'remove-button';
         removeButton.textContent = 'Remove friend';
         removeButton.addEventListener('click', function() {
-            console.log('Remove friend clicked for', name);
+            const message = JSON.stringify({ action: "remove friend", "username": username });
+    		socket.send(message);
         });
 
         listItem.appendChild(inviteButton);
@@ -49,14 +54,16 @@ function addButtons(listItem, name, listType) {
         acceptButton.className = 'accept-button';
         acceptButton.textContent = 'Accept';
         acceptButton.addEventListener('click', function() {
-            console.log('Accept request clicked for', name);
+            const message = JSON.stringify({ action: "accept friend request", "username": username });
+    		socket.send(message);
         });
 
         let denyButton = document.createElement('button');
         denyButton.className = 'deny-button';
         denyButton.textContent = 'Deny';
         denyButton.addEventListener('click', function() {
-            console.log('Deny request clicked for', name);
+			const message = JSON.stringify({ action: "deny friend request", "username": username });
+    		socket.send(message);
         });
 
         listItem.appendChild(acceptButton);
@@ -66,7 +73,8 @@ function addButtons(listItem, name, listType) {
         cancelButton.className = 'cancel-button';
         cancelButton.textContent = 'Cancel';
         cancelButton.addEventListener('click', function() {
-            console.log('Cancel request clicked for', name);
+            const message = JSON.stringify({ action: "cancel friend request", "username": username });
+    		socket.send(message);
         });
 
         listItem.appendChild(cancelButton);
