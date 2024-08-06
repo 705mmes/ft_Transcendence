@@ -55,6 +55,8 @@ function response() {
                 parse_friend_list(data);
             else if (data.action === 'request_list')
                 parse_request_list(data);
+			else if (data.action === 'pending_list')
+				parse_pending_list(data);
 			else
                 console.error("Unknown action received from server.");
         } 

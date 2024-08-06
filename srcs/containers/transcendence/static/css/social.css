@@ -13,7 +13,7 @@ button {
     margin-top: -2px;
 }
 
-#friend-list-form {
+#social-form {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -22,20 +22,20 @@ button {
     margin-top: -2px;
 }
 
-#friend-list-form input {
+#social-form input {
     margin: 5px;
     flex-grow: 1; /* Allow the input to grow and take available space */
     height: 50px;
     font-size: 16px;
 }
 
-#friend-list-form button {
+#social-form button {
     margin: 5px;
     height: 50px; /* Match the button height to the input height */
     flex-shrink: 0; /* Prevent button from shrinking */
 }
 
-#friendListContainer {
+#ListContainer {
     width: 100%;
     list-style-type: none;
     padding: 0;
@@ -45,7 +45,7 @@ button {
     align-items: center;
 }
 
-.friend-item {
+.item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -58,20 +58,7 @@ button {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for a 3D effect */
 }
 
-.request-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 80%;
-    max-width: 800px;
-    padding: 15px; /* Add padding for better spacing */
-    margin: 10px 0; /* Add margin between items */
-    background-color: #f5f5f5;
-    border-radius: 10px; /* Round the corners of the rectangles */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for a 3D effect */
-}
-
-.friend-name {
+.name {
     font-size: 18px;
 }
 

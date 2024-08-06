@@ -16,11 +16,11 @@ function parse_friend_list (data) {
 		if (friends.hasOwnProperty(friend)) {
 			// Create the list item container
 			let listItem = document.createElement('li');
-			listItem.className = 'friend-item';
+			listItem.className = 'item';
 
 			// Create the friend name element
 			let friendName = document.createElement('span');
-			friendName.className = 'friend-name';
+			friendName.className = 'name';
 			friendName.textContent = friend;
 
 			// Create the connection status dot
@@ -57,11 +57,11 @@ function parse_request_list (data) {
 		if (requests.hasOwnProperty(request)) {
 			// Create the list item container
 			let listItem = document.createElement('li');
-			listItem.className = 'request-item';
+			listItem.className = 'item';
 
 			// Create the friend name element
 			let requestName = document.createElement('span');
-			requestName.className = 'request-name';
+			requestName.className = 'name';
 			requestName.textContent = request;
 
 			// Create the connection status dot
@@ -79,6 +79,47 @@ function parse_request_list (data) {
 
 			// Append the list item to the friend list container
 			requestListContainer.appendChild(listItem);
+		}
+	}
+}
+
+function parse_pending_list (data) {
+	let pendingList = data.pending_list;
+	let pendings = pendingList.pending;
+	let pendingListContainer = document.getElementById('ListContainer');
+
+	if (!pendingListContainer) {
+		console.error("Request list container not found");
+		return;
+	}
+	pendingListContainer.innerHTML = '';
+	for (let pending in pendings)
+	{
+		if (pendings.hasOwnProperty(pending)) {
+			// Create the list item container
+			let listItem = document.createElement('li');
+			listItem.className = 'item';
+
+			// Create the friend name element
+			let pendingName = document.createElement('span');
+			pendingName.className = 'name';
+			pendingName.textContent = pending;
+
+			// Create the connection status dot
+			let connectionStatus = document.createElement('span');
+			connectionStatus.className = 'connection-status';
+			if (pendings[pending].is_connected) {
+				connectionStatus.classList.add('connected');
+			} else {
+				connectionStatus.classList.add('disconnected');
+			}
+
+			// Append the name and connection status to the list item
+			listItem.appendChild(pendingName);
+			listItem.appendChild(connectionStatus);
+
+			// Append the list item to the friend list container
+			pendingListContainer.appendChild(listItem);
 		}
 	}
 }
