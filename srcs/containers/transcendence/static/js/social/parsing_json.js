@@ -35,7 +35,7 @@ function addButtons(listItem, name, listType) {
         inviteButton.className = 'invite-button';
         inviteButton.textContent = 'Invite to game';
         inviteButton.addEventListener('click', function() {
-            const message = JSON.stringify({ action: "invite to game", "username": username });
+            const message = JSON.stringify({ action: "invite to game", "username": name });
     		socket.send(message);
         });
 
@@ -43,7 +43,7 @@ function addButtons(listItem, name, listType) {
         removeButton.className = 'remove-button';
         removeButton.textContent = 'Remove friend';
         removeButton.addEventListener('click', function() {
-            const message = JSON.stringify({ action: "remove friend", "username": username });
+            const message = JSON.stringify({ action: "remove friend", "username": name });
     		socket.send(message);
         });
 
@@ -54,7 +54,7 @@ function addButtons(listItem, name, listType) {
         acceptButton.className = 'accept-button';
         acceptButton.textContent = 'Accept';
         acceptButton.addEventListener('click', function() {
-            const message = JSON.stringify({ action: "accept friend request", "username": username });
+            const message = JSON.stringify({ action: "accept friend request", "username": name });
     		socket.send(message);
         });
 
@@ -62,7 +62,7 @@ function addButtons(listItem, name, listType) {
         denyButton.className = 'deny-button';
         denyButton.textContent = 'Deny';
         denyButton.addEventListener('click', function() {
-			const message = JSON.stringify({ action: "deny friend request", "username": username });
+			const message = JSON.stringify({ action: "deny friend request", "username": name });
     		socket.send(message);
         });
 
@@ -73,7 +73,7 @@ function addButtons(listItem, name, listType) {
         cancelButton.className = 'cancel-button';
         cancelButton.textContent = 'Cancel';
         cancelButton.addEventListener('click', function() {
-            const message = JSON.stringify({ action: "cancel friend request", "username": username });
+            const message = JSON.stringify({ action: "cancel friend request", "username": name });
     		socket.send(message);
         });
 

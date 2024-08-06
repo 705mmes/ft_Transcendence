@@ -18,7 +18,7 @@ def authentication(request):
 
 
 def register(request):
-    if (request.method == 'POST'):
+    if (request.method == 'PUT'):
         print('Registration')
         form = RegistrationForm(request.POST)
         if (form.is_valid()):

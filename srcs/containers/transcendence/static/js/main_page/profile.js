@@ -10,7 +10,7 @@ async function update_profile(value)
         navigate('/')
         const formdata = new FormData(value);
         let response = await fetch('profile/',{
-            method: 'POST',
+            method: 'PUT',
             body: formdata,
         });
         if (!response.ok)
