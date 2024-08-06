@@ -45,35 +45,9 @@ class ActiveConsumer(WebsocketConsumer):
             friend_user = friend.user1 if friend.user1 != user else friend.user2
             my_friend_list['friend_list']['friends'][friend_user.username] = {'is_connected': friend_user.is_connected}
         json_data = json.dumps(my_friend_list)
-        self.send(text_data=json_data)
-
-# list_social['requested_list'] = self.request_list()
-# list_social['received_list'] = self.recipient_list()
-
-    # def friend_list(self):
-    #     user = self.scope['user']
-    #     friends = FriendList.objects.filter(Q(user1=user) | Q(user2=user))
-    #     my_friend_list = {}
-    #     for friend in friends:
-    #         if (friend.user1 != user):
-    #             friend_user = User.objects.filter(username=friend.user1.username).get()
-    #         else:
-    #             friend_user = User.objects.filter(username=friend.user2.username).get()
-    #         my_friend_list[friend_user.username] = {'is_connected': friend_user.is_connected}
-    #     print(f"friends: {my_friend_list}")
-    #     return my_friend_list
+        self.send(json_data)
 
     def send_request_list(self):
-        user = self.scope['user']
-        requested = FriendRequest.objects.filter(requester=user)
-        my_request_list = {'action': 'request_list', 'request_list': {'request': {}}}
-        for request in requested:
-            requested_user = User.objects.filter(username=request.recipient.username).get()
-            my_request_list['request_list']['request'][requested_user.username] = {'is_connected': requested_user.is_connected}
-        print(my_request_list)
-        return my_request_list
-
-    def send_pending_list(self):
         user = self.scope['user']
         recipient = FriendRequest.objects.filter(recipient=user)
         my_recipient_list = {'action': 'request_list', 'request_list': {'request': {}}}
@@ -81,14 +55,29 @@ class ActiveConsumer(WebsocketConsumer):
             recipient_user = User.objects.filter(username=receiver.requester.username).get()
             my_recipient_list['request_list']['request'][recipient_user.username] = {'is_connected': recipient_user.is_connected}
         print(my_recipient_list)
-        return my_recipient_list
+        json_data = json.dumps(my_recipient_list)
+        self.send(json_data)
+
+    def send_pending_list(self):
+        user = self.scope['user']
+        requested = FriendRequest.objects.filter(requester=user)
+        my_request_list = {'action': 'pending_list', 'pending_list': {'pending': {}}}
+        for request in requested:
+            requested_user = User.objects.filter(username=request.recipient.username).get()
+            my_request_list['pending_list']['pending'][requested_user.username] = {'is_connected': requested_user.is_connected}
+        print(my_request_list)
+        json_data = json.dumps(my_request_list)
+        self.send(json_data)
 
     def create_request(self, username):
         requester = self.scope['user']
         recipient = User.objects.filter(username=username)
         if recipient.exists():
-            FriendRequest.objects.create(requester=requester, recipient=recipient.get())
-            print(f"Friend request create between {requester} and {recipient}")
+            if not FriendRequest.objects.filter(requester=requester, recipient=recipient.get()).exists():
+                FriendRequest.objects.create(requester=requester, recipient=recipient.get())
+                print(f"Friend request create between {requester} and {recipient}")
+            else:
+                print(f"Request already exist !")
             # Send info back to the user
         else:
             print("User not found !")
