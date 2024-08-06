@@ -35,6 +35,7 @@ class ActiveConsumer(WebsocketConsumer):
             self.send_pending_list()
         elif action == 'friend_request':
             self.create_request(text_data_json['username'])
+        elif action == ''
         print(f"Message Recu, action: {action}")
 
     def send_friend_list(self):
