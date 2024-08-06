@@ -1,125 +1,109 @@
-console.log("parsing_json.js loaded");
-function parse_friend_list (data) {
-	let friendList = data.friend_list;
-	let friends = friendList.friends;
-	let friendListContainer = document.getElementById('ListContainer'); // Ensure this ID matches your HTML
-
-	if (!friendListContainer) {
-		console.error("Friend list container not found.");
-		return;
-	}
-
-	// ensures that you remove any old or stale data from the friend list container.
-	friendListContainer.innerHTML = '';
-
-	for (let friend in friends) {
-		if (friends.hasOwnProperty(friend)) {
-			// Create the list item container
-			let listItem = document.createElement('li');
-			listItem.className = 'item';
-
-			// Create the friend name element
-			let friendName = document.createElement('span');
-			friendName.className = 'name';
-			friendName.textContent = friend;
-
-			// Create the connection status dot
-			let connectionStatus = document.createElement('span');
-			connectionStatus.className = 'connection-status';
-			if (friends[friend].is_connected) {
-				connectionStatus.classList.add('connected');
-			} else {
-				connectionStatus.classList.add('disconnected');
-			}
-
-			// Append the name and connection status to the list item
-			listItem.appendChild(friendName);
-			listItem.appendChild(connectionStatus);
-
-			// Append the list item to the friend list container
-			friendListContainer.appendChild(listItem);
-		}
-	}
+function clearAndCheckContainer(containerId) {
+    let container = document.getElementById(containerId);
+    if (!container) {
+        console.error(`${containerId} not found.`);
+        return null;
+    }
+    container.innerHTML = '';
+    return container;
 }
 
-function parse_request_list (data) {
-	let requestList = data.request_list;
-	let requests = requestList.request;
-	let requestListContainer = document.getElementById('ListContainer');
+function createListItem(name, isConnected) {
+    let listItem = document.createElement('li');
+    listItem.className = 'item';
 
-	if (!requestListContainer) {
-		console.error("Request list container not found");
-		return;
-	}
-	requestListContainer.innerHTML = '';
-	for (let request in requests)
-	{
-		if (requests.hasOwnProperty(request)) {
-			// Create the list item container
-			let listItem = document.createElement('li');
-			listItem.className = 'item';
+    let nameElement = document.createElement('span');
+    nameElement.className = 'name';
+    nameElement.textContent = name;
 
-			// Create the friend name element
-			let requestName = document.createElement('span');
-			requestName.className = 'name';
-			requestName.textContent = request;
+    let connectionStatus = document.createElement('span');
+    connectionStatus.className = 'connection-status';
+    connectionStatus.classList.add(isConnected ? 'connected' : 'disconnected');
 
-			// Create the connection status dot
-			let connectionStatus = document.createElement('span');
-			connectionStatus.className = 'connection-status';
-			if (requests[request].is_connected) {
-				connectionStatus.classList.add('connected');
-			} else {
-				connectionStatus.classList.add('disconnected');
-			}
+    listItem.appendChild(nameElement);
+    listItem.appendChild(connectionStatus);
 
-			// Append the name and connection status to the list item
-			listItem.appendChild(requestName);
-			listItem.appendChild(connectionStatus);
-
-			// Append the list item to the friend list container
-			requestListContainer.appendChild(listItem);
-		}
-	}
+    return listItem;
 }
 
-function parse_pending_list (data) {
-	let pendingList = data.pending_list;
-	let pendings = pendingList.pending;
-	let pendingListContainer = document.getElementById('ListContainer');
+function addButtons(listItem, name, listType) {
+    if (listType === 'friend_list') {
+        let inviteButton = document.createElement('button');
+        inviteButton.className = 'invite-button';
+        inviteButton.textContent = 'Invite to game';
+        inviteButton.addEventListener('click', function() {
+            console.log('Invite to game clicked for', name);
+        });
 
-	if (!pendingListContainer) {
-		console.error("Request list container not found");
-		return;
-	}
-	pendingListContainer.innerHTML = '';
-	for (let pending in pendings)
-	{
-		if (pendings.hasOwnProperty(pending)) {
-			// Create the list item container
-			let listItem = document.createElement('li');
-			listItem.className = 'item';
+        let removeButton = document.createElement('button');
+        removeButton.className = 'remove-button';
+        removeButton.textContent = 'Remove friend';
+        removeButton.addEventListener('click', function() {
+            console.log('Remove friend clicked for', name);
+        });
 
-			// Create the friend name element
-			let pendingName = document.createElement('span');
-			pendingName.className = 'name';
-			pendingName.textContent = pending;
+        listItem.appendChild(inviteButton);
+        listItem.appendChild(removeButton);
+    } else if (listType === 'request_list') {
+        let acceptButton = document.createElement('button');
+        acceptButton.className = 'accept-button';
+        acceptButton.textContent = 'Accept';
+        acceptButton.addEventListener('click', function() {
+            console.log('Accept request clicked for', name);
+        });
 
-			// Create the connection status dot
-			let connectionStatus = document.createElement('span');
-			connectionStatus.className = 'connection-status';
-			if (pendings[pending].is_connected) {
-				connectionStatus.classList.add('connected');
-			} else {
-				connectionStatus.classList.add('disconnected');
-			}
+        let denyButton = document.createElement('button');
+        denyButton.className = 'deny-button';
+        denyButton.textContent = 'Deny';
+        denyButton.addEventListener('click', function() {
+            console.log('Deny request clicked for', name);
+        });
 
-			// Append the name and connection status to the list item
-			listItem.appendChild(pendingName);
-			listItem.appendChild(connectionStatus);
+        listItem.appendChild(acceptButton);
+        listItem.appendChild(denyButton);
+    } else if (listType === 'pending_list') {
+        let cancelButton = document.createElement('button');
+        cancelButton.className = 'cancel-button';
+        cancelButton.textContent = 'Cancel';
+        cancelButton.addEventListener('click', function() {
+            console.log('Cancel request clicked for', name);
+        });
 
-			// Append the list item to the friend list container
-			pendingListContainer.appendChild(listItem);
-		}
-	}
+        listItem.appendChild(cancelButton);
+    }
 }
+
+function parseList(data, listType, containerId) {
+    let items;
+    if (listType === 'friend_list') {
+        items = data.friend_list.friends;
+    } else if (listType === 'request_list') {
+        items = data.request_list.request;
+    } else if (listType === 'pending_list') {
+        items = data.pending_list.pending;
+    }
+
+    let container = clearAndCheckContainer(containerId);
+    if (!container) return;
+
+    for (let item in items) {
+        if (items.hasOwnProperty(item)) {
+            let listItem = createListItem(item, items[item].is_connected);
+            addButtons(listItem, item, listType);
+            container.appendChild(listItem);
+        }
+    }
+}
+
+function parse_friend_list(data) {
+    parseList(data, 'friend_list', 'ListContainer');
+}
+
+function parse_request_list(data) {
+    parseList(data, 'request_list', 'ListContainer');
+}
+
+function parse_pending_list(data) {
+    parseList(data, 'pending_list', 'ListContainer');
+}
+

@@ -27,7 +27,7 @@ function checkSocketStatus() {
             break;
         case WebSocket.OPEN:
             console.log("WebSocket connection is open.");
-			request_friend_list();
+            request_friend_list();
             break;
         case WebSocket.CLOSING:
             console.log("WebSocket is closing...");
@@ -51,21 +51,20 @@ function response() {
             let data = JSON.parse(event.data);
             console.log(data);
 
-            if (data.action === 'friend_list')
+            if (data.action === 'friend_list') {
                 parse_friend_list(data);
-            else if (data.action === 'request_list')
+            } else if (data.action === 'request_list') {
                 parse_request_list(data);
-			else if (data.action === 'pending_list')
-				parse_pending_list(data);
-			else
+            } else if (data.action === 'pending_list') {
+                parse_pending_list(data);
+            } else {
                 console.error("Unknown action received from server.");
-        } 
-		catch (e) {
+            }
+        } catch (e) {
             console.error("Failed to parse message data: ", e);
-		}
+        }
     };
 }
 
 console.log("Calling response function");
 response();
-

@@ -1,3 +1,4 @@
+/* General button styles */
 button {
     width: auto;
     height: 50px;
@@ -17,22 +18,22 @@ button {
     display: flex;
     flex-direction: row;
     align-items: center;
-    width: 80%; /* Set the desired width of the form, e.g., 80% of the container */
+    width: 80%;
     max-width: 800px;
     margin-top: -2px;
 }
 
 #social-form input {
     margin: 5px;
-    flex-grow: 1; /* Allow the input to grow and take available space */
+    flex-grow: 1;
     height: 50px;
     font-size: 16px;
 }
 
 #social-form button {
     margin: 5px;
-    height: 50px; /* Match the button height to the input height */
-    flex-shrink: 0; /* Prevent button from shrinking */
+    height: 50px;
+    flex-shrink: 0;
 }
 
 #ListContainer {
@@ -51,21 +52,23 @@ button {
     align-items: center;
     width: 80%;
     max-width: 800px;
-    padding: 15px; /* Add padding for better spacing */
-    margin: 10px 0; /* Add margin between items */
+    padding: 15px;
+    margin: 10px 0;
     background-color: #f5f5f5;
-    border-radius: 10px; /* Round the corners of the rectangles */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for a 3D effect */
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .name {
     font-size: 18px;
+	margin-right: 10px;
 }
 
 .connection-status {
     width: 15px;
     height: 15px;
     border-radius: 50%;
+	margin-right: 200px;
     display: inline-block;
 }
 
@@ -79,46 +82,112 @@ button {
 
 /* From Uiverse.io by Custyyyy */
 .button {
- align-items: center;
- background-color: #FFFFFF;
- border: 1px solid rgba(0, 0, 0, 0.1);
- border-radius: .25rem;
- box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
- box-sizing: border-box;
- color: rgba(0, 0, 0, 0.85);
- cursor: pointer;
- display: inline-flex;
- font-family: system-ui,-apple-system,system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;
- font-size: 16px;
- font-weight: 600;
- justify-content: center;
- line-height: 1.25;
- min-height: 3rem;
- padding: calc(.875rem - 1px) calc(1.5rem - 1px);
- text-decoration: none;
- transition: all 250ms;
- user-select: none;
- -webkit-user-select: none;
- touch-action: manipulation;
- vertical-align: baseline;
- width: auto;
+    align-items: center;
+    background-color: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: .25rem;
+    box-shadow: rgba(0, 0, 0, 0.02) 0 1px 3px 0;
+    box-sizing: border-box;
+    color: rgba(0, 0, 0, 0.85);
+    cursor: pointer;
+    display: inline-flex;
+    font-family: system-ui,-apple-system,system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    justify-content: center;
+    line-height: 1.25;
+    min-height: 3rem;
+    padding: calc(.875rem - 1px) calc(1.5rem - 1px);
+    text-decoration: none;
+    transition: all 250ms;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: baseline;
+    width: auto;
 }
 
 .button:hover,
 .button:focus {
- border-color: rgba(0, 0, 0, 0.15);
- box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
- color: rgba(0, 0, 0, 0.65);
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.1) 0 4px 12px;
+    color: rgba(0, 0, 0, 0.65);
 }
 
 .button:hover {
- transform: translateY(-1px);
+    transform: translateY(-1px);
 }
 
 .button:active {
- background-color: #F0F0F1;
- border-color: rgba(0, 0, 0, 0.15);
- box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
- color: rgba(0, 0, 0, 0.65);
- transform: translateY(0);
+    background-color: #F0F0F1;
+    border-color: rgba(0, 0, 0, 0.15);
+    box-shadow: rgba(0, 0, 0, 0.06) 0 2px 4px;
+    color: rgba(0, 0, 0, 0.65);
+    transform: translateY(0);
+}
+
+/* Button styles for different actions */
+.message-button,
+.remove-button,
+.invite-button,
+.accept-button,
+.deny-button,
+.cancel-button {
+    margin-left: 2px;
+    padding: 5px 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+.invite-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.invite-button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.remove-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.remove-button:hover {
+    background-color: #e53935;
+    transform: scale(1.05);
+}
+
+.accept-button {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.accept-button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.deny-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.deny-button:hover {
+    background-color: #e53935;
+    transform: scale(1.05);
+}
+
+.cancel-button {
+    background-color: #ff9800;
+    color: white;
+}
+
+.cancel-button:hover {
+    background-color: #fb8c00;
+    transform: scale(1.05);
 }
