@@ -53,11 +53,20 @@ function response() {
 
             if (data.action === 'friend_list') {
                 parse_friend_list(data);
-            } else if (data.action === 'request_list') {
+            }
+            else if (data.action === 'request_list') {
                 parse_request_list(data);
-            } else if (data.action === 'pending_list') {
+            }
+            else if (data.action === 'pending_list') {
                 parse_pending_list(data);
-            } else {
+            }
+            else if (data.action === 'remove_friend') {
+                document.getElementById(data.target).remove();
+            }
+            else if (data.action === 'accept_friend_request') {
+                accept_friend_request(data);
+            }
+            else {
                 console.error("Unknown action received from server.");
             }
         } catch (e) {

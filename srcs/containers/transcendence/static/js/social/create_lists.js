@@ -1,5 +1,5 @@
 
-console.log("parsing_json.js loaded");
+console.log("create_lists.js loaded");
 
 function clearAndCheckContainer(containerId) {
     let container = document.getElementById(containerId);
