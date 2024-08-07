@@ -77,10 +77,10 @@ class ActiveConsumer(WebsocketConsumer):
 
     def create_request(self, username):
         requester = self.scope['user']
-        recipient = User.objects.filter(username=username)
-        if recipient.exists():
-            if not FriendRequest.objects.filter(requester=requester, recipient=recipient.get()).exists():
-                FriendRequest.objects.create(requester=requester, recipient=recipient.get())
+        recipient = User.objects.filter(username=username).get()
+        if not FriendList.objects.filter((Q(user1=requester) & Q(user2=recipient)) | (Q(user1=recipient) & Q(user2=requester))).exists():
+            if not FriendRequest.objects.filter(requester=requester, recipient=recipient).exists():
+                FriendRequest.objects.create(requester=requester, recipient=recipient)
                 print(f"Friend request create between {requester} and {recipient}")
             else:
                 print(f"Request already exist !")
@@ -98,10 +98,10 @@ class ActiveConsumer(WebsocketConsumer):
         target = User.objects.filter(username=target_name).get()
         me = self.scope['user']
         info = {'action': 'remove_friend', 'target': target_name}
-        if FriendList.objects.filter(Q(user1=me) | Q(user2=target)).exists():
-            FriendList.objects.filter(Q(user1=me) | Q(user2=target)).delete()
-        elif FriendList.objects.filter(Q(user1=target) | Q(user2=me)).exists():
-            FriendList.objects.filter(Q(user1=target) | Q(user2=me)).delete()
+        if FriendList.objects.filter(user1=me, user2=target).exists():
+            FriendList.objects.filter(user1=me, user2=target).delete()
+        elif FriendList.objects.filter(user1=target, user2=me).exists():
+            FriendList.objects.filter(user1=target, user2=me).delete()
         print("FriendShip delete !")
         async_to_sync(self.channel_layer.group_add)("social_" + target_name, self.channel_name)
         async_to_sync(self.channel_layer.group_send)("social_" + target_name, { 'type': 'send_info', 'data': info })
@@ -110,20 +110,20 @@ class ActiveConsumer(WebsocketConsumer):
         target = User.objects.filter(username=target_name).get()
         me = self.scope['user']
         info = {'action': 'accept_friend_request', 'target': target_name, 'is_connected': target.is_connected }
+        info_me = {'action': 'accept_friend_request', 'target': me.username, 'is_connected': me.is_connected}
         if not FriendList.objects.filter((Q(user1=me) & Q(user2=target)) | (Q(user1=target) & Q(user2=me))).exists():
             FriendList.objects.create(user1=me, user2=target)
+            FriendRequest.objects.filter(requester=target, recipient=me).delete()
         print("Accept friend request !")
-        async_to_sync(self.channel_layer.group_add)("social_" + target_name, self.channel_name)
-        async_to_sync(self.channel_layer.group_send)("social_" + target_name, {'type': 'send_info', 'data': info})
+        async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': info})
+        async_to_sync(self.channel_layer.group_send)("social_" + target_name, {'type': 'send_info', 'data': info_me})
 
     def deny_request(self, target_name):
         target = User.objects.filter(username=target_name).get()
         me = self.scope['user']
         info = {'action': 'deny_friend_request', 'target': target_name}
-        if FriendRequest.objects.filter(Q(requester=me) | Q(recipient=target)).exists():
-            FriendRequest.objects.filter(Q(requester=me) | Q(recipient=target)).delete()
-        elif FriendRequest.objects.filter(Q(requester=target) | Q(recipient=me)).exists():
-            FriendRequest.objects.filter(Q(requester=target) | Q(recipient=me)).delete()
+        if FriendRequest.objects.filter(requester=target, recipient=me).exists():
+            FriendRequest.objects.filter(requester=target, recipient=me).delete()
         print("Deny friend request !")
         async_to_sync(self.channel_layer.group_add)("social_" + target_name, self.channel_name)
         async_to_sync(self.channel_layer.group_send)("social_" + target_name, {'type': 'send_info', 'data': info})

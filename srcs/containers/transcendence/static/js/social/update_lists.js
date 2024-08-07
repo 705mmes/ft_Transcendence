@@ -3,11 +3,13 @@ console.log("update_lists.js loaded");
 
 
 function accept_friend_request(data) {
-    if (document.getElementById("RequestListContainer"))
-        document.getElementById(data.target).remove();
-    else if (document.getElementById("FriendListContainer"))
-    {
+    if (document.getElementsByClassName("RequestListContainer"))
+        if (document.getElementById(data.target))
+            document.getElementById(data.target).remove();
+    if (document.getElementsByClassName("FriendListContainer")[0]) {
+        console.log("cacaa");
         let listItem = createListItem(data.target, data.is_connected);
         addButtons(listItem, data.target, "friend_list");
+        document.getElementsByClassName('FriendListContainer')[0].appendChild(listItem);
     }
 }

@@ -143,12 +143,12 @@ button {
 }
 
 .invite-button {
-    background-color: #4CAF50;
+    background-color: #4ac1f7;
     color: white;
 }
 
 .invite-button:hover {
-    background-color: #45a049;
+    background-color: #4ac1f7;
     transform: scale(1.05);
 }
 
@@ -163,12 +163,12 @@ button {
 }
 
 .accept-button {
-    background-color: #4CAF50;
+    background-color: green;
     color: white;
 }
 
 .accept-button:hover {
-    background-color: #45a049;
+    background-color: darkgreen;
     transform: scale(1.05);
 }
 

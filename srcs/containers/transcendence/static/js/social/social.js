@@ -11,22 +11,24 @@ document.getElementById('social-form').addEventListener('submit', function(event
 
 document.getElementById('friends').addEventListener('click', function(event) {
     event.preventDefault();
-        document.getElementsByClassName('ListContainer').id = "FriendListContainer";
+        let list = document.getElementById('ListContainer');
+    list.className = "FriendListContainer";
     const message = JSON.stringify({action: "friend_list"});
     socket.send(message);
 });
 
 document.getElementById('request').addEventListener('click', function(event) {
     event.preventDefault();
-        let list = document.getElementsByClassName('ListContainer');
-        list.id = "RequestListContainer";
+        let list = document.getElementById('ListContainer');
+        list.className = "RequestListContainer";
     const message = JSON.stringify({action: "request_list"});
     socket.send(message);
 });
 
 document.getElementById('pending').addEventListener('click', function(event) {
     event.preventDefault();
-    document.getElementsByClassName('ListContainer').id = "PendingListContainer";
+    let list = document.getElementById('ListContainer');
+    list.className = "PendingListContainer";
     const message = JSON.stringify({action: "pending_list"});
     socket.send(message);
 });
