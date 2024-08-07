@@ -25,4 +25,7 @@ urlpatterns = [
     path('chat/', include('chat.urls')),
     path('game/', include('game.urls'))
     # path('registration/', views.registration),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

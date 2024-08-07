@@ -60,24 +60,18 @@ def logout_btn(request):
 
 
 def profile(request):
-    player = request.user
     if (request.method == 'POST'):
-        form = ModifiedProfileForm(request.POST, request.FILES)
+        form = ModifiedProfileForm(request.POST, request.FILES, instance=request.user)
         print('Profile picture:', request.FILES.get('profile_picture'))
         if (form.is_valid()):
-            print('valid form')
-            player.username = form.cleaned_data['username']
-            player.email = form.cleaned_data['email']
-            player.profile_picture = form.cleaned_data['profile_picture']
-            player.save()
+            form.save()
+    else:
+        form = ModifiedProfileForm(instance=request.user)
     context = {
-        'username': player.username,
-        'email': player.email,
-        'password': player.password,
-        'profile_picture': player.profile_picture,
+        'registration_form': form,
+        'player': request.user,
     }
-    playerform = ModifiedProfileForm(context)
-    return render(request, 'authentication/profile.html', {'registration_form': playerform, 'player': player})
+    return render(request, 'authentication/profile.html', context)
 
 def profile_page(request):
     return render(request, 'authentication/profile_page.html')
