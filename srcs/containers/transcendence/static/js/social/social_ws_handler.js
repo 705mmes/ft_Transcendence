@@ -1,5 +1,37 @@
 console.log("social_ws_handler.js is loaded");
 
+document.getElementById('social-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const username = document.getElementById('searchbar').value;
+    const message = JSON.stringify({ action: "friend_request", "username": username });
+    socket.send(message);
+    console.log(username);
+});
+
+document.getElementById('friends').addEventListener('click', function(event) {
+    event.preventDefault();
+        let list = document.getElementById('ListContainer');
+    list.className = "FriendListContainer";
+    const message = JSON.stringify({action: "friend_list"});
+    socket.send(message);
+});
+
+document.getElementById('request').addEventListener('click', function(event) {
+    event.preventDefault();
+        let list = document.getElementById('ListContainer');
+        list.className = "RequestListContainer";
+    const message = JSON.stringify({action: "request_list"});
+    socket.send(message);
+});
+
+document.getElementById('pending').addEventListener('click', function(event) {
+    event.preventDefault();
+    let list = document.getElementById('ListContainer');
+    list.className = "PendingListContainer";
+    const message = JSON.stringify({action: "pending_list"});
+    socket.send(message);
+});
+
 function request_friend_list() {
     console.log(`Current pathname: ${window.location.pathname}`);
     if (window.location.pathname === '/social/') {
@@ -49,23 +81,23 @@ function response() {
 
         try {
             let data = JSON.parse(event.data);
-            console.log(data);
+            console.log("parsed data:", data);
 
-            if (data.action === 'friend_list') {
+            if (data.action === 'friend_list')
                 parse_friend_list(data);
-            }
-            else if (data.action === 'request_list') {
+            else if (data.action === 'request_list')
                 parse_request_list(data);
-            }
-            else if (data.action === 'pending_list') {
+            else if (data.action === 'pending_list')
                 parse_pending_list(data);
+            else if (data.action === 'remove_friend')
+            {
+                if (document.getElementById(data.target))
+                    document.getElementById(data.target).remove();
             }
-            else if (data.action === 'remove_friend') {
-                document.getElementById(data.target).remove();
-            }
-            else if (data.action === 'accept_friend_request') {
+            else if (data.action === 'accept_friend_request')
                 accept_friend_request(data);
-            }
+            else if (data.action === 'cancel_deny_request')
+                cancel_deny_request(data);
             else {
                 console.error("Unknown action received from server.");
             }

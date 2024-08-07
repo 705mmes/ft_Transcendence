@@ -36,8 +36,8 @@ class ActiveConsumer(WebsocketConsumer):
             self.remove_friend(text_data_json['target'])
         elif action == 'accept_friend_request':
             self.accept_request(text_data_json['target'])
-        elif action == 'deny_friend_request':
-            self.deny_request(text_data_json['target'])
+        elif action == 'cancel_deny_request':
+            self.cancel_deny_request(text_data_json['target'])
         print(f"Message Recu, action: {action}")
         print(text_data_json)
 
@@ -75,20 +75,23 @@ class ActiveConsumer(WebsocketConsumer):
         json_data = json.dumps(my_request_list)
         self.send(json_data)
 
-    def create_request(self, username):
+    def create_request(self, target_name):
         requester = self.scope['user']
-        recipient = User.objects.filter(username=username).get()
+        recipient = User.objects.filter(username=target_name).get()
+        info = {'action': 'create_request', 'target': target_name, 'is_connected': recipient.is_connected}
+        info_me = {'action': 'create_request', 'target': requester.username, 'is_connected': requester.is_connected}
         if not FriendList.objects.filter((Q(user1=requester) & Q(user2=recipient)) | (Q(user1=recipient) & Q(user2=requester))).exists():
             if not FriendRequest.objects.filter(requester=requester, recipient=recipient).exists():
                 FriendRequest.objects.create(requester=requester, recipient=recipient)
                 print(f"Friend request create between {requester} and {recipient}")
+                async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': info})
+                async_to_sync(self.channel_layer.group_send)("social_" + target_name, {'type': 'send_info', 'data': info_me})
             else:
                 print(f"Request already exist !")
-            # Send info back to the user
+                # Send info back to the user
         else:
             print("User not found !")
             # Send info back to the user
-
 
     def send_info(self, event):
         data = event['data']
@@ -98,13 +101,14 @@ class ActiveConsumer(WebsocketConsumer):
         target = User.objects.filter(username=target_name).get()
         me = self.scope['user']
         info = {'action': 'remove_friend', 'target': target_name}
+        info_me = {'action': 'remove_friend', 'target': me.username}
         if FriendList.objects.filter(user1=me, user2=target).exists():
             FriendList.objects.filter(user1=me, user2=target).delete()
         elif FriendList.objects.filter(user1=target, user2=me).exists():
             FriendList.objects.filter(user1=target, user2=me).delete()
         print("FriendShip delete !")
-        async_to_sync(self.channel_layer.group_add)("social_" + target_name, self.channel_name)
-        async_to_sync(self.channel_layer.group_send)("social_" + target_name, { 'type': 'send_info', 'data': info })
+        async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': info})
+        async_to_sync(self.channel_layer.group_send)("social_" + target_name, { 'type': 'send_info', 'data': info_me })
 
     def accept_request(self, target_name):
         target = User.objects.filter(username=target_name).get()
@@ -118,18 +122,15 @@ class ActiveConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': info})
         async_to_sync(self.channel_layer.group_send)("social_" + target_name, {'type': 'send_info', 'data': info_me})
 
-    def deny_request(self, target_name):
+    def cancel_deny_request(self, target_name):
         target = User.objects.filter(username=target_name).get()
         me = self.scope['user']
-        info = {'action': 'deny_friend_request', 'target': target_name}
+        info = {'action': 'cancel_deny_request', 'target': target_name}
+        info_me = {'action': 'cancel_deny_request', 'target': me.username}
         if FriendRequest.objects.filter(requester=target, recipient=me).exists():
             FriendRequest.objects.filter(requester=target, recipient=me).delete()
+        elif FriendRequest.objects.filter(requester=me, recipient=target).exists():
+            FriendRequest.objects.filter(requester=me, recipient=target).delete()
         print("Deny friend request !")
-        async_to_sync(self.channel_layer.group_add)("social_" + target_name, self.channel_name)
-        async_to_sync(self.channel_layer.group_send)("social_" + target_name, {'type': 'send_info', 'data': info})
-
-    def cancel_pending(self):
-        pass
-
-
-
+        async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': info})
+        async_to_sync(self.channel_layer.group_send)("social_" + target_name, {'type': 'send_info', 'data': info_me})

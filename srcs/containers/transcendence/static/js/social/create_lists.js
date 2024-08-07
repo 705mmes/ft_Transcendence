@@ -65,7 +65,7 @@ function addButtons(listItem, name, listType) {
         denyButton.className = 'deny-button';
         denyButton.textContent = 'Deny';
         denyButton.addEventListener('click', function() {
-			const message = JSON.stringify({ action: "deny_friend_request", "target": name });
+			const message = JSON.stringify({ action: "cancel_deny_request", "target": name });
     		socket.send(message);
             console.log(`Sent request to deny friend request: ${name}`);
         });
@@ -77,7 +77,7 @@ function addButtons(listItem, name, listType) {
         cancelButton.className = 'cancel-button';
         cancelButton.textContent = 'Cancel';
         cancelButton.addEventListener('click', function() {
-            const message = JSON.stringify({ action: "cancel_friend_request", "target": name });
+            const message = JSON.stringify({ action: "cancel_deny_request", "target": name });
     		socket.send(message);
             console.log(`Sent request to cancel friend request: ${name}`);
         });
