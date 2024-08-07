@@ -27,7 +27,7 @@ function checkSocketStatus() {
             break;
         case WebSocket.OPEN:
             console.log("WebSocket connection is open.");
-			request_friend_list();
+            request_friend_list();
             break;
         case WebSocket.CLOSING:
             console.log("WebSocket is closing...");
@@ -41,49 +41,6 @@ function checkSocketStatus() {
     }
 }
 
-function parse_friend_list (data) {
-	let friendList = data.friend_list;
-	let friends = friendList.friends;
-	let friendListContainer = document.getElementById('friendListContainer'); // Ensure this ID matches your HTML
-
-	if (!friendListContainer) {
-		console.error("Friend list container not found.");
-		return;
-	}
-
-	// ensures that you remove any old or stale data from the friend list container.
-	friendListContainer.innerHTML = '';
-
-	for (let friend in friends) {
-		if (friends.hasOwnProperty(friend)) {
-			// Create the list item container
-			let listItem = document.createElement('li');
-			listItem.className = 'friend-item';
-
-			// Create the friend name element
-			let friendName = document.createElement('span');
-			friendName.className = 'friend-name';
-			friendName.textContent = friend;
-
-			// Create the connection status dot
-			let connectionStatus = document.createElement('span');
-			connectionStatus.className = 'connection-status';
-			if (friends[friend].is_connected) {
-				connectionStatus.classList.add('connected');
-			} else {
-				connectionStatus.classList.add('disconnected');
-			}
-
-			// Append the name and connection status to the list item
-			listItem.appendChild(friendName);
-			listItem.appendChild(connectionStatus);
-
-			// Append the list item to the friend list container
-			friendListContainer.appendChild(listItem);
-		}
-	}
-}
-
 function response() {
     checkSocketStatus();
 
@@ -94,17 +51,29 @@ function response() {
             let data = JSON.parse(event.data);
             console.log(data);
 
-            if (data.action === 'friend_list')
+            if (data.action === 'friend_list') {
                 parse_friend_list(data);
-			else
+            }
+            else if (data.action === 'request_list') {
+                parse_request_list(data);
+            }
+            else if (data.action === 'pending_list') {
+                parse_pending_list(data);
+            }
+            else if (data.action === 'remove_friend') {
+                document.getElementById(data.target).remove();
+            }
+            else if (data.action === 'accept_friend_request') {
+                accept_friend_request(data);
+            }
+            else {
                 console.error("Unknown action received from server.");
-        } 
-		catch (e) {
+            }
+        } catch (e) {
             console.error("Failed to parse message data: ", e);
-		}
+        }
     };
 }
 
 console.log("Calling response function");
 response();
-

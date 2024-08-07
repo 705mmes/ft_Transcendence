@@ -12,7 +12,7 @@ async function update_profile(value)
         console.log(token);
         const formdata = new FormData(value);
         let response = await fetch('profile/',{
-            method: 'POST',
+            method: 'PUT',
             body: formdata,
                         headers: {
                 'X-CSRFToken': token,

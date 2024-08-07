@@ -6,7 +6,7 @@
     {% include "authentication/navbar.html" %}
     <link rel="stylesheet" href="{% static 'css/social.css' %}">
     <div class="form-container">
-        <form id="friend-list-form">
+        <form id="social-form">
             <input type="search" id="searchbar" name="username" placeholder="Search...">
             <button type="submit" id="friend_invite">Invite</button>
         </form>
@@ -15,7 +15,7 @@
             <button class="button" type="button" id="request">Requests</button>
             <button class="button" type="button" id="pending">Pending</button>
         </div>
-        <ul id="friendListContainer">
+        <ul id="ListContainer" class="ListContainer">
             <!-- Friend list items will be appended here -->
         </ul>
     </div>
