@@ -3,11 +3,10 @@ from .models import User
 from . import models
 
 
-class ModifiedProfileForm(forms.Form):
-    username = forms.CharField(max_length=64, label='Username', required=False)
-    email = forms.CharField(max_length=300, label='mail', required=False)
-    #password1 = forms.CharField(max_length=64, label='Password')
-    profile_picture = forms.ImageField(label='profile_picture', required=False)
+class ModifiedProfileForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'profile_picture']
 
 
 class LoginForm(forms.Form):

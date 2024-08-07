@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 
 
 class User(AbstractUser):
-    profile_picture = models.ImageField(upload_to='', default='images/smunio.jpg')
+    profile_picture = models.ImageField(upload_to='', blank=True)
     is_connected = models.BooleanField(default=False)
 
     def __str__(self):
@@ -31,3 +31,4 @@ class FriendList(models.Model):
 
     def __str__(self):
         return f"{self.user1.username}"
+
