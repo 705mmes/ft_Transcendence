@@ -98,6 +98,10 @@ function response() {
                 accept_friend_request(data);
             else if (data.action === 'cancel_deny_request')
                 cancel_deny_request(data);
+            else if (data.action === 'create_request')
+                create_request(data);
+            else if (data.action === 'error')
+                display_popup(data);
             else {
                 console.error("Unknown action received from server.");
             }

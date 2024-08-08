@@ -77,21 +77,24 @@ class ActiveConsumer(WebsocketConsumer):
 
     def create_request(self, target_name):
         requester = self.scope['user']
-        recipient = User.objects.filter(username=target_name).get()
-        info = {'action': 'create_request', 'target': target_name, 'is_connected': recipient.is_connected}
-        info_me = {'action': 'create_request', 'target': requester.username, 'is_connected': requester.is_connected}
-        if not FriendList.objects.filter((Q(user1=requester) & Q(user2=recipient)) | (Q(user1=recipient) & Q(user2=requester))).exists():
-            if not FriendRequest.objects.filter(requester=requester, recipient=recipient).exists():
-                FriendRequest.objects.create(requester=requester, recipient=recipient)
-                print(f"Friend request create between {requester} and {recipient}")
-                async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': info})
-                async_to_sync(self.channel_layer.group_send)("social_" + target_name, {'type': 'send_info', 'data': info_me})
+        if User.objects.filter(username=target_name).exists():
+            recipient = User.objects.filter(username=target_name).get()
+            info = {'action': 'create_request', 'target': target_name, 'is_connected': recipient.is_connected}
+            info_me = {'action': 'create_request', 'target': requester.username, 'is_connected': requester.is_connected}
+            if not FriendList.objects.filter((Q(user1=requester) & Q(user2=recipient)) | (Q(user1=recipient) & Q(user2=requester))).exists():
+                if not FriendRequest.objects.filter(requester=requester, recipient=recipient).exists():
+                    FriendRequest.objects.create(requester=requester, recipient=recipient)
+                    async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': info})
+                    async_to_sync(self.channel_layer.group_send)("social_" + target_name, {'type': 'send_info', 'data': info_me})
+                else:
+                    error = {'action': 'error', 'error': "Error: Friend request has already been sent !"}
+                    self.send(json.dumps(error))
             else:
-                print(f"Request already exist !")
-                # Send info back to the user
+                error = {'action': 'error', 'error': "Error: User is already your friend !"}
+                self.send(json.dumps(error))
         else:
-            print("User not found !")
-            # Send info back to the user
+            error = {'action': 'error', 'error': "Error: User not found !"}
+            self.send(json.dumps(error))
 
     def send_info(self, event):
         data = event['data']

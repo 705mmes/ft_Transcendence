@@ -191,3 +191,21 @@ button {
     background-color: #fb8c00;
     transform: scale(1.05);
 }
+
+#snackbar
+{
+    visibility: hidden;
+    width: 100%;
+    background-color: #ca0000;
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+}
+
+#snackbar.snackbar_visibility_show
+{
+    visibility: visible;
+}
