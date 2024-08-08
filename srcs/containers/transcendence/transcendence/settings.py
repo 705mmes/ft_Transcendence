@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'chat',
     'game',
     'channels',
+    'profile_page',
 ]
 
 CHANNEL_LAYERS = {

@@ -1,0 +1,11 @@
+{% load static %}
+
+<h1> Profile </h1>
+{% include "authentication/navbar.html" %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<div>
+    <span>Your info</span>
+    <div id="info"></div>
+    {% include "profile/player_form.html" %}
+</div>
+<div id="yourinfo"></div>

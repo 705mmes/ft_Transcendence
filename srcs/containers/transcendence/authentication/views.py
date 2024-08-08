@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from authentication.forms import LoginForm, RegistrationForm, ModifiedProfileForm
+from authentication.forms import LoginForm, RegistrationForm
 from .models import User
 from django.http import HttpResponse
 from django.contrib.auth import login, authenticate, logout
@@ -59,22 +59,6 @@ def logout_btn(request):
     return render(request, 'authentication/btn_page.html', context)
 
 
-def profile(request):
-    if (request.method == 'POST'):
-        form = ModifiedProfileForm(request.POST, request.FILES, instance=request.user)
-        print('Profile picture:', request.FILES.get('profile_picture'))
-        if (form.is_valid()):
-            form.save()
-    else:
-        form = ModifiedProfileForm(instance=request.user)
-    context = {
-        'registration_form': form,
-        'player': request.user,
-    }
-    return render(request, 'authentication/profile.html', context)
-
-def profile_page(request):
-    return render(request, 'authentication/profile_page.html')
 
 def social(request):
     return render(request, 'authentication/social.html')

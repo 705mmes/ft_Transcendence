@@ -13,7 +13,7 @@ def social(request):
     return render(request, "social.html")
 
 def profile(request):
-    return render(request, "authentication/profile.html")
+    return render(request, "authentication/../profile_page/templates/authentication/profile.html")
 
 def game(request):
     return render(request, "game/game.html")

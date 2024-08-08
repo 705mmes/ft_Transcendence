@@ -8,27 +8,36 @@ async function update_profile(value)
     try
     {
         navigate('/')
-        let token =  document.querySelector('[name=csrfmiddlewaretoken]').value;
-        console.log(token);
         const formdata = new FormData(value);
         let response = await fetch('profile/',{
             method: 'POST',
             body: formdata,
-                        headers: {
-                'X-CSRFToken': token,
-            },
+            headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,},
             credentials: 'same-origin',
         });
         if (!response.ok)
             throw new TypeError(`Server error: ${errorText}`);
-        let errorcatch = await response.text();
-        if(errorcatch === 'Error')
+        let success_error = await response.text();
+        if(success_error === 'Error')
             throw new TypeError('something went wrong');
-        console.log(errorcatch);
-        to_unspecified_page('profile/');
+        else if (success_error === 'Password changed')
+        {
+            socket.close();
+            to_unspecified_page('logout_btn/');
+        }
+        else
+            to_unspecified_page('profile/');
     }
     catch (error)
     {
         console.log(error);
     }
 }
+
+document.getElementById('imglabel').addEventListener('mouseenter',() =>{
+    document.getElementById('imglabel').classList.add('hover_img')
+})
+
+document.getElementById('imglabel').addEventListener('mouseleave',() =>{
+    document.getElementById('imglabel').classList.remove('hover_img');
+})
