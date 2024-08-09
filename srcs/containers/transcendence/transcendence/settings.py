@@ -29,6 +29,9 @@ DEBUG = bool(os.environ.get("DEBUG", default=0))
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://10.13.3.9:8000', 'http://0.0.0.0:8000', 'http://192.168.1.17:8000']
+# Cross-Origin Resource Sharing
+CORS_ALLOW_ALL_ORIGINS = bool(os.environ.get("CORS_ALLOW_ALL"))  # Allow all origins (not recommended for production)
+CORS_ALLOW_CREDENTIALS = True
 
 # ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 ALLOWED_HOSTS = ['*']
@@ -39,6 +42,7 @@ WEBSOCKET_URL = os.getenv('VITE_WEBSOCKET_URL')
 
 INSTALLED_APPS = [
     'daphne',
+	'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -68,6 +72,25 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'corsheaders.middleware.CorsMiddleware',  # Must be placed before Django's CommonMiddleware
+	'django.middleware.security.SecurityMiddleware',
+	'django.middleware.common.CommonMiddleware',
+]
+
+# Allow specific headers and methods
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'authorization',
+    'x-requested-with',
+]
+
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'PATCH',
+    'DELETE',
+    'OPTIONS',
 ]
 
 ROOT_URLCONF = 'transcendence.urls'

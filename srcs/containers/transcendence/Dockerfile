@@ -15,7 +15,9 @@ RUN apt-get update && apt-get install -y netcat && apt-get install -y npm
 RUN pip install --upgrade pip
 COPY ./requirements.txt .
 RUN pip install -r requirements.txt
-RUN npm install dotenv
+RUN npm install dotenv 
+RUN pip install django-cors-headers
+
 
 # copy entrypoint.sh
 COPY ./entrypoint.sh .
