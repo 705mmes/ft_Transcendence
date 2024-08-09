@@ -24,6 +24,7 @@ from django.contrib.auth import get_user_model;
 User = get_user_model();
 from authentication.models import FriendList
 from authentication.models import FriendRequest
+from game.models import GameHistory
 if not User.objects.filter(username='$DJANGO_SUPERUSER_USERNAME').exists():
     neo = User.objects.create_superuser('$DJANGO_SUPERUSER_USERNAME', '$DJANGO_SUPERUSER_EMAIL', '$DJANGO_SUPERUSER_PASSWORD'),
 if not User.objects.filter(username='ludo').exists():
@@ -44,6 +45,13 @@ if not FriendList.objects.filter(user1=leon, user2=abel).exists():
     FriendList.objects.create(user1=leon, user2=abel)
 if not FriendList.objects.filter(user1=ludo, user2=dcandan).exists():
     FriendList.objects.create(user1=ludo, user2=dcandan)
+if not FriendRequest.objects.filter(requester=leon, recipient=ludo):
+    FriendRequest.objects.create(requester=leon, recipient=ludo)
+GameHistory.objects.create(History1=leon, History2=ludo, Score1=3, Score2=0)
+GameHistory.objects.create(History1=dcandan, History2=leon, Score1=0, Score2=3)
+GameHistory.objects.create(History1=dcandan, History2=ludo, Score1=3, Score2=2)
+GameHistory.objects.create(History1=leon, History2=dcandan, Score1=3, Score2=2)
+GameHistory.objects.create(History1=leon, History2=dcandan, Score1=3, Score2=1)
 "
 fi
 
