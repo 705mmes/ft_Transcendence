@@ -54,5 +54,4 @@ function display_popup(data)
             snackbar.className = "snackbar_visibility"
         }, 5000)
     }
-    return ;
 }

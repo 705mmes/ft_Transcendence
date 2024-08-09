@@ -21,7 +21,6 @@ class ActiveConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_discard)(self.room_name, self.channel_name)
 
     def receive(self, text_data):
-        print("Message recu sur ws social !")
         text_data_json = json.loads(text_data)
         action = text_data_json['action']
         if action == 'friend_list':
@@ -38,8 +37,7 @@ class ActiveConsumer(WebsocketConsumer):
             self.accept_request(text_data_json['target'])
         elif action == 'cancel_deny_request':
             self.cancel_deny_request(text_data_json['target'])
-        print(f"Message Recu, action: {action}")
-        print(text_data_json)
+        # print(text_data_json)
 
     def send_friend_list(self):
         user = self.scope['user']
@@ -59,7 +57,6 @@ class ActiveConsumer(WebsocketConsumer):
             recipient_user = User.objects.filter(username=receiver.requester.username).get()
             my_recipient_list['request_list']['request'][recipient_user.username] = {
                 'is_connected': recipient_user.is_connected}
-        print(my_recipient_list)
         json_data = json.dumps(my_recipient_list)
         self.send(json_data)
 
@@ -71,7 +68,6 @@ class ActiveConsumer(WebsocketConsumer):
             requested_user = User.objects.filter(username=request.recipient.username).get()
             my_request_list['pending_list']['pending'][requested_user.username] = {
                 'is_connected': requested_user.is_connected}
-        print(my_request_list)
         json_data = json.dumps(my_request_list)
         self.send(json_data)
 
@@ -109,7 +105,6 @@ class ActiveConsumer(WebsocketConsumer):
             FriendList.objects.filter(user1=me, user2=target).delete()
         elif FriendList.objects.filter(user1=target, user2=me).exists():
             FriendList.objects.filter(user1=target, user2=me).delete()
-        print("FriendShip delete !")
         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': info})
         async_to_sync(self.channel_layer.group_send)("social_" + target_name, { 'type': 'send_info', 'data': info_me })
 
@@ -121,7 +116,6 @@ class ActiveConsumer(WebsocketConsumer):
         if not FriendList.objects.filter((Q(user1=me) & Q(user2=target)) | (Q(user1=target) & Q(user2=me))).exists():
             FriendList.objects.create(user1=me, user2=target)
             FriendRequest.objects.filter(requester=target, recipient=me).delete()
-        print("Accept friend request !")
         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': info})
         async_to_sync(self.channel_layer.group_send)("social_" + target_name, {'type': 'send_info', 'data': info_me})
 
@@ -134,6 +128,5 @@ class ActiveConsumer(WebsocketConsumer):
             FriendRequest.objects.filter(requester=target, recipient=me).delete()
         elif FriendRequest.objects.filter(requester=me, recipient=target).exists():
             FriendRequest.objects.filter(requester=me, recipient=target).delete()
-        print("Deny friend request !")
         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': info})
         async_to_sync(self.channel_layer.group_send)("social_" + target_name, {'type': 'send_info', 'data': info_me})
