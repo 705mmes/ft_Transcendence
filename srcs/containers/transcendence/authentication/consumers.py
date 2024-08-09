@@ -79,8 +79,8 @@ class ActiveConsumer(WebsocketConsumer):
         requester = self.scope['user']
         if User.objects.filter(username=target_name).exists():
             recipient = User.objects.filter(username=target_name).get()
-            info = {'action': 'create_request', 'target': target_name, 'is_connected': recipient.is_connected}
-            info_me = {'action': 'create_request', 'target': requester.username, 'is_connected': requester.is_connected}
+            info = {'action': 'create_request', 'target': target_name, 'is_connected': recipient.is_connected, 'who': 'pending'}
+            info_me = {'action': 'create_request', 'target': requester.username, 'is_connected': requester.is_connected, 'who': 'requester'}
             if not FriendList.objects.filter((Q(user1=requester) & Q(user2=recipient)) | (Q(user1=recipient) & Q(user2=requester))).exists():
                 if not FriendRequest.objects.filter(requester=requester, recipient=recipient).exists():
                     FriendRequest.objects.create(requester=requester, recipient=recipient)

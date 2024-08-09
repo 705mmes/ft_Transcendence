@@ -25,17 +25,22 @@ function cancel_deny_request(data) {
 
 function create_request(data)
 {
-    if (document.getElementsByClassName("RequestListContainer")[0]) {
-        let listItem = createListItem(data.target, data.is_connected);
-        listItem.id = data.target;
-        addButtons(listItem, data.target, "request_list");
-        document.getElementsByClassName('RequestListContainer')[0].appendChild(listItem);
+    if (data.who === 'requester')
+    {
+        if (document.getElementsByClassName("RequestListContainer")[0]) {
+            let listItem = createListItem(data.target, data.is_connected);
+            listItem.id = data.target;
+            addButtons(listItem, data.target, "request_list");
+            document.getElementsByClassName('RequestListContainer')[0].appendChild(listItem);
+        }
     }
-    if (document.getElementsByClassName("PendingListContainer")[0]) {
-        let PendingItem = createListItem(data.target, data.is_connected);
-        PendingItem.id = data.target;
-        addButtons(PendingItem, data.target, "pending_list");
-        document.getElementsByClassName('PendingListContainer')[0].appendChild(PendingItem);
+    if (data.who === 'pending') {
+        if (document.getElementsByClassName("PendingListContainer")[0]) {
+            let PendingItem = createListItem(data.target, data.is_connected);
+            PendingItem.id = data.target;
+            addButtons(PendingItem, data.target, "pending_list");
+            document.getElementsByClassName('PendingListContainer')[0].appendChild(PendingItem);
+        }
     }
 }
 
