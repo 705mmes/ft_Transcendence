@@ -14,7 +14,6 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator
 from transcendence.routing import websocket_urlpatterns as transcendence_websocket_urlpatterns
-from chat.routing import websocket_urlpatterns as chat_websocket_urlpatterns
 from authentication.routing import websocket_urlpatterns as authentication_websocket_urlpatterns
 
 
@@ -25,7 +24,7 @@ application = ProtocolTypeRouter({
     "websocket": AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter(
-                transcendence_websocket_urlpatterns + chat_websocket_urlpatterns + authentication_websocket_urlpatterns
+                transcendence_websocket_urlpatterns + authentication_websocket_urlpatterns
             )
         )
     )
