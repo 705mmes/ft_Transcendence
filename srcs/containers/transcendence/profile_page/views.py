@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from authentication.forms import ModifiedProfileForm
 from django.http import HttpResponse
+from game.models import GameHistory
 
 # Create your views here.
 def profile(request):
@@ -28,3 +29,10 @@ def profile(request):
 
 def profile_page(request):
     return render(request, 'profile/profile_page.html')
+
+def history(request):
+    print(GameHistory.History1)
+    print(GameHistory.History2)
+    print(GameHistory.Score1)
+    print(GameHistory.Score2)
+    return render(request, 'profile/history.html')

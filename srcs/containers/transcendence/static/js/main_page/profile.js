@@ -41,3 +41,7 @@ document.getElementById('imglabel').addEventListener('mouseenter',() =>{
 document.getElementById('imglabel').addEventListener('mouseleave',() =>{
     document.getElementById('imglabel').classList.remove('hover_img');
 })
+
+document.getElementById('history').addEventListener('click', () =>{
+    to_unspecified_page('profile/history/')
+})
