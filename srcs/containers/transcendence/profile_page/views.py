@@ -27,9 +27,6 @@ def profile(request):
     }
     return render(request, 'profile/profile.html', context)
 
-def profile_page(request):
-    return render(request, 'profile/profile_page.html')
-
 def history(request):
     print(GameHistory.History1)
     print(GameHistory.History2)
