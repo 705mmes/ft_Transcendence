@@ -1,7 +1,12 @@
-function main()
-{
+function main_game() {
     // socket = window.getWebSocket()
-    let canevas = document.getElementById("canv");
+    let canevas = document.createElement("canvas");
+    canevas.id = "canv";
+    canevas.height = 1080;
+    canevas.width = 1920;
+    canevas.style = "border: 4px solid black";
+    document.getElementById("gamecanvas").appendChild(canevas);
+    // let canevas = document.getElementById("canv");
 
     let utils = {
         canvcont: canevas.getContext("2d"),
@@ -12,20 +17,20 @@ function main()
         game_begin: 0,
     }
 
-    let btn_1v1 = document.createElement("button");
-    btn_1v1.value = "Test";
-
     let racket_left = new racket(0, canevas.height / 2, "../static/js/images/raquetteR.png", 1000, canevas);
     let racket_right = new racket(canevas.width - 74, canevas.height / 2, "../static/js/images/raquetteL.png", 1000, canevas);
     let ballon = new balle(canevas.width / 2, canevas.height / 2, "../static/js/images/maltesers.png", 500, canevas);
 
-    document.addEventListener("keyup",function (event){lowkeyup(event, racket_left, racket_right)});
-    document.addEventListener("keydown", function (event){lowkeydown(event, racket_left, racket_right, ballon, utils, canevas)});
-    const interid = setInterval(infinite_game_loop, 1000/60, racket_left, racket_right, ballon, canevas, utils);
+    document.addEventListener("keyup", function (event) {
+        lowkeyup(event, racket_left, racket_right)
+    });
+    document.addEventListener("keydown", function (event) {
+        lowkeydown(event, racket_left, racket_right, ballon, utils, canevas)
+    });
+    const interid = setInterval(infinite_game_loop, 1000 / 60, racket_left, racket_right, ballon, canevas, utils);
 }
 
-function drawwin(racket_left, racket_right, canevas, utils)
-{
+function drawwin(racket_left, racket_right, canevas, utils) {
     let text;
     let actualfontsize = utils.fontsize * canevas.width;
     utils.canvcont.font = (actualfontsize) + "px serif";
@@ -135,5 +140,3 @@ function countdown(newtime, racket_left, racket_right, ballon, utils, canevas)
         utils.game_begin = 1;
     }
 }
-
-main();
