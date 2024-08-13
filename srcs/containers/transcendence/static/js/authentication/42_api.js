@@ -115,35 +115,37 @@ async function fetchProtectedData() {
 }
 
 async function registerUser(username, email) {
-    const url = `api_connection/`;
-    const token_csrf = getCookie('csrftoken');
-    // Create the payload for the PUT request
+    const url = `/api_connection/`; // Ensure this matches your Django view URL
+    const csrftoken = getCookie('csrftoken'); // Function to retrieve CSRF token
+
     const payload = {
         username: username,
-        password: 'defaultPassword', // Consider generating a strong, unique password
+        password: 'defaultPass', // Use a generated password
         email: email
     };
-    console.log("registering user: ", payload.username, payload.email, payload.password, " url: ", url, " csrf: ", token_csrf);
+
+    console.log("Attempting to register user:", payload);
+
     try {
-        // Send a PUT request with the user data
         const response = await fetch(url, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRFToken': token_csrf
+                'X-CSRFToken': csrftoken
             },
             body: JSON.stringify(payload)
         });
 
-        // Check if the response is ok (status in the range 200-299)
         if (!response.ok) {
+            // Log the response for debugging
+            const errorResponse = await response.text();
+            console.error('Error response:', errorResponse);
             throw new Error(`Failed to register user: ${response.status}`);
         }
 
-        // Parse the response data
         const data = await response.json();
         console.log('User registered successfully:', data);
-        window.location.href = `${redirectUri}/game/`;
+        window.location.href = `/game/`;
     } catch (error) {
         console.error('Error registering user:', error);
     }

@@ -32,18 +32,27 @@ def api_connection(request):
             if not username or not password or not email:
                 return HttpResponseBadRequest('Missing required fields')
 
-            # Create user
-            user = User.objects.create_user(username=username, password=password, email=email)
-
-            # Authenticate and log in the user
-            user = authenticate(username=username, password=password)
-            if user is not None:
+            # Check if the user already exists
+            user = User.objects.filter(username=username).first()
+            if user:
+                # User exists, authenticate and log in
+                user = authenticate(username=username, password=password)
+                if user is not None:
+                    login(request, user)
+                    return JsonResponse({'message': 'User logged in successfully'}, status=200)
+                else:
+                    return HttpResponse('Error in authentication', status=401)
+            else:
+                # Create new user
+                user = User.objects.create_user(username=username, password=password, email=email)
                 login(request, user)
                 return JsonResponse({'message': 'User registered successfully'}, status=201)
-            else:
-                return HttpResponse('Error in authentication', status=401)
+
         except Exception as e:
             return HttpResponseBadRequest(f'Error: {str(e)}')
+    else:
+        return HttpResponseBadRequest('Invalid request method')
+
 
 def register(request):
     if (request.method == 'PUT'):
