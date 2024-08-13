@@ -1,20 +1,24 @@
 console.log("42_api.js loaded");
 
 // ! NEED A SOLUTION TO AVOID HARDCODING UID AND SECRET !
-const UID = "u-s4t2ud-1f7110550c784d1f276d9e2561682127c83f2e679ba6f4e055955081521aa73ee";
+const UID = "u-s4t2ud-1f7110550c784d1f276d9e2561682127c83f2e679ba6f4e055955081521aa73e";
 const SECRET = "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";
 
 // Define the redirect URI, which is where the user will be redirected after they authenticate.
 // This URI must match one of the URIs registered with the 42 API.
+// Initialize redirectUri
 let redirectUri;
-if (window.location.hostname === 'localhost')
-    redirectUri = 'http://localhost:8000/callback';
-else if (window.location.hostname === 'k2r3p9')
-    redirectUri = 'http://k2r3p9:8000/callback';
-else if (window.location.hostname === 'k2r3p10')
-    redirectUri = 'http://k2r3p10:8000/callback';
-else
-    console.error("host not known");
+
+// Check the hostname and set the redirect URI accordingly
+if (window.location.hostname === 'localhost') {
+    redirectUri = 'http://localhost:8000';
+} else if (window.location.hostname === 'k2r3p9') {
+    redirectUri = 'http://k2r3p10:8000';
+} else if (window.location.hostname === 'k2r3p10') {
+    redirectUri = 'http://k2r3p9:8000';
+} else {
+    console.error("Host not known");
+}
 
 // Check if the URL contains an authorization code
 const urlParams = new URLSearchParams(window.location.search);
@@ -30,14 +34,17 @@ if (code) {
 
 // Function to start the OAuth2 authorization flow
 function startOAuth2Flow() {
-    // Construct the URL to which the user will be redirected to authorize your application.
     const authorizationEndpoint = "https://api.intra.42.fr/oauth/authorize";
-    const url = `${authorizationEndpoint}?client_id=${UID}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code`;
-    console.log("Redirecting to:", url);
-    window.location.href = url; // Redirect the user to the 42 API authorization page
+    // Construct the authorization URL using template literals
+    const authUrl = `${authorizationEndpoint}?client_id=${UID}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code`;
+    // Redirect the user to the 42 API authorization page
+    window.location.href = authUrl;
+    console.log("Redirecting to:", authUrl);
 }
 
+
 async function getAccessToken() {
+    console.log("get access token...");
     try {
 		// const credentials = btoa(`${UID}:${SECRET}`); // Base64 encode "client_id:client_secret"
         // Send a POST request to the token endpoint to exchange the authorization code for an access token
@@ -70,6 +77,7 @@ async function getAccessToken() {
 }
 
 async function fetchProtectedData() {
+    console.log("fetch protected data...");
     const accessToken = await getAccessToken();
 
     if (!accessToken) {
@@ -95,8 +103,9 @@ async function fetchProtectedData() {
 
         const data = await response.json();
         console.log('Protected Data:', data);
-        return data;
-    } catch (error) {
+        const create_user   = await fetch()
+    }
+    catch (error) {
         console.error(error.message);
     }
 }

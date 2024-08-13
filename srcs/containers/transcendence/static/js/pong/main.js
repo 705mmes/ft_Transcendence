@@ -11,6 +11,10 @@ function main()
         ms: 0,
         game_begin: 0,
     }
+
+    let btn_1v1 = document.createElement("button");
+    btn_1v1.value = "Test";
+
     let racket_left = new racket(0, canevas.height / 2, "../static/js/images/raquetteR.png", 1000, canevas);
     let racket_right = new racket(canevas.width - 74, canevas.height / 2, "../static/js/images/raquetteL.png", 1000, canevas);
     let ballon = new balle(canevas.width / 2, canevas.height / 2, "../static/js/images/maltesers.png", 500, canevas);

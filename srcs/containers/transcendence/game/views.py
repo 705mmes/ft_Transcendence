@@ -11,9 +11,15 @@ def game(request):
 def scripts(request):
     return render(request, 'game/scripts.html')
 
+
 def social(request):
     all_users = User.objects.all()
     return render(request, 'authentication/social.html', {'all_users': all_users})
 
+
 def room(request, room_name):
     return render(request, "chat/room.html", {"room_name": room_name})
+
+
+def new_game(request):
+    return render(request, "game/new_game.html")

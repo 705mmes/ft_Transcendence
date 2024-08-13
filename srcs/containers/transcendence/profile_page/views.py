@@ -2,6 +2,7 @@ from django.shortcuts import render
 from authentication.forms import ModifiedProfileForm
 from django.http import HttpResponse
 from game.models import GameHistory
+from django.db.models import Q
 
 # Create your views here.
 def profile(request):
@@ -28,8 +29,23 @@ def profile(request):
     return render(request, 'profile/profile.html', context)
 
 def history(request):
-    print(GameHistory.History1)
-    print(GameHistory.History2)
-    print(GameHistory.Score1)
-    print(GameHistory.Score2)
+    me = request.user
+    test = GameHistory.objects.filter(Q(History1=me) | Q(History2=me))
+
+    print(test)
+    five_last_game = list(test)[-5:]
+    game_history = {}
+    for game in reversed(five_last_game):
+
+        if (game.History1 == me):
+            if(game.Score1 > game.Score2):
+                print('win')
+            else:
+                print('lost')
+        else:
+            print(game.Score2)
+            if(game.Score1 > game.Score2):
+                print('lost')
+            else:
+                print('win')
     return render(request, 'profile/history.html')
