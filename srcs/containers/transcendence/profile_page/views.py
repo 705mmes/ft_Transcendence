@@ -34,18 +34,20 @@ def history(request):
 
     print(test)
     five_last_game = list(test)[-5:]
-    game_history = {}
+    game_history = []
     for game in reversed(five_last_game):
 
         if (game.History1 == me):
-            if(game.Score1 > game.Score2):
-                print('win')
-            else:
-                print('lost')
+            game_history.append({
+                'User1': {'score': game.Score1, 'username': game.History1.username},
+                'User2': {'score': game.Score2, 'username': game.History2.username}
+            })
         else:
-            print(game.Score2)
-            if(game.Score1 > game.Score2):
-                print('lost')
-            else:
-                print('win')
-    return render(request, 'profile/history.html')
+            game_history.append({
+                'User1': {'score': game.Score2, 'username': game.History2.username},
+                'User2': {'score': game.Score1, 'username': game.History1.username}
+            })
+    context  ={
+        'game': game_history
+    }
+    return render(request, 'profile/history.html', context)

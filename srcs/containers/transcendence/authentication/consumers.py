@@ -46,6 +46,7 @@ class ActiveConsumer(WebsocketConsumer):
         for friend in friends:
             friend_user = friend.user1 if friend.user1 != user else friend.user2
             my_friend_list['friend_list']['friends'][friend_user.username] = {'is_connected': friend_user.is_connected}
+        print(my_friend_list)
         json_data = json.dumps(my_friend_list)
         self.send(json_data)
 
