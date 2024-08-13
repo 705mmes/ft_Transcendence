@@ -103,9 +103,64 @@ async function fetchProtectedData() {
 
         const data = await response.json();
         console.log('Protected Data:', data);
-        const create_user   = await fetch()
+        const username = data.login;
+        const email = data.email;
+
+        // Call the function to register the user
+        registerUser(username, email);
     }
     catch (error) {
         console.error(error.message);
     }
+}
+
+async function registerUser(username, email) {
+    const url = `api_connection/`;
+    const token_csrf = getCookie('csrftoken');
+    // Create the payload for the PUT request
+    const payload = {
+        username: username,
+        password: 'defaultPassword', // Consider generating a strong, unique password
+        email: email
+    };
+    console.log("registering user: ", payload.username, payload.email, payload.password, " url: ", url, " csrf: ", token_csrf);
+    try {
+        // Send a PUT request with the user data
+        const response = await fetch(url, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': token_csrf
+            },
+            body: JSON.stringify(payload)
+        });
+
+        // Check if the response is ok (status in the range 200-299)
+        if (!response.ok) {
+            throw new Error(`Failed to register user: ${response.status}`);
+        }
+
+        // Parse the response data
+        const data = await response.json();
+        console.log('User registered successfully:', data);
+        window.location.href = `${redirectUri}/game/`;
+    } catch (error) {
+        console.error('Error registering user:', error);
+    }
+}
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
