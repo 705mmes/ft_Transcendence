@@ -7,7 +7,7 @@ from django.core import serializers
 
 class GameConsumer(WebsocketConsumer):
     def connect(self):
-        print(f"Connecting to : {self.scope['user']}")
+        print(f"Connecting to game : {self.scope['user']}")
         self.room_name = "game_" + self.scope['user'].username
         async_to_sync(self.channel_layer.group_add)(self.room_name, self.channel_name)
         self.accept()

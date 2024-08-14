@@ -1,10 +1,12 @@
+
 function main_lobby()
 {
 
     divcanvas = document.getElementById("gamecanvas");
     divcanvas.height = 200;
-    let game_socket = pong_websocket("ws/game/game/");
-    game_socket.send("Test")
+    let game_socket;
+    game_socket = pong_websocket(game_socket);
+    // game_socket.send("Test")
 }
 
 main_lobby();

@@ -1,26 +1,26 @@
 
-function getWebSocket() {
+function pong_websocket(game_socket) {
     console.log("WebSocket script !")
-    if (!socket || socket.readyState === WebSocket.CLOSED) {
+    if (!game_socket || game_socket.readyState === WebSocket.CLOSED) {
 
         // Initialize the WebSocket connection
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-        const websocketUrl = `${protocol}//${window.location.host}/ws/authentication/social/`;
+        const websocketUrl = `${protocol}//${window.location.host}/ws/game/game/`;
         console.log(websocketUrl);
-        socket = new WebSocket(websocketUrl);
+        game_socket = new WebSocket(websocketUrl);
 
         // Event handler for when the WebSocket connection opens
-        socket.onopen = function (e) {
+        game_socket.onopen = function (e) {
             console.log("[open] Connection established");
         };
 
         // Event handler for when a message is received from the WebSocket
-        socket.onmessage = function (event) {
+        game_socket.onmessage = function (event) {
             console.log(`[message] Data received from server: ${event.data}`);
         };
 
         // Event handler for when the WebSocket connection closes
-        socket.onclose = function (event) {
+        game_socket.onclose = function (event) {
             if (event.wasClean) {
                 console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
             } else {
@@ -29,11 +29,10 @@ function getWebSocket() {
             }
         };
         // Event handler for when an error occurs
-        socket.onerror = function (error) {
+        game_socket.onerror = function (error) {
             console.log(`[error] ${error.message}`);
         };
     }
-    return socket;
-
+    return game_socket;
 }
 

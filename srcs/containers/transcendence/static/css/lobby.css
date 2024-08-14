@@ -72,7 +72,8 @@
 }
 
 #lobby_content {
-    flex-direction: column;
+    display: flex;
+    justify-content: center;
 }
 
 #start_research {

@@ -8,7 +8,7 @@ from django.core import serializers
 
 class ActiveConsumer(WebsocketConsumer):
     def connect(self):
-        print(f"Connecting to : {self.scope['user']}")
+        print(f"Connecting to social : {self.scope['user']}")
         self.scope['user'].is_connected = True
         self.scope['user'].save()
         self.room_name = "social_" + self.scope['user'].username
