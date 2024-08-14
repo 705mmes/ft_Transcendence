@@ -8,7 +8,7 @@ from django.core import serializers
 
 class ActiveConsumer(WebsocketConsumer):
     def connect(self):
-        print(f"Connecting to : {self.scope['user']}")
+        print(f"Connecting to social : {self.scope['user']}")
         self.scope['user'].is_connected = True
         self.scope['user'].save()
         self.room_name = "social_" + self.scope['user'].username
@@ -46,7 +46,7 @@ class ActiveConsumer(WebsocketConsumer):
         for friend in friends:
             friend_user = friend.user1 if friend.user1 != user else friend.user2
             my_friend_list['friend_list']['friends'][friend_user.username] = {'is_connected': friend_user.is_connected}
-        print(my_friend_list)
+        # print(my_friend_list)
         json_data = json.dumps(my_friend_list)
         self.send(json_data)
 
