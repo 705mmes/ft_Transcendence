@@ -5,13 +5,15 @@
 {% include "authentication/navbar.html" %}
 <link rel="stylesheet" href="{% static 'css/lobby.css' %}">
 <div class="game" id="gamecanvas">
-    <div class="button_div">
-        <button id="btn_matchmaking_1v1" class="button">MatchMaking 1v1</button>
-        <button id="btn_tournament" class="button">Tournaments</button>
-        <button id="btn_match_ai" class="button">Match vs AI</button>
-    </div>
     <div class="lobby" id="lobby_div">
-        <h1 id="mode_name">Select a game mode to play !</h1>
+        <div class="button_div">
+            <button id="btn_tournament" class="button">Tournaments</button>
+            <button id="btn_matchmaking_1v1" class="button">MatchMaking 1v1</button>
+            <button id="btn_match_ai" class="button">Match vs AI</button>
+        </div>
+        <div id="lobby_content">
+            <h1 id="mode_name">Select a game mode to play !</h1>
+        </div>
     </div>
 </div>
 

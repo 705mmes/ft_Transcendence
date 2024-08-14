@@ -28,11 +28,18 @@ DEBUG = bool(os.environ.get("DEBUG", default=0))
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_SECURE = bool(os.environ.get("SESSION_COOKIE", default=0))  # Set to True in production with HTTPS
-
+SESSION_COOKIE_DOMAIN = None  # Allows the cookie to be accessible from all subdomains
+SESSION_COOKIE_NAME = 'sessionid'
+SESSION_COOKIE_AGE = 1209600  # Two weeks
+SESSION_COOKIE_HTTPONLY = True
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
+CSRF_COOKIE_SECURE = bool(os.environ.get("CSRF_COOKIE", default=0))
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://10.13.3.9:8000', 'http://0.0.0.0:8000', 'http://192.168.1.17:8000']
+CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_COOKIE_HTTPONLY = True
+
 # Cross-Origin Resource Sharing
 CORS_ALLOW_ALL_ORIGINS = bool(os.environ.get("CORS_ALLOW_ALL"))  # Allow all origins (not recommended for production)
 CORS_ALLOW_CREDENTIALS = True
@@ -80,10 +87,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-	'corsheaders.middleware.CorsMiddleware',  # Must be placed before Django's CommonMiddleware
-	'django.middleware.security.SecurityMiddleware',
-	'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Must be placed before CommonMiddleware
 ]
+
 
 # Allow specific headers and methods
 CORS_ALLOW_HEADERS = [
@@ -99,6 +105,15 @@ CORS_ALLOW_METHODS = [
     'PATCH',
     'DELETE',
     'OPTIONS',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "http://0.0.0.0:8000",
+    "http://k2r3p10:8000",
+    "http://k2r3p9:8000",
+    "http://k2r3p10:8000",
 ]
 
 ROOT_URLCONF = 'transcendence.urls'
@@ -185,3 +200,32 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+log_directory = 'logs'
+if not os.path.exists(log_directory):
+    os.makedirs(log_directory)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(log_directory, 'myproject.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'authentication': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+

@@ -1,6 +1,4 @@
 
-
-// Function to get or create a WebSocket connection
 function getWebSocket() {
     console.log("WebSocket script !")
     if (!socket || socket.readyState === WebSocket.CLOSED) {
@@ -39,11 +37,3 @@ function getWebSocket() {
 
 }
 
-
-// window.addEventListener('beforeunload', () => {
-//     if (socket) {
-//         socket.close();
-//     }
-// });
-
-getWebSocket();
