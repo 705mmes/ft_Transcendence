@@ -1,6 +1,14 @@
+{% extends "index.html" %}
 {% load static %}
 
-<button id="history">history</button>
+{% block content %}
+
+    <h1>Profile</h1>
+{% include "authentication/navbar.html" %}
+
+    <h1>Modify</h1>
+
+<link rel="stylesheet" href="{% static 'css/edit_profile.css' %}">
 <form id="profile_form" enctype="multipart/form-data">
     {% csrf_token %}
     <br><br>
@@ -44,4 +52,6 @@
       <feBlend in="SourceGraphic" in2="goo"></feBlend>
     </filter>
   </defs>
-    </svg>
+</svg>
+
+{% endblock %}

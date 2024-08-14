@@ -40,6 +40,8 @@ def get_redirect_uri(request):
         return 'http://k2r3p9:8000/'
     elif hostname == 'k2r3p10:8000':
         return 'http://k2r3p10:8000/'
+    elif hostname == 'k2r3p8:8000':
+        return 'http://k2r3p8:8000/'
     else:
         raise ValueError(f"Unknown hostname: {hostname}")
 

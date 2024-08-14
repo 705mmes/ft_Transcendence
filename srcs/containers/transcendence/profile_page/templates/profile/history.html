@@ -1,8 +1,6 @@
 {% load static %}
 
 <h1> History </h1>
-
-{% include "authentication/navbar.html" %}
 {% csrf_token %}
 
 <link rel="stylesheet" href="{% static 'css/history.css' %}">
@@ -48,4 +46,4 @@
             </div>
         </div>
     {% endfor %}
-</span>
+</div>

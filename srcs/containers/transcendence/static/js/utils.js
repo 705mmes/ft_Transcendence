@@ -38,16 +38,16 @@ async function reload_scripts(page, flag)
     {
         await load_script_form_fetch(game_class_script_cache);
         await load_script_form_fetch(navigation_script_cache);
+        await  load_script_form_fetch(ws_script_cache);
     }
     if (page !== '/')
     {
         await load_script_form_fetch(navbar_script_cache);
-        await  load_script_form_fetch(ws_script_cache);
-        if (page === '/social/')
+        if (page.match('/social/'))
             await load_script_form_fetch(social_script_cache);
-        else if (page === '/profile/')
+        else if (page.match('/profile/'))
             await load_script_form_fetch(profile_script_cache);
-        else if (page === '/game/')
+        else if (page.match('/game/'))
             await load_script_form_fetch(game_script_cache);
     }
     else

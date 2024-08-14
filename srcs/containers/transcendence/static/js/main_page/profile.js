@@ -1,7 +1,18 @@
-document.getElementById('profile_form').addEventListener('submit', function (event) {
-    event.preventDefault();
-    update_profile(this);
-})
+
+if (document.getElementById('profile_form'))
+{
+    document.getElementById('profile_form').addEventListener('submit', function (event) {
+        event.preventDefault();
+        update_profile(this);
+    })
+    document.getElementById('imglabel').addEventListener('mouseenter',() =>{
+        document.getElementById('imglabel').classList.add('hover_img')
+    })
+
+    document.getElementById('imglabel').addEventListener('mouseleave',() =>{
+        document.getElementById('imglabel').classList.remove('hover_img');
+    })
+}
 
 async function update_profile(value)
 {
@@ -34,14 +45,10 @@ async function update_profile(value)
     }
 }
 
-document.getElementById('imglabel').addEventListener('mouseenter',() =>{
-    document.getElementById('imglabel').classList.add('hover_img')
-})
 
-document.getElementById('imglabel').addEventListener('mouseleave',() =>{
-    document.getElementById('imglabel').classList.remove('hover_img');
-})
-
-document.getElementById('history').addEventListener('click', () =>{
-    to_unspecified_page('profile/history/')
-})
+if (document.getElementById('edit_profile'))
+{
+    document.getElementById('edit_profile').addEventListener('click', () =>{
+        to_unspecified_page('profile/modify/')
+    })
+}

@@ -5,7 +5,7 @@ from game.models import GameHistory
 from django.db.models import Q
 
 # Create your views here.
-def profile(request):
+def profile_update(request):
     if (request.method == 'POST'):
         form = ModifiedProfileForm(request.POST, request.FILES, instance=request.user)
         print('Profile picture:', request.FILES.get('profile_picture'))
@@ -26,7 +26,7 @@ def profile(request):
         'registration_form': form,
         'player': request.user,
     }
-    return render(request, 'profile/profile.html', context)
+    return render(request, 'profile/player_form.html', context)
 
 def history(request):
     me = request.user
@@ -48,6 +48,7 @@ def history(request):
                 'User2': {'score': game.Score1, 'username': game.History1.username}
             })
     context  ={
+        'player': me,
         'game': game_history
     }
-    return render(request, 'profile/history.html', context)
+    return render(request, 'profile/profile.html', context)
