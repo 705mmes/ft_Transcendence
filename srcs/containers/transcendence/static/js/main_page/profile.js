@@ -20,7 +20,7 @@ async function update_profile(value)
     {
         navigate('/')
         const formdata = new FormData(value);
-        let response = await fetch('profile/',{
+        let response = await fetch('profile/modify/',{
             method: 'POST',
             body: formdata,
             headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,},
@@ -29,15 +29,10 @@ async function update_profile(value)
         if (!response.ok)
             throw new TypeError(`Server error: ${errorText}`);
         let success_error = await response.text();
+        console.log(success_error);
         if(success_error === 'Error')
             throw new TypeError('something went wrong');
-        else if (success_error === 'Password changed')
-        {
-            socket.close();
-            to_unspecified_page('logout_btn/');
-        }
-        else
-            to_unspecified_page('profile/');
+        to_unspecified_page('profile/modify/');
     }
     catch (error)
     {

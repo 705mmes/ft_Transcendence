@@ -14,8 +14,6 @@ def profile_update(request):
                 print(form.cleaned_data['new_password'])
                 request.user.set_password(form.cleaned_data['new_password'])
                 request.user.save()
-                form.save()
-                return HttpResponse('Password changed')
             form.save()
             return HttpResponse('Success')
         else:
