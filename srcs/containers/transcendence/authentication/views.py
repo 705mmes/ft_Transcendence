@@ -132,26 +132,19 @@ def register(request):
 
 
 def login_session(request):
-    print("login_session view is called")
-    if request.method == 'POST':
+    if (request.method == 'POST'):
         form = LoginForm(request.POST)
-        if form.is_valid():
+        if (form.is_valid()):
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
-            print("username:", username, "password:", password)
+            print(request.POST['username'])
+            print(request.POST['password'])
             if user is not None:
                 login(request, user)
-                return render(request, 'game/game.html')
+                return (render(request, 'game/game.html'))
             else:
-                return HttpResponse('Invalid credentials, please try again.')
-        else:
-            return render(request, 'authentication/auth_page.html',
-                          {'login_form': form, 'registration_form': RegistrationForm()})
-    else:
-        form = LoginForm()
-    return render(request, 'authentication/auth_page.html',
-                  {'login_form': form, 'registration_form': RegistrationForm()})
+                return (HttpResponse('Error'))
 
 
 def logout_btn(request):

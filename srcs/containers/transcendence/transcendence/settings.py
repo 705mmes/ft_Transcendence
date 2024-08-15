@@ -25,17 +25,17 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get("DEBUG", default=0))
 
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if os.environ.get("USE_HTTPS") == 'true' else None
+# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if os.environ.get("USE_HTTPS") == 'true' else None
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_SECURE = bool(os.environ.get("SESSION_COOKIE", default=0))  # Set to True in production with HTTPS
+# SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# SESSION_COOKIE_SECURE = bool(os.environ.get("SESSION_COOKIE", default=0))  # Set to True in production with HTTPS
 
-CSRF_COOKIE_SECURE = bool(os.environ.get("CSRF_COOKIE", default=0))
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://10.13.3.9:8000', 'http://0.0.0.0:8000', 'http://192.168.1.17:8000']
-CSRF_COOKIE_NAME = 'csrftoken'
+# CSRF_COOKIE_SECURE = bool(os.environ.get("CSRF_COOKIE", default=0))
+# CSRF_COOKIE_NAME = 'csrftoken'
 
 # Cross-Origin Resource Sharing
-CORS_ALLOW_ALL_ORIGINS = bool(os.environ.get("CORS_ALLOW_ALL"))  # Allow all origins (not recommended for production)
+# CORS_ALLOW_ALL_ORIGINS = bool(os.environ.get("CORS_ALLOW_ALL"))  # Allow all origins (not recommended for production)
 
 # OAuth2 credentials
 OAUTH_CLIENT_ID = os.getenv('VITE_UID')
@@ -44,13 +44,12 @@ OAUTH_CLIENT_SECRET = os.getenv('VITE_SECRET')
 # ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 ALLOWED_HOSTS = ['*']
 
-WEBSOCKET_URL = os.getenv('VITE_WEBSOCKET_URL')
 
 # Application definition
 
 INSTALLED_APPS = [
     'daphne',
-	'corsheaders',
+	# 'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -85,29 +84,29 @@ MIDDLEWARE = [
 
 
 # Allow specific headers and methods
-CORS_ALLOW_HEADERS = [
-    'content-type',
-    'authorization',
-    'x-requested-with',
-]
+# CORS_ALLOW_HEADERS = [
+#     'content-type',
+#     'authorization',
+#     'x-requested-with',
+# ]
 
-CORS_ALLOW_METHODS = [
-    'GET',
-    'POST',
-    'PUT',
-    'PATCH',
-    'DELETE',
-    'OPTIONS',
-]
+# CORS_ALLOW_METHODS = [
+#     'GET',
+#     'POST',
+#     'PUT',
+#     'PATCH',
+#     'DELETE',
+#     'OPTIONS',
+# ]
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-    "http://0.0.0.0:8000",
-    "http://k2r3p10:8000",
-    "http://k2r3p9:8000",
-    "http://k2r3p10:8000",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:8000",
+#     "http://127.0.0.1:8000",
+#     "http://0.0.0.0:8000",
+#     "http://k2r3p10:8000",
+#     "http://k2r3p9:8000",
+#     "http://k2r3p10:8000",
+# ]
 
 ROOT_URLCONF = 'transcendence.urls'
 
