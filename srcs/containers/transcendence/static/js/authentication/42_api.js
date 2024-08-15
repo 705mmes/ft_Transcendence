@@ -2,7 +2,7 @@ console.log("42_api script loaded");
 
 function startOAuth2Flow() {
     // Redirect to the start-oauth2-flow Django view
-    window.location.href = '/start-oauth2-flow/';
+    window.location.href = '/oauth/start/';
 }
 
 function getCookie(name) {
