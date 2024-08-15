@@ -30,19 +30,13 @@ async function fetch_scripts(url, class_name)
     return (script_list);
 }
 
-reload_scripts(window.location.pathname, 1);
+reload_scripts(window.location.pathname);
 
-async function reload_scripts(page, flag)
+async function reload_scripts(page)
 {
-    if(flag === 1)
-    {
-        await load_script_form_fetch(game_class_script_cache);
-        await load_script_form_fetch(navigation_script_cache);
-        await  load_script_form_fetch(ws_script_cache);
-    }
     if (page !== '/')
     {
-        await load_script_form_fetch(navbar_script_cache);
+        await always_on_script();
         if (page.match('/social/'))
             await load_script_form_fetch(social_script_cache);
         else if (page.match('/profile/'))
@@ -53,6 +47,22 @@ async function reload_scripts(page, flag)
     else
         await load_script_form_fetch(authentication_script_cache);
 }
+
+async function always_on_script()
+{
+    let script_list = ['navigation_script', 'game_class_script', 'ws_script']
+    let script_list_cache = [navigation_script_cache, game_class_script_cache, ws_script_cache]
+
+    for (let a = 0; a <= 2; a++)
+    {
+        if (document.getElementsByClassName(script_list[a]).length === 0)
+                await  load_script_form_fetch(script_list_cache[a]);
+
+    }
+    if (document.getElementsByClassName('navbar').length > 0)
+        await load_script_form_fetch(navbar_script_cache);
+}
+
 
 async function load_script_form_fetch(cache)
 {
@@ -104,4 +114,13 @@ function navigate_to_load(link)
         history.pushState({page : page_number},null, link);
     page_number++;
     current_page = page_number;
+}
+
+
+
+function navigate(link)
+{
+    if (link[0] !== '/')
+        link = '/' + link;
+    history.replaceState(current_page, null, link)
 }

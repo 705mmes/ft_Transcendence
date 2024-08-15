@@ -14,9 +14,11 @@ function RemoveLoginRegistration()
     }
 }
 
-function DisplayCanvas() {
+async function DisplayCanvas() {
     RemoveLoginRegistration();
-    load_script_form_fetch(ws_script_cache);
+
+    await reload_scripts('nothing/');
+
     AddGameCanvas();
 }
 
@@ -26,11 +28,8 @@ async function AddGameCanvas()
     let div_content = document.getElementById('content');
     await fetching_html('game/', div_content);
 
-
-    delete_script_by_class_name("auth_script");
-
-    await load_script_form_fetch(navbar_script_cache);
-    await load_script_form_fetch(game_script_cache);
+    reset_script();
+    await reload_scripts('/game/canvas/');
     navigate('game/');
 
 }
