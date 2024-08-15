@@ -1,5 +1,8 @@
 console.log("42_api script loaded");
 
+// The then() method is a key feature of JavaScript's Promise API, 
+// 	designed specifically to handle asynchronous tasks like API calls.
+
 function startOAuth2Flow() {
     // Redirect to the start-oauth2-flow Django view
     window.location.href = '/oauth/start/';
@@ -26,6 +29,7 @@ const code = urlParams.get('code');
 
 if (code) {
     // If there's an authorization code, exchange it for an access token
+	console.log("code found:", code)
     fetch('/oauth/callback/', {
         method: 'POST',
         headers: {
@@ -40,10 +44,11 @@ if (code) {
         }
         return response.json();
     })
-    .then(data => {
+    .then(async data => {
         const accessToken = data.access_token;
         // Use the access token to fetch protected data
-        return fetchProtectedData(accessToken);
+        console.log("Pipi caca popo cucu");
+        await DisplayCanvas();
     })
     .catch(error => console.error('Error:', error));
 } else {
@@ -52,13 +57,14 @@ if (code) {
 }
 
 function fetchProtectedData(accessToken) {
-    return fetch('/fetch-user-data/', {
+	console.log("fetchProtectedData sending POST...");
+    return fetch('/fetch_protected_data/', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
+            'X-CSRFToken': getCookie('csrftoken'),
+			'Authorization': `Bearer ${accessToken}`
         },
-        body: JSON.stringify({ accessToken: accessToken })
     })
     .then(response => {
         if (!response.ok) {
@@ -70,7 +76,7 @@ function fetchProtectedData(accessToken) {
         const { username, email } = userData;
         return registerUser(username, email);
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => console.error('Error fetch 2:', error));
 }
 
 function registerUser(username, email) {

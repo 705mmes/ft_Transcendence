@@ -9,6 +9,7 @@ urlpatterns = [
     path('register_session/', views.register),
     path('oauth/start/', views.start_oauth2_flow, name='start_oauth2_flow'),
     path('oauth/callback/', views.oauth_callback, name='oauth_callback'),
+	path('fetch_protected_data/',views.fetch_protected_data),
     path('logout_btn/', views.logout_btn),
     path('social/', views.social),
 ]

@@ -25,15 +25,18 @@ def authentication(request):
 def get_redirect_uri(request):
     print("get_redirect_uri view is called")
     hostname = request.get_host()
+    print("hostname: ", hostname)
     redirect_uris = {
         'localhost:8000': 'http://localhost:8000/',
         'k2r3p9:8000': 'http://k2r3p9:8000/',
         'k2r3p10:8000': 'http://k2r3p10:8000/',
         'k2r3p8:8000': 'http://k2r3p8:8000/',
         '127.0.0.1:8000': 'http://127.0.0.1:8000/',
-        '0.0.0.0:8000': 'http://0.0.0.0:8000/'
+        '0.0.0.0:8000': 'http://0.0.0.0:8000/',
+        '192.168.1.17:8000': 'http://192.168.1.17:8000/'
     }
-    return redirect_uris.get(hostname, 'http://localhost:8000/')
+    print("redirect uri: ", redirect_uris.get(hostname))
+    return redirect_uris.get(hostname)
 
 def start_oauth2_flow(request):
     print("start_oauth2_flow view is called")
@@ -52,7 +55,11 @@ def start_oauth2_flow(request):
 def oauth_callback(request):
     print("oauth_callback view is called")
     REDIRECT_URI = get_redirect_uri(request)
-    code = request.GET.get('code')
+    body_unicode = request.body.decode('utf-8')
+    body = json.loads(body_unicode)
+    code = body.get('code')
+
+    print("code: ", code)
     if not code:
         return JsonResponse({'error': 'Authorization code not provided'}, status=400)
 
@@ -71,7 +78,7 @@ def oauth_callback(request):
         return JsonResponse({'error': 'Failed to fetch access token'}, status=response.status_code)
 
     access_token = response.json().get('access_token')
-    print(access_token)
+    print("access_token: ", access_token)
     # You can now use this access token to fetch protected resources
     return fetch_protected_data(access_token)
 
@@ -92,7 +99,13 @@ def fetch_protected_data(access_token):
     email = user_data.get('email')
 
     result = register_api(username, email)
-    print(result)
+    print("register result: ", result)
+    
+	 # Check the result and respond accordingly
+    if result['status'] == 'success':
+        return JsonResponse({'message': 'User registered and logged in successfully.'}, status=200)
+    else:
+        return JsonResponse({'error': result['message']}, status=400)
 
 def register_api(username, email):
     print("registering, username:", username, "email:", email)
@@ -104,7 +117,7 @@ def register_api(username, email):
         return {'status': 'error', 'message': 'Username already exists.'}
 
     user = User.objects.create_user(username=username, email=email, password=password)
-
+    print("user created, authenticating...")
     # Authenticate and log in the user
     user = authenticate(username=username, password=password)
     if user:
