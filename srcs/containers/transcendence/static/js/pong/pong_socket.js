@@ -11,7 +11,7 @@ function pong_websocket(game_socket) {
 
         // Event handler for when the WebSocket connection opens
         game_socket.onopen = function (e) {
-            console.log("[open] Connection established");
+            console.log("[open] Connection established pong");
         };
 
         // Event handler for when a message is received from the WebSocket
@@ -22,9 +22,9 @@ function pong_websocket(game_socket) {
         // Event handler for when the WebSocket connection closes
         game_socket.onclose = function (event) {
             if (event.wasClean) {
-                console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
+                console.log(`[close] Connection pong closed cleanly, code=${event.code} reason=${event.reason}`);
             } else {
-                console.log('[close] Connection died');
+                console.log('[close] Connection pong died');
                 // Optionally, implement reconnection logic here
             }
         };

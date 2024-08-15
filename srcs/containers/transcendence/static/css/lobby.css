@@ -84,3 +84,19 @@
     margin: 0; /* Reset margin to avoid any unexpected offsets */
 }
 
+.center_div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player_div {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+   margin-left: 10%;
+   margin-right: 10%;
+   width: 200%;
+}
+

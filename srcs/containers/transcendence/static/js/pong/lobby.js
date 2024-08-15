@@ -6,7 +6,7 @@ function main_lobby()
     divcanvas.height = 200;
     let game_socket;
     game_socket = pong_websocket(game_socket);
-    // game_socket.send("Test")
+    game_socket.send(JSON.stringify({action: "request_list"}));
 }
 
 main_lobby();

@@ -13,9 +13,15 @@
         </div>
         <h1 id="mode_name">MatchMaking 1v1</h1>
         <div id="lobby_content">
-            <div>Player 1</div>
-            <div>VS</div>
-            <div>Player 2</div>
+            <div class="player_div">
+                <h2>Player 1</h2>
+                <p>{{ user.username }}</p>
+            </div>
+            <div class="center_div">VS</div>
+            <div class="player_div">
+                <h2>Player 2</h2>
+                <p id="opponent_name">...</p>
+            </div>
         </div>
         <button class="button" id="start_research">SEARCH OPPONENT</button>
     </div>
