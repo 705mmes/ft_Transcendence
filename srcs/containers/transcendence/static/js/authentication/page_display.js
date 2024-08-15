@@ -14,9 +14,9 @@ function RemoveLoginRegistration()
     }
 }
 
-function DisplayCanvas() {
+async function DisplayCanvas() {
     RemoveLoginRegistration();
-    load_script_form_fetch(ws_script_cache);
+    await  load_script_form_fetch(ws_script_cache);
     AddGameCanvas();
 }
 

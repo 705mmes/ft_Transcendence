@@ -6,7 +6,7 @@ function main_lobby()
     divcanvas.height = 200;
     let game_socket;
     game_socket = pong_websocket(game_socket);
-    game_socket.send(JSON.stringify({action: "request_list"}));
+    // game_socket.send(JSON.stringify({action: "request_list"}));
 }
 
 main_lobby();
@@ -57,4 +57,8 @@ document.getElementById("btn_match_ai").onclick = () => {
     {
         document.getElementById("start_research").innerHTML = "LAUNCH GAME"
     }
+}
+
+document.getElementById("start_research").onclick = () => {
+
 }

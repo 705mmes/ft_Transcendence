@@ -41,7 +41,7 @@ services:
     volumes:
       - static_volume:/home/app/web/staticfiles
     ports:
-      - 443:443
+      - 4443:4443
     depends_on:
       - web
     networks:

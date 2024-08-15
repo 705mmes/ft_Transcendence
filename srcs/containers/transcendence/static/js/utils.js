@@ -36,12 +36,13 @@ async function reload_scripts(page, flag)
 {
     if(flag === 1)
     {
-        await load_script_form_fetch(game_class_script_cache);
         await load_script_form_fetch(navigation_script_cache);
-        await  load_script_form_fetch(ws_script_cache);
+        await load_script_form_fetch(game_class_script_cache);
     }
     if (page !== '/')
     {
+        if (flag === 1)
+            await  load_script_form_fetch(ws_script_cache);
         await load_script_form_fetch(navbar_script_cache);
         if (page.match('/social/'))
             await load_script_form_fetch(social_script_cache);
