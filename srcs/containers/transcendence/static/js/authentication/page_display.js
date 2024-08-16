@@ -12,6 +12,9 @@ function RemoveLoginRegistration()
         document.getElementById('login_container').remove();
         document.getElementById('login').remove();
     }
+    if (document.getElementById("42_auth_button")){
+        document.getElementById("42_auth_button").remove()
+    }
 }
 
 async function DisplayCanvas() {

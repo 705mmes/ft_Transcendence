@@ -12,7 +12,6 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_http_methods
 
 def authentication(request):
-    print("authentication view is called")
     context = {
         'login_form': LoginForm,
         'registration_form': RegistrationForm,
@@ -23,9 +22,7 @@ def authentication(request):
         return render(request, 'authentication/auth_page.html', context)
 
 def get_redirect_uri(request):
-    print("get_redirect_uri view is called")
     hostname = request.get_host()
-    print("hostname: ", hostname)
     redirect_uris = {
         'localhost:8000': 'http://localhost:8000/',
         'k2r3p9:8000': 'http://k2r3p9:8000/',
@@ -35,11 +32,9 @@ def get_redirect_uri(request):
         '0.0.0.0:8000': 'http://0.0.0.0:8000/',
         '192.168.1.17:8000': 'http://192.168.1.17:8000/'
     }
-    print("redirect uri: ", redirect_uris.get(hostname))
     return redirect_uris.get(hostname)
 
 def start_oauth2_flow(request):
-    print("start_oauth2_flow view is called")
     REDIRECT_URI = get_redirect_uri(request)
     authorization_endpoint = "https://api.intra.42.fr/oauth/authorize"
     params = {
@@ -47,24 +42,19 @@ def start_oauth2_flow(request):
         'redirect_uri': REDIRECT_URI,
         'response_type': 'code',
     }
-    print(params)
     auth_url = f"{authorization_endpoint}?{urlencode(params)}"
-    print(auth_url)
     return redirect(auth_url)
 
 def oauth_callback(request):
-    print("oauth_callback view is called")
     REDIRECT_URI = get_redirect_uri(request)
     body_unicode = request.body.decode('utf-8')
     body = json.loads(body_unicode)
     code = body.get('code')
 
-    print("code: ", code)
     if not code:
         return JsonResponse({'error': 'Authorization code not provided'}, status=400)
 
     token_endpoint = "https://api.intra.42.fr/oauth/token"
-    print("token_endpoint: ", token_endpoint)
     data = {
         'grant_type': 'authorization_code',
         'client_id': settings.OAUTH_CLIENT_ID,
@@ -72,13 +62,11 @@ def oauth_callback(request):
         'redirect_uri': REDIRECT_URI,
         'code': code,
     }
-    print("data:", data)
     response = requests.post(token_endpoint, data=data)
     if response.status_code != 200:
         return JsonResponse({'error': 'Failed to fetch access token'}, status=response.status_code)
 
     access_token = response.json().get('access_token')
-    print("access_token: ", access_token)
     # You can now use this access token to fetch protected resources
     
     api_endpoint = "https://api.intra.42.fr/v2/me"
@@ -86,7 +74,6 @@ def oauth_callback(request):
         'Authorization': f'Bearer {access_token}',
         'Content-Type': 'application/json',
     }
-    print("fetching protected data using access_token...")
     response = requests.get(api_endpoint, headers=headers)
     if response.status_code != 200:
         return JsonResponse({'error': 'Failed to fetch protected data'}, status=response.status_code)
@@ -96,8 +83,7 @@ def oauth_callback(request):
     email = user_data.get('email')
 
     result = register_api(username, email, request)
-    print("register result: ", result)
-    
+
 	 # Check the result and respond accordingly
     if result['status'] == 'success':
         return JsonResponse({'message': 'User registered and logged in successfully.'}, status=200)
@@ -105,7 +91,6 @@ def oauth_callback(request):
         return JsonResponse({'error': result['message']}, status=400)
 
 def register_api(username, email, request):
-    print("registering, username:", username, "email:", email)
     # Generate a secure random password
     password = "test"
 
@@ -119,7 +104,6 @@ def register_api(username, email, request):
             return {'status': 'error', 'message': 'Authentication failed.'}
 
     user = User.objects.create_user(username=username, email=email, password=password)
-    print("user created, authenticating...")
     # Authenticate and log in the user
     user = authenticate(username=username, password=password)
     if user:
@@ -130,7 +114,6 @@ def register_api(username, email, request):
 
 
 def register(request):
-    print("register view is called")
     if (request.method == 'POST'):
         print('Registration')
         form = RegistrationForm(request.POST)
