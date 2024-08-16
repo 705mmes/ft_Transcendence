@@ -39,64 +39,26 @@ if (code) {
         body: JSON.stringify({ code: code })
     })
     .then(response => {
+        console.log("checking response...");
         if (!response.ok) {
-            throw new Error(`Failed to fetch access token: ${response.status}`);
+            return response.json().then (data => {
+                console.error(`Failed to fetch access token: ${data.message}`);
+                throw new Error(`Failed to fetch access token: ${data.message} ${response.status}`);
+            })
         }
         return response.json();
     })
-    .then(async data => {
-        const accessToken = data.access_token;
-        // Use the access token to fetch protected data
-        console.log("Pipi caca popo cucu");
-        await DisplayCanvas();
-    })
+    .then(data => {
+        console.log("checking data...");
+        if (data.error) {
+            console.error('Error:', data.error);
+        } else {
+            console.log(data.message);
+            window.location.href = '/game/';
+        }})
     .catch(error => console.error('Error:', error));
 } else {
     // Set up the button click event to start OAuth2 flow
     document.getElementById("42_auth_button").addEventListener('click', startOAuth2Flow);
 }
 
-function fetchProtectedData(accessToken) {
-	console.log("fetchProtectedData sending POST...");
-    return fetch('/fetch_protected_data/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken'),
-			'Authorization': `Bearer ${accessToken}`
-        },
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Failed to fetch protected data: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(userData => {
-        const { username, email } = userData;
-        return registerUser(username, email);
-    })
-    .catch(error => console.error('Error fetch 2:', error));
-}
-
-function registerUser(username, email) {
-    return fetch('/register_api/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
-        },
-        body: JSON.stringify({ username: username, email: email })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error(`Failed to register user: ${response.status}`);
-        }
-        return response.json();
-    })
-    .then(result => {
-        console.log(result.message);
-        window.location.href = '/game/';
-    })
-    .catch(error => console.error('Error:', error));
-}

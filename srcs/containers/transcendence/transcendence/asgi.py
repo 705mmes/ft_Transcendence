@@ -9,6 +9,8 @@ https://docs.djangoproject.com/en/5.0/howto/deployment/asgi/
 
 import os
 
+from django.urls import path
+from authentication.consumers import ActiveConsumer
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
@@ -25,6 +27,7 @@ application = ProtocolTypeRouter({
     "websocket": AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter(
+                # path("ws/authentication/social/", ActiveConsumer.as_asgi()),
                 transcendence_websocket_urlpatterns + authentication_websocket_urlpatterns + game_websocket_urlpatterns
             )
         )

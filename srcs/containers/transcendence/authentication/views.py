@@ -80,16 +80,13 @@ def oauth_callback(request):
     access_token = response.json().get('access_token')
     print("access_token: ", access_token)
     # You can now use this access token to fetch protected resources
-    return fetch_protected_data(access_token)
-
-def fetch_protected_data(access_token):
-    print("fetch_protected_data view is called")
+    
     api_endpoint = "https://api.intra.42.fr/v2/me"
     headers = {
         'Authorization': f'Bearer {access_token}',
         'Content-Type': 'application/json',
     }
-
+    print("fetching protected data using access_token...")
     response = requests.get(api_endpoint, headers=headers)
     if response.status_code != 200:
         return JsonResponse({'error': 'Failed to fetch protected data'}, status=response.status_code)
@@ -98,7 +95,7 @@ def fetch_protected_data(access_token):
     username = user_data.get('login')
     email = user_data.get('email')
 
-    result = register_api(username, email)
+    result = register_api(username, email, request)
     print("register result: ", result)
     
 	 # Check the result and respond accordingly
@@ -107,23 +104,30 @@ def fetch_protected_data(access_token):
     else:
         return JsonResponse({'error': result['message']}, status=400)
 
-def register_api(username, email):
+def register_api(username, email, request):
     print("registering, username:", username, "email:", email)
     # Generate a secure random password
     password = "test"
 
     # Create a new user
     if User.objects.filter(username=username).exists():
-        return {'status': 'error', 'message': 'Username already exists.'}
+        user = authenticate(username=username, password=password)
+        if user:
+            login(request, user)
+            return {'status': 'success', 'message': 'User registered and logged in successfully.'}
+        else:
+            return {'status': 'error', 'message': 'Authentication failed.'}
 
     user = User.objects.create_user(username=username, email=email, password=password)
     print("user created, authenticating...")
     # Authenticate and log in the user
     user = authenticate(username=username, password=password)
     if user:
+        login(request, user)
         return {'status': 'success', 'message': 'User registered and logged in successfully.'}
     else:
         return {'status': 'error', 'message': 'Authentication failed.'}
+
 
 def register(request):
     print("register view is called")
