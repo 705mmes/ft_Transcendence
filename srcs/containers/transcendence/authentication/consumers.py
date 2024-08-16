@@ -1,4 +1,3 @@
-from channels.db import database_sync_to_async
 import json
 from asgiref.sync import async_to_sync
 from channels.generic.websocket import WebsocketConsumer
@@ -8,21 +7,17 @@ from django.core import serializers
 
 
 class ActiveConsumer(WebsocketConsumer):
-    async def connect(self):
+    def connect(self):
         print(f"Connecting to social : {self.scope['user']}")
-        await self.connection_status_update(self.scope['user'], True)
+        self.scope['user'].is_connected = True
+        self.scope['user'].save()
         self.room_name = "social_" + self.scope['user'].username
-        await self.channel_layer.group_add(self.room_name, self.channel_name)
+        async_to_sync(self.channel_layer.group_add)(self.room_name, self.channel_name)
         self.accept()
 
-    async def disconnect(self, close_code):
+    def disconnect(self, close_code):
         print(f"Disconnecting to social : {self.scope['user']}")
-        await self.connection_status_update(self.scope['user', False])
-        await self.channel_layer.group_discard(self.room_name, self.channel_name)
-    @database_sync_to_async
-    def connection_status_update(self, user, status):
-        user.is_connected = status
-        user.save()
+        async_to_sync(self.channel_layer.group_discard)(self.room_name, self.channel_name)
 
     def receive(self, text_data):
         text_data_json = json.loads(text_data)

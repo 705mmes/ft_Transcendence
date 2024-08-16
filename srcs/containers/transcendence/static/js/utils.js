@@ -1,4 +1,5 @@
 
+let game_socket;
 let socket;
 let page_number = 0;
 let current_page ;
@@ -86,7 +87,7 @@ async function fetching_html(link, element)
 {
     try
     {
-        console.log(link);
+        // console.log(link);
         const response = await fetch(link);
         if (!response.ok)
             throw new TypeError("HTML fetch failed");
@@ -115,8 +116,6 @@ function navigate_to_load(link)
     page_number++;
     current_page = page_number;
 }
-
-
 
 function navigate(link)
 {

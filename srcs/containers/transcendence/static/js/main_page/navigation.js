@@ -56,3 +56,10 @@ window.onpopstate = (function (event)
             back_to_unspecified_page(window.location.pathname);
     }
 })
+
+
+//bout de scotch deconnexion
+window.addEventListener('beforeunload', () => {
+    navigate('/')
+    navigator.sendBeacon('profile/deconnexion/');
+})

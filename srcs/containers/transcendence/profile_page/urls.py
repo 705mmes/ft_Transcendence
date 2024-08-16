@@ -5,5 +5,6 @@ from . import views
 
 urlpatterns = [
     path('', views.history),
-    path('modify/', views.profile_update)
+    path('modify/', views.profile_update),
+    path('deconnexion/', views.deconnexion),
 ]
