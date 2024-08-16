@@ -13,6 +13,17 @@ class ModifiedProfileForm(forms.ModelForm):
         super(ModifiedProfileForm, self).__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'class': 'input', 'placeholder': ''})
         self.fields['email'].widget.attrs.update({'class': 'input', 'placeholder': ''})
+    def save(self, commit=True):
+        user = super(ModifiedProfileForm, self).save(commit=False)
+        new_password = self.cleaned_data.get('new_password')
+
+        if new_password:
+            user.set_password(new_password)
+
+        if commit:
+            user.save()
+
+        return user
 
 
 class LoginForm(forms.Form):

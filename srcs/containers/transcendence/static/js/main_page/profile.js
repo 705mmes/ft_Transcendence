@@ -32,7 +32,7 @@ async function update_profile(value)
         console.log(success_error);
         if(success_error === 'Error')
             throw new TypeError('something went wrong');
-        to_unspecified_page('profile/modify/');
+        to_unspecified_page('profile');
     }
     catch (error)
     {

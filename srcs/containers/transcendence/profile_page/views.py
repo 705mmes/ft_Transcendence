@@ -3,23 +3,21 @@ from authentication.forms import ModifiedProfileForm
 from django.http import HttpResponse
 from game.models import GameHistory
 from django.db.models import Q
+from authentication.models import User
 
 # Create your views here.
 def profile_update(request):
+    user = User.objects.get(id=request.user.id)
     if (request.method == 'POST'):
-        form = ModifiedProfileForm(request.POST, request.FILES, instance=request.user)
+        form = ModifiedProfileForm(request.POST, request.FILES, instance=user)
         print('Profile picture:', request.FILES.get('profile_picture'))
         if (form.is_valid()):
-            if (form.cleaned_data['new_password']):
-                print(form.cleaned_data['new_password'])
-                request.user.set_password(form.cleaned_data['new_password'])
-                request.user.save()
             form.save()
             return HttpResponse('Success')
         else:
             return HttpResponse('Error')
     else:
-        form = ModifiedProfileForm(instance=request.user)
+        form = ModifiedProfileForm(instance=user)
     context = {
         'registration_form': form,
         'player': request.user,
