@@ -73,15 +73,27 @@ function checkSocketStatus() {
     }
 }
 
+async function friend_profile_request(data)
+{
+    console.log('here');
+    navigate_to_load('/');
+    let div_content = document.getElementById('content');
+    fetching_html(`profile/friend_profile/?target_name=${encodeURIComponent(data.target)}`, div_content)
+    reset_script('/profile/')
+
+    reload_scripts('profile/');
+    navigate('profile/' + data.target);
+}
+
 function response_choice(data)
 {
     let action_list = ['friend_list', 'request_list', 'pending_list', 'remove_friend',
-        'accept_friend_request', 'cancel_deny_request', 'create_request', 'error'];
+        'accept_friend_request', 'cancel_deny_request', 'create_request', 'view_profile', 'error'];
 
     let action_list_function = [parse_friend_list, parse_request_list, parse_pending_list, remove_friend_request,
-        accept_friend_request, cancel_deny_request, create_request, display_popup];
+        accept_friend_request, cancel_deny_request, create_request, friend_profile_request, display_popup];
 
-    for (let a = 0; a <= 7; a++)
+    for (let a = 0; a <= 8; a++)
     {
         if (data.action === action_list[a])
         {

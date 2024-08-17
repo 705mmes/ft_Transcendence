@@ -39,6 +39,8 @@ class ActiveConsumer(WebsocketConsumer):
             self.accept_request(text_data_json['target'])
         elif action == 'cancel_deny_request':
             self.cancel_deny_request(text_data_json['target'])
+        elif action == 'view_profile':
+            self.show_profile(text_data_json['target'])
         # print(text_data_json)
 
     def send_friend_list(self):
@@ -133,3 +135,7 @@ class ActiveConsumer(WebsocketConsumer):
             FriendRequest.objects.filter(requester=me, recipient=target).delete()
         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': info})
         async_to_sync(self.channel_layer.group_send)("social_" + target_name, {'type': 'send_info', 'data': info_me})
+
+    def show_profile(self,  target_name):
+        info = {'action': 'view_profile', 'target': target_name}
+        async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': info})

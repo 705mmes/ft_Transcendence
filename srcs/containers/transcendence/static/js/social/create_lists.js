@@ -49,8 +49,18 @@ function addButtons(listItem, name, listType) {
             console.log(`$Sent request to remove friend: ${name}`);
         });
 
+        let view_profile_button = document.createElement('button');
+        view_profile_button.className = 'view-button';
+        view_profile_button.textContent = 'view profile';
+        view_profile_button.addEventListener('click', function() {
+            const message = JSON.stringify({ action: "view_profile", "target": name });
+    		socket.send(message);
+            console.log(`$Sent request to view friend profile: ${name}`);
+        });
+
         listItem.appendChild(inviteButton);
         listItem.appendChild(removeButton);
+        listItem.appendChild(view_profile_button)
     } else if (listType === 'request_list') {
         let acceptButton = document.createElement('button');
         acceptButton.className = 'accept-button';

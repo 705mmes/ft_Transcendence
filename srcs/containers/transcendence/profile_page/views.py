@@ -27,8 +27,7 @@ def profile_update(request):
                     return HttpResponse('wrong password')
             form.save()
             return HttpResponse('Success')
-        else:
-            return HttpResponse('Error')
+        return HttpResponse('Error')
     else:
         form = ModifiedProfileForm(instance=user)
     context = {
@@ -57,7 +56,36 @@ def history(request):
                 'User2': {'score': game.Score1, 'username': game.History1.username}
             })
     context  ={
+        'target': 'me',
         'player': me,
         'game': game_history
+    }
+    return render(request, 'profile/profile.html', context)
+
+def friend_profile(request):
+    target_name = request.GET.get('target_name')
+    print(target_name)
+    target_user = User.objects.filter(username=target_name).get()
+    test = GameHistory.objects.filter(Q(History1=target_user) | Q(History2=target_user))
+
+    print(test)
+    five_last_game = list(test)[-5:]
+    game_history = []
+    for game in reversed(five_last_game):
+
+        if (game.History1 == target_user):
+            game_history.append({
+                'User1': {'score': game.Score1, 'username': game.History1.username},
+                'User2': {'score': game.Score2, 'username': game.History2.username}
+            })
+        else:
+            game_history.append({
+                'User1': {'score': game.Score2, 'username': game.History2.username},
+                'User2': {'score': game.Score1, 'username': game.History1.username}
+            })
+    context = {
+        'target': 'friend',
+        'player': target_user,
+        'game': game_history,
     }
     return render(request, 'profile/profile.html', context)

@@ -131,6 +131,7 @@ button {
 .remove-button,
 .invite-button,
 .accept-button,
+.view-button,
 .deny-button,
 .cancel-button {
     margin-right: 2px;
