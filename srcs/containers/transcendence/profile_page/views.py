@@ -4,8 +4,9 @@ from django.http import HttpResponse
 from game.models import GameHistory
 from django.db.models import Q
 from authentication.models import User
-from django.views.decorators.csrf import csrf_exempt
-
+from django.contrib.auth.password_validation import validate_password
+from django.core.exceptions import ValidationError
+from django.contrib.auth import update_session_auth_hash
     
 # Create your views here.
 def profile_update(request):
@@ -14,6 +15,16 @@ def profile_update(request):
         form = ModifiedProfileForm(request.POST, request.FILES, instance=user)
         print('Profile picture:', request.FILES.get('profile_picture'))
         if (form.is_valid()):
+            if (form.cleaned_data['new_password']):
+                try:
+                    validate_password(form.cleaned_data['new_password'], form.cleaned_data['new_password_repeat'])
+                    user.set_password(form.cleaned_data['new_password'])
+                    user.save()
+                    update_session_auth_hash(request, user)
+                    form.save()
+                    return HttpResponse('Password updated successfully')
+                except ValidationError:
+                    return HttpResponse('wrong password')
             form.save()
             return HttpResponse('Success')
         else:

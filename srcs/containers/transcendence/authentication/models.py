@@ -1,10 +1,11 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 
 
 class User(AbstractUser):
-    profile_picture = models.ImageField(upload_to='', default='images/smunio.jpg')
+    profile_picture = models.ImageField(upload_to='', default='images/Joever.jpg')
     is_connected = models.BooleanField(default=False)
 
     def __str__(self):
@@ -32,3 +33,12 @@ class FriendList(models.Model):
     def __str__(self):
         return f"{self.user1.username}"
 
+
+
+class RepeatPasswordValidator():
+    def validate(self, password, repeat_password,user=None):
+        if password != repeat_password:
+            raise ValidationError(
+                ("Passwords do not match. try again."),
+                code='password missmatch',
+            )

@@ -32,7 +32,13 @@ async function update_profile(value)
         console.log(success_error);
         if(success_error === 'Error')
             throw new TypeError('something went wrong');
-        to_unspecified_page('profile');
+        if (success_error === 'Password updated successfully')
+        {
+            socket.close();
+            to_unspecified_page('logout_btn/');
+        }
+        else
+            to_unspecified_page('profile');
     }
     catch (error)
     {

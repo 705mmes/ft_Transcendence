@@ -5,6 +5,7 @@ from . import models
 
 class ModifiedProfileForm(forms.ModelForm):
     new_password = forms.CharField(max_length=64, required=False, widget=forms.TextInput(attrs={'class': 'input', 'placeholder':"", 'type':'password'}))
+    new_password_repeat = forms.CharField(max_length=64, required=False, widget=forms.TextInput(attrs={'class': 'input', 'placeholder':"", 'type':'password'}))
     class Meta:
         model = User
         fields = ['username', 'email', 'profile_picture']
@@ -13,18 +14,6 @@ class ModifiedProfileForm(forms.ModelForm):
         super(ModifiedProfileForm, self).__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'class': 'input', 'placeholder': ''})
         self.fields['email'].widget.attrs.update({'class': 'input', 'placeholder': ''})
-    def save(self, commit=True):
-        user = super(ModifiedProfileForm, self).save(commit=False)
-        new_password = self.cleaned_data.get('new_password')
-
-        if new_password:
-            user.set_password(new_password)
-
-        if commit:
-            user.save()
-
-        return user
-
 
 class LoginForm(forms.Form):
     username = forms.CharField(max_length=64, label='Username', widget=forms.TextInput(attrs={'id':'Lusername', 'class':'popuptext', 'placeholder':""}))
