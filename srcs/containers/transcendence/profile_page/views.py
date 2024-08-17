@@ -6,15 +6,6 @@ from django.db.models import Q
 from authentication.models import User
 from django.views.decorators.csrf import csrf_exempt
 
-
-#bout de scotch deconnexion
-@csrf_exempt
-def deconnexion(request):
-    request.user.is_connected = False
-    request.user.save()
-    print('user deconnected')
-    return HttpResponse('user disconnected')
-
     
 # Create your views here.
 def profile_update(request):

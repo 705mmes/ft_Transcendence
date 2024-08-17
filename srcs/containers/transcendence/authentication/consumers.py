@@ -16,6 +16,9 @@ class ActiveConsumer(WebsocketConsumer):
         self.accept()
 
     def disconnect(self, close_code):
+        user = User.objects.get(username=self.scope['user'])
+        user.is_connected = False
+        user.save()
         print(f"Disconnecting to social : {self.scope['user']}")
         async_to_sync(self.channel_layer.group_discard)(self.room_name, self.channel_name)
 
