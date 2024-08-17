@@ -2,6 +2,12 @@
 console.log("update_lists.js loaded");
 
 
+function remove_friend_request(data)
+{
+    if (document.getElementById(data.target))
+        document.getElementById(data.target).remove();
+}
+
 function accept_friend_request(data) {
     if (document.getElementsByClassName("RequestListContainer"))
         if (document.getElementById(data.target))

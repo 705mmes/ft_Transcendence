@@ -73,39 +73,41 @@ function checkSocketStatus() {
     }
 }
 
+function response_choice(data)
+{
+    let action_list = ['friend_list', 'request_list', 'pending_list', 'remove_friend',
+        'accept_friend_request', 'cancel_deny_request', 'create_request', 'error'];
+
+    let action_list_function = [parse_friend_list, parse_request_list, parse_pending_list, remove_friend_request,
+        accept_friend_request, cancel_deny_request, create_request, display_popup];
+
+    for (let a = 0; a <= 7; a++)
+    {
+        if (data.action === action_list[a])
+        {
+            action_list_function[a](data);
+            return ;
+        }
+    }
+    console.error("Unknown action received from server.");
+}
+
+//désolé sam
 function response() {
     checkSocketStatus();
 
-    socket.onmessage = function(event) {
+    socket.onmessage = function(event)
+    {
         console.log(`Data received from server: ${event.data}`);
 
-        try {
+        try
+        {
             let data = JSON.parse(event.data);
             console.log("parsed data:", data);
-
-            if (data.action === 'friend_list')
-                parse_friend_list(data);
-            else if (data.action === 'request_list')
-                parse_request_list(data);
-            else if (data.action === 'pending_list')
-                parse_pending_list(data);
-            else if (data.action === 'remove_friend')
-            {
-                if (document.getElementById(data.target))
-                    document.getElementById(data.target).remove();
-            }
-            else if (data.action === 'accept_friend_request')
-                accept_friend_request(data);
-            else if (data.action === 'cancel_deny_request')
-                cancel_deny_request(data);
-            else if (data.action === 'create_request')
-                create_request(data);
-            else if (data.action === 'error')
-                display_popup(data);
-            else {
-                console.error("Unknown action received from server.");
-            }
-        } catch (e) {
+            response_choice(data);
+        }
+        catch (e)
+        {
             console.error("Failed to parse message data: ", e);
         }
     };
