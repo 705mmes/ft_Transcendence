@@ -14,8 +14,10 @@
     <br><br>
     <input type="file" id="newpp" class="hidden_input" name="profile_picture" accept=".png, .jpg, .jpeg">
     <label for="newpp" id="imglabel">
-        {% if player.profile_picture %}
-            <img src="{{ player.profile_picture.url }}" alt="" width="200px" height="200px">
+        {% if player.profile_picture_url %}
+            <img class="user_profile_picture" src="{{ player.profile_picture_url }}" alt="">
+        {% elif player.profile_picture %}
+            <img class="user_profile_picture" src="{{ player.profile_picture.url }}" alt="">
         {% endif %}
     </label>
     <br><br>

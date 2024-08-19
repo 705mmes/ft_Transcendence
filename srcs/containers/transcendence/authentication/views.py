@@ -10,6 +10,14 @@ from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse, Http
 from django.contrib.auth import login, authenticate, logout
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_http_methods
+import random
+import string
+
+def generate_password():
+    length = random.randint(8, 32)
+    characters = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(random.choice(characters) for i in range(length))
+    return password
 
 def authentication(request):
     context = {
@@ -20,6 +28,7 @@ def authentication(request):
         return render(request, 'game/game.html')
     else:
         return render(request, 'authentication/auth_page.html', context)
+
 
 def get_redirect_uri(request):
     hostname = request.get_host()
@@ -34,6 +43,7 @@ def get_redirect_uri(request):
     }
     return redirect_uris.get(hostname)
 
+
 def start_oauth2_flow(request):
     REDIRECT_URI = get_redirect_uri(request)
     authorization_endpoint = "https://api.intra.42.fr/oauth/authorize"
@@ -44,6 +54,7 @@ def start_oauth2_flow(request):
     }
     auth_url = f"{authorization_endpoint}?{urlencode(params)}"
     return redirect(auth_url)
+
 
 def oauth_callback(request):
     REDIRECT_URI = get_redirect_uri(request)
@@ -68,7 +79,7 @@ def oauth_callback(request):
 
     access_token = response.json().get('access_token')
     # You can now use this access token to fetch protected resources
-    
+
     api_endpoint = "https://api.intra.42.fr/v2/me"
     headers = {
         'Authorization': f'Bearer {access_token}',
@@ -79,20 +90,30 @@ def oauth_callback(request):
         return JsonResponse({'error': 'Failed to fetch protected data'}, status=response.status_code)
 
     user_data = response.json()
+    print("user data: ", user_data);
     username = user_data.get('login')
     email = user_data.get('email')
+    image_data = user_data.get('image', {})
+    main_image_link = image_data.get('link')
 
-    result = register_api(username, email, request)
+    result = register_api(username, email, request, main_image_link)
 
-	 # Check the result and respond accordingly
+    user = User.objects.get(username=username)
+    profile_picture_url = user.get_profile_picture()
+
+    # Check the result and respond accordingly
     if result['status'] == 'success':
-        return JsonResponse({'message': 'User registered and logged in successfully.'}, status=200)
+        return JsonResponse({
+            'message': 'User registered and logged in successfully.',
+            'profile_picture': profile_picture_url
+        }, status=200)
     else:
         return JsonResponse({'error': result['message']}, status=400)
 
-def register_api(username, email, request):
+
+def register_api(username, email, request, image):
     # Generate a secure random password
-    password = "test"
+    password = generate_password()
 
     # Create a new user
     if User.objects.filter(username=username).exists():
@@ -103,7 +124,7 @@ def register_api(username, email, request):
         else:
             return {'status': 'error', 'message': 'Authentication failed.'}
 
-    user = User.objects.create_user(username=username, email=email, password=password)
+    user = User.objects.create_user(username=username, email=email, password=password, profile_picture_url=image, is_42=True)
     # Authenticate and log in the user
     user = authenticate(username=username, password=password)
     if user:
