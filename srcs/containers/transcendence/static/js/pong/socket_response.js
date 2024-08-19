@@ -35,7 +35,7 @@ function responsePong() {
             console.log("parsed data:", data);
 
             if (data.action === 'searching_opponent')
-                console.log("Searching opponnent in prgress ...");
+                console.log("Searching opponent in progress ...");
             else {
                 console.error("Unknown action received from server.");
             }
@@ -45,5 +45,5 @@ function responsePong() {
     };
 }
 
-console.log("Calling response function");
+console.log("Calling responsePong function");
 responsePong();

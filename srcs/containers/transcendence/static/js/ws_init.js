@@ -8,7 +8,7 @@ function getWebSocket() {
         // Initialize the WebSocket connection
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const websocketUrl = `${protocol}//${window.location.host}/ws/authentication/social/`;
-        console.log("websocketUrl: ", websocketUrl);
+        // console.log("websocketUrl: ", websocketUrl);
         socket = new WebSocket(websocketUrl);
 
         // Event handler for when the WebSocket connection opens
@@ -38,12 +38,5 @@ function getWebSocket() {
     return socket;
 
 }
-
-
-// window.addEventListener('beforeunload', () => {
-//     if (socket) {
-//         socket.close();
-//     }
-// });
 
 getWebSocket();
