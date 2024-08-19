@@ -254,6 +254,7 @@ button {
 
 .profile_popup .profile_popup_container
 {
+    min-height: 40%;
     width: 90%;
     background-color: #ffffff;
     border-radius: 8px;
