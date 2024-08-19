@@ -1,8 +1,7 @@
 {% load static %}
 
 <link rel="stylesheet" href="{% static 'css/profile.css' %}">
-{% include "authentication/navbar.html" %}
-<div>
+<div id="profile_page">
     <div class="player_info">
         <label>
         {% if player.profile_picture %}
@@ -37,4 +36,3 @@
     </div>
     {% include "profile/history.html" %}
 </div>
-<div id="yourinfo"></div>

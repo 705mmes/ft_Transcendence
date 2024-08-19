@@ -77,13 +77,17 @@ async function friend_profile_request(data)
 {
     console.log('here');
     navigate_to_load('/');
-    let div_content = document.getElementById('content');
+    let div_content = document.getElementById('profile_popup_content');
     fetching_html(`profile/friend_profile/?target_name=${encodeURIComponent(data.target)}`, div_content)
-    reset_script('/profile/')
+    document.getElementById("profile_popup").classList.add('on')
 
-    reload_scripts('profile/');
-    navigate('profile/' + data.target);
+    navigate('social/');
 }
+
+document.getElementById('profile_popup').addEventListener('click', () =>{
+    document.getElementById('profile_page').remove();
+    document.getElementById('profile_popup').classList.remove('on');
+})
 
 function response_choice(data)
 {

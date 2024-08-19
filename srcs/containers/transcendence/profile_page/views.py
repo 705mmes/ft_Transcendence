@@ -23,8 +23,9 @@ def profile_update(request):
                     update_session_auth_hash(request, user)
                     form.save()
                     return HttpResponse('Password updated successfully')
-                except ValidationError:
-                    return HttpResponse('wrong password')
+                except ValidationError as e:
+                    for error in e.error_list:
+                        return HttpResponse(error.message)
             form.save()
             return HttpResponse('Success')
         return HttpResponse('Error')
@@ -88,4 +89,4 @@ def friend_profile(request):
         'player': target_user,
         'game': game_history,
     }
-    return render(request, 'profile/profile.html', context)
+    return render(request, 'profile/profile_page.html', context)
