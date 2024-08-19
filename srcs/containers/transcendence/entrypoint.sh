@@ -50,13 +50,13 @@ if not FriendRequest.objects.filter(requester=leon, recipient=ludo):
 GameHistory.objects.create(History1=leon, History2=ludo, Score1=3, Score2=0)
 GameHistory.objects.create(History1=dcandan, History2=leon, Score1=0, Score2=3)
 GameHistory.objects.create(History1=dcandan, History2=ludo, Score1=3, Score2=2)
-GameHistory.objects.create(History1=leon, History2=dcandan, Score1=3, Score2=2)
-GameHistory.objects.create(History1=leon, History2=dcandan, Score1=3, Score2=1)
-GameHistory.objects.create(History1=leon, History2=dcandan, Score1=3, Score2=1)
-GameHistory.objects.create(History1=leon, History2=dcandan, Score1=3, Score2=4)
-GameHistory.objects.create(History1=leon, History2=dcandan, Score1=3, Score2=5)
-GameHistory.objects.create(History1=leon, History2=dcandan, Score1=3, Score2=6)
-GameHistory.objects.create(History1=leon, History2=dcandan, Score1=3, Score2=7)
+GameHistory.objects.create(History1=leon, History2=dcandan, Score1=1, Score2=2)
+GameHistory.objects.create(History1=leon, History2=dcandan, Score1=30, Score2=1)
+GameHistory.objects.create(History1=leon, History2=dcandan, Score1=30, Score2=1)
+GameHistory.objects.create(History1=leon, History2=dcandan, Score1=30, Score2=4)
+GameHistory.objects.create(History1=leon, History2=dcandan, Score1=30, Score2=5)
+GameHistory.objects.create(History1=leon, History2=dcandan, Score1=30, Score2=6)
+GameHistory.objects.create(History1=leon, History2=dcandan, Score1=30, Score2=7)
 "
 fi
 
