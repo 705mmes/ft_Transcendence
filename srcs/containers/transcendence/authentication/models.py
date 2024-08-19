@@ -7,6 +7,8 @@ from django.core.exceptions import ValidationError
 class User(AbstractUser):
     profile_picture = models.ImageField(upload_to='', default='images/Joever.jpg')
     is_connected = models.BooleanField(default=False)
+    is_playing = models.BooleanField(default=False)
+    in_research = models.BooleanField(default=True)
 
     def __str__(self):
         return self.username

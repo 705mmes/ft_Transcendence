@@ -1,4 +1,4 @@
-console.log("social_ws_handler.js is loaded");
+// console.log("social_ws_handler.js is loaded");
 
 document.getElementById('social-form').addEventListener('submit', function(event) {
     event.preventDefault();
@@ -93,7 +93,7 @@ function response_choice(data)
     let action_list_function = [parse_friend_list, parse_request_list, parse_pending_list, remove_friend_request,
         accept_friend_request, cancel_deny_request, create_request, friend_profile_request, display_popup];
 
-    for (let a = 0; a <= 8; a++)
+    for (let a = 0; a <= action_list.length; a++)
     {
         if (data.action === action_list[a])
         {
@@ -104,7 +104,7 @@ function response_choice(data)
     console.error("Unknown action received from server.");
 }
 
-//désolé sam
+
 function response() {
     checkSocketStatus();
 
@@ -125,5 +125,5 @@ function response() {
     };
 }
 
-console.log("Calling response function");
+// console.log("Calling response function");
 response();
