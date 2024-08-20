@@ -64,3 +64,4 @@ networks:
 volumes:
   postgres_data:
   static_volume:
+  redis_volume:

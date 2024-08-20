@@ -21,6 +21,8 @@ from django.contrib.auth import get_user_model;
 User = get_user_model();
 if not User.objects.filter(username='$DJANGO_SUPERUSER_USERNAME').exists():
     User.objects.create_superuser('$DJANGO_SUPERUSER_USERNAME', '$DJANGO_SUPERUSER_EMAIL', '$DJANGO_SUPERUSER_PASSWORD')
+if not ValidationService.objects.filter(name='default').exists():
+    ValidationService.objects.create(name='default', use_ssl=True, param_sl='', param_timeout='')
 "
 fi
 

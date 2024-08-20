@@ -21,12 +21,17 @@ python manage.py flush --no-input
 if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_EMAIL" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
     python manage.py shell -c "
 from django.contrib.auth import get_user_model;
+from otp_yubikey.models import ValidationService
+
 User = get_user_model();
 from authentication.models import FriendList
 from authentication.models import FriendRequest
 from game.models import GameHistory
 if not User.objects.filter(username='$DJANGO_SUPERUSER_USERNAME').exists():
     neo = User.objects.create_superuser('$DJANGO_SUPERUSER_USERNAME', '$DJANGO_SUPERUSER_EMAIL', '$DJANGO_SUPERUSER_PASSWORD'),
+if not ValidationService.objects.filter(name='default').exists():
+    ValidationService.objects.create(name='default', use_ssl=True, param_sl='', param_timeout='')
+
 if not User.objects.filter(username='ludo').exists():
     ludo = User.objects.create_user(username='ludo', email='ludo@maildeludo.com', password='fefe')
 if not User.objects.filter(username='leon').exists():
@@ -47,6 +52,7 @@ if not FriendList.objects.filter(user1=ludo, user2=dcandan).exists():
     FriendList.objects.create(user1=ludo, user2=dcandan)
 if not FriendRequest.objects.filter(requester=leon, recipient=ludo):
     FriendRequest.objects.create(requester=leon, recipient=ludo)
+
 GameHistory.objects.create(History1=leon, History2=ludo, Score1=3, Score2=0)
 GameHistory.objects.create(History1=dcandan, History2=leon, Score1=0, Score2=3)
 GameHistory.objects.create(History1=dcandan, History2=ludo, Score1=3, Score2=2)
