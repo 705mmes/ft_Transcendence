@@ -30,7 +30,7 @@ DEBUG = bool(os.environ.get("DEBUG", default=0))
 # SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 # SESSION_COOKIE_SECURE = bool(os.environ.get("SESSION_COOKIE", default=0))  # Set to True in production with HTTPS
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://10.13.3.9:8000', 'http://0.0.0.0:8000', 'http://192.168.1.17:8000']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://10.13.3.9:8000', 'http://0.0.0.0:8000', 'http://192.168.1.17:8000', 'https://localhost:4443', 'https://10.13.3.9:4443', 'https://0.0.0.0:4443', 'https://192.168.1.17:4443']
 # CSRF_COOKIE_SECURE = bool(os.environ.get("CSRF_COOKIE", default=0))
 # CSRF_COOKIE_NAME = 'csrftoken'
 
