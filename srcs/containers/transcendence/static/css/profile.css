@@ -1,25 +1,39 @@
-.player_info{
+.player_info {
     width: 100%;
-    position: fixed;
-    top: 30%;
     display: flex;
-    justify-content: right;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
 }
 
-#player_username{
+#player_username {
+    font-size: 24px;
     display: flex;
-    margin-top: 18.5%;
-    right: 9%;
-    position: absolute;
     justify-content: center;
+    margin-bottom: -30px;
+    z-index: 1;
+    background-color: pink;
+    padding: 5px 10px;
+    border-radius: 10px;
+}
+
+.user_profile_picture {
+    display: block;
+    border-radius: 5px;
+    outline: 5px solid pink;
+    border: 0;
+    outline-offset: 3px;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .edit_btn {
-    margin-top: 17.5%;
-    margin-right: 2.45%;
-    right: 3%;
-    width: 5%;
-    height: 10%;
+    position: absolute;
+    top: 10px;
+    right: 10px;
     border-radius: 20px;
     display: flex;
     justify-content: center;
@@ -34,21 +48,10 @@
     height: 50px;
     transition: all 0.3s;
 }
+
 .edit_btn:hover {
     box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.11);
     color: pink;
     fill-rule: evenodd;
     background-color: whitesmoke;
-}
-
-.user_profile_picture {
-    display: flex;
-    position: absolute;
-    top: 3%;
-    right: 3%;
-    border-radius: 5px;
-    outline: 5px solid pink;
-    border: 0;
-    outline-offset: 3px;
-    width: 15%;
 }

@@ -15,6 +15,9 @@ def profile_update(request):
         form = ModifiedProfileForm(request.POST, request.FILES, instance=user)
         print('Profile picture:', request.FILES.get('profile_picture'))
         if (form.is_valid()):
+            if (user.profile_picture_url):
+                user.profile_picture_url = ''
+                user.save()
             if (form.cleaned_data['new_password']):
                 try:
                     validate_password(form.cleaned_data['new_password'], form.cleaned_data['new_password_repeat'])
@@ -42,7 +45,7 @@ def history(request):
     test = GameHistory.objects.filter(Q(History1=me) | Q(History2=me))
 
     print(test)
-    five_last_game = list(test)[-5:]
+    five_last_game = list(test)[-20:]
     game_history = []
     for game in reversed(five_last_game):
 
@@ -70,7 +73,7 @@ def friend_profile(request):
     test = GameHistory.objects.filter(Q(History1=target_user) | Q(History2=target_user))
 
     print(test)
-    five_last_game = list(test)[-5:]
+    five_last_game = list(test)[-20:]
     game_history = []
     for game in reversed(five_last_game):
 

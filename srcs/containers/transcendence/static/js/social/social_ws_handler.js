@@ -78,15 +78,29 @@ async function friend_profile_request(data)
     console.log('here');
     navigate_to_load('/');
     let div_content = document.getElementById('profile_popup_content');
-    fetching_html(`profile/friend_profile/?target_name=${encodeURIComponent(data.target)}`, div_content)
+    await fetching_html_add(`profile/friend_profile/?target_name=${encodeURIComponent(data.target)}`, div_content)
     document.getElementById("profile_popup").classList.add('on')
 
     navigate('social/');
 }
 
-document.getElementById('profile_popup').addEventListener('click', () =>{
-    document.getElementById('profile_page').remove();
-    document.getElementById('profile_popup').classList.remove('on');
+document.getElementById('profile_popup').addEventListener('click', function(e){
+    if (!document.getElementById('profile_popup_content').contains(e.target)
+        || document.getElementById('close-friend-profile').contains(e.target)){
+        document.getElementById('profile_page').remove();
+        document.getElementById('profile_popup').classList.remove('on');
+    }
+})
+
+window.addEventListener('keydown', function (e){
+    if (e.key === 'Escape')
+    {
+        if (document.getElementsByClassName('profile_popup.on'))
+        {
+            document.getElementById('profile_page').remove();
+            document.getElementById('profile_popup').classList.remove('on');
+        }
+    }
 })
 
 function response_choice(data)

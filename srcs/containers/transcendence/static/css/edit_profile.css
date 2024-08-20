@@ -7,13 +7,11 @@
   opacity: 50%;
 }
 
-#profile_form #imglabel{
-  max-width: 200px;
-  max-height: 200px;
-}
 #profile_form #imglabel img{
   cursor: pointer;
   position: relative;
+  max-width: 200px;
+  max-height: 200px;
 }
 
 #profile_form {

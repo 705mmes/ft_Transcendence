@@ -3,8 +3,8 @@
 {% csrf_token %}
 
 <link rel="stylesheet" href="{% static 'css/history.css' %}">
+<h1 class="title"> History </h1>
 <div class="history">
-    <h1 class="title"> History </h1>
     {% for history in game %}
         <div class="match">
             <div class="user_block">

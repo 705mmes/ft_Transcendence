@@ -254,8 +254,9 @@ button {
 
 .profile_popup .profile_popup_container
 {
-    min-height: 40%;
-    width: 90%;
+    max-height: 80%;
+    min-height: 60%;
+    width: 30%;
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 0 10 rgba(0, 0, 0,.1);
@@ -268,6 +269,24 @@ button {
     transform: scale(1);
     transition: .4s ease;
     transition-delay: .25s;
+    cursor: default;
 }
 
+.exit-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background-color: transparent;
+  position: absolute;
+  top: 0px;
+  right: 10px;
+  cursor: pointer;
+}
+.exit-button:hover svg {
+  fill: black;
+}
+.exit-button svg {
+  fill: rgb(175, 175, 175);
+}
 

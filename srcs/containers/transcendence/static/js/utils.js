@@ -83,6 +83,22 @@ async function load_script_form_fetch(cache)
     }
 }
 
+async function fetching_html_add(link, element)
+{
+    try
+    {
+        // console.log(link);
+        const response = await fetch(link);
+        if (!response.ok)
+            throw new TypeError("HTML fetch failed");
+        element.innerHTML += await response.text();
+    }
+    catch (error)
+    {
+        console.log(error);
+    }
+}
+
 async function fetching_html(link, element)
 {
     try
