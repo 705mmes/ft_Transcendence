@@ -114,7 +114,7 @@ function response() {
 
     socket.onmessage = function(event)
     {
-        console.log(`Data received from server: ${event.data}`);
+        console.log(`Data received from server social: ${event.data}`);
 
         try
         {

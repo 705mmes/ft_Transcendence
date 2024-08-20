@@ -3,43 +3,43 @@ if (document.getElementById("register"))
 		document.getElementById("register").id = "registerhover";
 	})
 
-if (document.getElementById("register"))
+if (document.getElementById("register")){
 document.getElementById("register").addEventListener("mouseleave", (e) => {
 	document.getElementById("registerhover").id = "register";
-})
+})}
 
-if (document.getElementById("register"))
+if (document.getElementById("register")){
 document.getElementById("register").onclick = () => {
 	document.getElementById("registration_container").classList.add('on');
-}
+}}
 
-if (document.getElementById("Rclose"))
+if (document.getElementById("Rclose")){
 document.getElementById("Rclose").onclick = () => {
 	 document.getElementById("registration_container").classList.remove('on');
 	document.getElementById("registration").reset();
-}
+}}
 
-if (document.getElementById("login"))
+if (document.getElementById("login")){
 document.getElementById("login").onclick = () => {
 	document.getElementById("login_container").classList.add('on');
-}
+}}
 
-if (document.getElementById("Lclose"))
+if (document.getElementById("Lclose")){
 document.getElementById("Lclose").onclick = () => {
 	document.getElementById("login_container").classList.remove('on');
-}
+}}
 
-if (document.getElementById("loginform"))
+if (document.getElementById("loginform")){
 document.getElementById("loginform").addEventListener('submit', function(event){
 	event.preventDefault();
 	send_login_form(this, 'login_session/');
 	document.getElementById("login_container").classList.remove('on');
-});
+});}
 
-if (document.getElementById("registration"))
+if (document.getElementById("registration")){
 document.getElementById("registration").addEventListener('submit', function(event){
 	event.preventDefault();
 	send_login_form(this, 'register_session/');
 	document.getElementById("registration_container").classList.remove('on');
-});
+});}
 
