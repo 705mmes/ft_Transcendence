@@ -9,8 +9,9 @@ class User(AbstractUser):
     profile_picture_url = models.URLField(blank=True, null=True)  # Store external URL
     profile_picture = models.ImageField(upload_to='', default='images/Joever.jpg')
     is_connected = models.BooleanField(default=False)
-    is_42 = models.BooleanField(default=False)    is_playing = models.BooleanField(default=False)
-    in_research = models.BooleanField(default=True)
+    is_42 = models.BooleanField(default=False)
+    is_playing = models.BooleanField(default=False)
+    in_research = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
