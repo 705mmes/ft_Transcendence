@@ -20,7 +20,7 @@ function reset_script(page)
 {
     let script_list = ['game_script', 'social_script', 'navbar_script', 'profile_script', 'auth_script']
 
-    for(let a = 0; a <= 4; a++)
+    for(let a = 0; a <= script_list.length; a++)
     {
         if (document.getElementsByClassName(script_list[a]))
             delete_script_by_class_name(script_list[a]);

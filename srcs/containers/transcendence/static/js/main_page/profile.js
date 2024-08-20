@@ -35,14 +35,28 @@ async function update_profile(value)
         if (success_error === 'Password updated successfully')
         {
             socket.close();
-            to_unspecified_page('logout_btn/');
+           await to_unspecified_page('logout_btn/');
         }
+        else if (success_error === 'Success')
+           await to_unspecified_page('profile/');
         else
-            to_unspecified_page('profile');
+            display_popup(success_error)
     }
     catch (error)
     {
         console.log(error);
+    }
+}
+
+function display_popup(data)
+{
+    if (document.getElementById("snackbar")) {
+        let snackbar = document.getElementById("snackbar")
+        snackbar.className = "snackbar_visibility_show";
+        snackbar.innerHTML = data;
+        setTimeout(function (){
+            snackbar.className = "snackbar_visibility"
+        }, 5000)
     }
 }
 

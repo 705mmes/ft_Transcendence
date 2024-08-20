@@ -2,13 +2,16 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
+from django.utils.translation import gettext as _
 
 
 class User(AbstractUser):
     profile_picture_url = models.URLField(blank=True, null=True)  # Store external URL
     profile_picture = models.ImageField(upload_to='', default='images/Joever.jpg')
     is_connected = models.BooleanField(default=False)
-    is_42 = models.BooleanField(default=False)
+    is_42 = models.BooleanField(default=False)    is_playing = models.BooleanField(default=False)
+    in_research = models.BooleanField(default=True)
+
     def __str__(self):
         return self.username
 
@@ -49,3 +52,20 @@ class RepeatPasswordValidator():
                 ("Passwords do not match. try again."),
                 code='password missmatch',
             )
+
+class CustomMinimumLengthValidator:
+    def __init__(self, min_length=8):
+        self.min_length = min_length
+
+    def validate(self, password, user=None):
+        if len(password) < self.min_length:
+            raise ValidationError(
+                _("This password is too short. It must contain at least 8 characters."),
+                code='password too short',
+                params={'min_length': self.min_length},
+            )
+
+    def get_help_text(self):
+        return _(
+            "Your password must contain at least 8 characters."
+        ) % {'min_length': self.min_length}

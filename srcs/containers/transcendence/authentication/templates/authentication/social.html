@@ -5,6 +5,11 @@
     <h1>Social</h1>
     {% include "authentication/navbar.html" %}
     <link rel="stylesheet" href="{% static 'css/social.css' %}">
+    <div class="profile_popup" id="profile_popup">
+        <div class="profile_popup_container" id="profile_popup_content">
+            <button type="submit" class="close_profile_popup"> X </button>
+        </div>
+    </div>
     <div class="form-container">
         <form id="social-form">
             <input type="search" id="searchbar" name="username" placeholder="Search friend...">

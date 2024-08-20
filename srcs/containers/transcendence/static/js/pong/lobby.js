@@ -4,8 +4,6 @@ function main_lobby()
 
     divcanvas = document.getElementById("gamecanvas");
     divcanvas.height = 200;
-    let game_socket;
-    game_socket = pong_websocket(game_socket);
     // game_socket.send(JSON.stringify({action: "request_list"}));
 }
 
@@ -23,7 +21,8 @@ document.getElementById("btn_matchmaking_1v1").onclick = () => {
     }
     else
     {
-        document.getElementById("start_research").innerHTML = "SEARCH OPPONENT"
+        let btn = document.getElementById("start_research");
+        btn.innerHTML = "SEARCH OPPONENT";
     }
 }
 
@@ -39,7 +38,8 @@ document.getElementById("btn_tournament").onclick = () => {
     }
     else
     {
-        document.getElementById("start_research").innerHTML = "SEARCH TOURNAMENT"
+        let btn = document.getElementById("start_research");
+        btn.innerHTML = "SEARCH TOURNAMENT";
     }
 }
 
@@ -55,10 +55,15 @@ document.getElementById("btn_match_ai").onclick = () => {
     }
     else
     {
-        document.getElementById("start_research").innerHTML = "LAUNCH GAME"
+        let btn = document.getElementById("start_research");
+        btn.innerHTML = "LAUNCH GAME";
     }
 }
 
 document.getElementById("start_research").onclick = () => {
-
+    if (document.getElementById("start_research"))
+    {
+        const message = JSON.stringify({action: "searching_opponent"});
+        game_socket.send(message);
+    }
 }

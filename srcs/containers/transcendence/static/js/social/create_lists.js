@@ -1,5 +1,5 @@
 
-console.log("create_lists.js loaded");
+// console.log("create_lists.js loaded");
 
 function clearAndCheckContainer(containerId) {
     let container = document.getElementById(containerId);
@@ -37,7 +37,7 @@ function addButtons(listItem, name, listType) {
         inviteButton.addEventListener('click', function() {
             const message = JSON.stringify({ action: "invite_to_game", "target": name });
     		socket.send(message);
-            console.log(`Sent request to invite ${name} to a game`);
+            // console.log(`Sent request to invite ${name} to a game`);
         });
 
         let removeButton = document.createElement('button');
@@ -46,7 +46,7 @@ function addButtons(listItem, name, listType) {
         removeButton.addEventListener('click', function() {
             const message = JSON.stringify({ action: "remove_friend", "target": name });
     		socket.send(message);
-            console.log(`$Sent request to remove friend: ${name}`);
+            // console.log(`$Sent request to remove friend: ${name}`);
         });
 
         let view_profile_button = document.createElement('button');
@@ -55,7 +55,7 @@ function addButtons(listItem, name, listType) {
         view_profile_button.addEventListener('click', function() {
             const message = JSON.stringify({ action: "view_profile", "target": name });
     		socket.send(message);
-            console.log(`$Sent request to view friend profile: ${name}`);
+            // console.log(`$Sent request to view friend profile: ${name}`);
         });
 
         listItem.appendChild(inviteButton);
@@ -68,7 +68,7 @@ function addButtons(listItem, name, listType) {
         acceptButton.addEventListener('click', function() {
             const message = JSON.stringify({ action: "accept_friend_request", "target": name });
     		socket.send(message);
-            console.log(`Sent request to accept friend request: ${name}`);
+            // console.log(`Sent request to accept friend request: ${name}`);
         });
 
         let denyButton = document.createElement('button');
@@ -77,7 +77,7 @@ function addButtons(listItem, name, listType) {
         denyButton.addEventListener('click', function() {
 			const message = JSON.stringify({ action: "cancel_deny_request", "target": name });
     		socket.send(message);
-            console.log(`Sent request to deny friend request: ${name}`);
+            // console.log(`Sent request to deny friend request: ${name}`);
         });
 
         listItem.appendChild(acceptButton);
@@ -89,7 +89,7 @@ function addButtons(listItem, name, listType) {
         cancelButton.addEventListener('click', function() {
             const message = JSON.stringify({ action: "cancel_deny_request", "target": name });
     		socket.send(message);
-            console.log(`Sent request to cancel friend request: ${name}`);
+            // console.log(`Sent request to cancel friend request: ${name}`);
         });
 
         listItem.appendChild(cancelButton);

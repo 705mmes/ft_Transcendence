@@ -170,8 +170,8 @@ def login_session(request):
 
 def logout_btn(request):
     print("logout view is called")
-    request.user.is_connected = False
-    request.user.save()
+    # request.user.is_connected = False
+    # request.user.save()
     logout(request)
     context = {
         'login_form': LoginForm(),
