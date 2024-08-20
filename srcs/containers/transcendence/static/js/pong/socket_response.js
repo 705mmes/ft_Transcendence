@@ -27,19 +27,23 @@ function PongSocketStatus() {
 function responsePong() {
     PongSocketStatus();
 
-    game_socket.onmessage = function(event) {
-        console.log(`Data received from server: ${event.data}`);
-
-        try {
+    game_socket.onmessage = function(event)
+    {
+        console.log(`Data received from server on pong: ${event.data}`);
+        try
+        {
             let data = JSON.parse(event.data);
-            console.log("parsed data:", data);
-
+            console.log("parsed data pong:", data);
+            console.log(data['action']);
             if (data.action === 'searching_opponent')
-                console.log("Searching opponent in progress ...");
+                change_opponent(undefined);
+            else if (data.action === 'find_opponent')
+                change_opponent(data.opponent)
             else {
                 console.error("Unknown action received from server.");
             }
-        } catch (e) {
+        }
+        catch (e) {
             console.error("Failed to parse message data: ", e);
         }
     };

@@ -16,6 +16,7 @@ function pong_websocket() {
 
         // Event handler for when a message is received from the WebSocket
         game_socket.onmessage = function (event) {
+            // responsePong();
             console.log(`[message] Data received from server: ${event.data}`);
         };
 

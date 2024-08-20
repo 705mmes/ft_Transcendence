@@ -3,8 +3,7 @@ function main_lobby()
 {
 
     divcanvas = document.getElementById("gamecanvas");
-    divcanvas.height = 200;
-    // game_socket.send(JSON.stringify({action: "request_list"}));
+    // divcanvas.height = 200;
 }
 
 main_lobby();
@@ -61,9 +60,23 @@ document.getElementById("btn_match_ai").onclick = () => {
 }
 
 document.getElementById("start_research").onclick = () => {
-    if (document.getElementById("start_research"))
-    {
+    if (document.getElementById("start_research")) {
         const message = JSON.stringify({action: "searching_opponent"});
         game_socket.send(message);
+    }
+}
+
+
+function change_opponent(opponent) {
+    if (opponent === undefined) {
+        console.log("Change opponent", opponent);
+        let text_oppponnent = document.getElementById("opponent_name");
+        text_oppponnent.className = "loader";
+        text_oppponnent.innerHTML = "";
+    }
+    else {
+        if (document.getElementById("opponent_name").className === "loader")
+            document.getElementById("opponent_name").className = "";
+        document.getElementById("opponent_name").innerHTML = opponent;
     }
 }
