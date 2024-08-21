@@ -254,14 +254,14 @@ button {
 
 .profile_popup .profile_popup_container
 {
-    max-height: 80%;
-    min-height: 60%;
-    width: 30%;
+    width: clamp(40%, 45vw, 80%);
+    max-height: clamp(60%, 100vh, 90%);
     background-color: #ffffff;
     border-radius: 8px;
     box-shadow: 0 0 10 rgba(0, 0, 0,.1);
     padding: 30px;
     transform: scale(0);
+    overflow: hidden;
 }
 
 .profile_popup.on .profile_popup_container
@@ -289,4 +289,3 @@ button {
 .exit-button svg {
   fill: rgb(175, 175, 175);
 }
-
