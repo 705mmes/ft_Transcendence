@@ -10,6 +10,8 @@ from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse, Http
 from django.contrib.auth import login, authenticate, logout
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
+from django_otp.decorators import otp_required
 import random
 import string
 
@@ -160,19 +162,26 @@ def register(request):
 
 
 def login_session(request):
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         form = LoginForm(request.POST)
-        if (form.is_valid()):
+        if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
-            print(request.POST['username'])
-            print(request.POST['password'])
             if user is not None:
+                # print("about to call two_factor...")
+                # request.session['pre_2fa_user_id'] = user.pk  # Save the user's ID before 2FA
+                # return redirect('two_factor:login')  # Redirect to 2FA verification
                 login(request, user)
                 return (render(request, 'game/game.html'))
             else:
-                return (HttpResponse('Error'))
+                return HttpResponse('Error: Invalid login credentials')
+        else:
+            return HttpResponse('Error: Form is not valid')
+    else:
+        form = LoginForm()
+        return render(request, 'authentication/auth_page.html', {'login_form': form})
+
 
 
 def logout_btn(request):

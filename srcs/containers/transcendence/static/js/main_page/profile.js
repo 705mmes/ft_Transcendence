@@ -18,6 +18,7 @@ async function update_profile(value)
 {
     try
     {
+        console.log("je jure jai pas cliquer sur save");
         navigate('/')
         const formdata = new FormData(value);
         let response = await fetch('profile/modify/',{
@@ -60,6 +61,14 @@ function display_popup(data)
     }
 }
 
+if (document.getElementById('two_factor')) {
+    document.getElementById('two_factor').addEventListener('click', () =>{
+        const host = window.location.host;
+        const url = `http://${host}/account/two_factor/setup/`;
+        console.log("url: ", url);
+        window.location.href = url;
+    })
+}
 
 if (document.getElementById('edit_profile'))
 {
