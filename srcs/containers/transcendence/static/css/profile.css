@@ -19,6 +19,8 @@
 }
 
 .user_profile_picture {
+    height: 200px;
+    width: 200px;
     display: block;
     border-radius: 5px;
     outline: 5px solid pink;

@@ -11,7 +11,7 @@
     box-sizing: border-box;
     border-radius: 10px;
     margin: auto;
-    max-height: 50vh;
+    max-height: clamp(5vh, 100vh, 50vh);
 }
 
 .history .title {
