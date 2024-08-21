@@ -34,11 +34,16 @@ function responsePong() {
         {
             let data = JSON.parse(event.data);
             console.log("parsed data pong:", data);
-            console.log(data['action']);
-            if (data.action === 'searching_opponent')
-                change_opponent(undefined);
+            console.log(data.action);
+            if (data.action === 'searching')
+                display_cancel_btn();
+            else if (data.action === 'cancel')
+                display_research_btn("SEARCH OPPONENT");
             else if (data.action === 'find_opponent')
-                change_opponent(data.opponent)
+            {
+                change_opponent(data.opponent);
+
+            }
             else {
                 console.error("Unknown action received from server.");
             }

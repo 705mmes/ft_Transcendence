@@ -76,6 +76,7 @@
     justify-content: center;
 }
 
+#cancel_research,
 #start_research {
     position: absolute;
     bottom: 10px; /* 10px from the bottom */
@@ -98,5 +99,9 @@
    margin-left: 10%;
    margin-right: 10%;
    width: 200%;
+}
+
+#loading{
+    margin: auto;
 }
 
