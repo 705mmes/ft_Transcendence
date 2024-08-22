@@ -12,8 +12,11 @@ class GameConsumer(WebsocketConsumer):
     def connect(self):
         print(f"Connecting to game : {self.scope['user']}")
         self.room_name = "game_" + self.scope['user'].username
-        print(f"room name = {self.room_name}")
+        print(f"room name = {self.room_name} et channel name {self.channel_name}")
         async_to_sync(self.channel_layer.group_add)(self.room_name, self.channel_name)
+        user = User.objects.get(username=self.scope['user'])
+        user.channel_name = self.channel_name
+        user.save()
         self.accept()
 
     def disconnect(self, close_code):
@@ -72,8 +75,8 @@ class GameConsumer(WebsocketConsumer):
         self.change_is_playing(True, user)
         if self.check_lobby_existance(opponent, user) == False:
             lobby = GameLobby.objects.create(Player1=user, Player2=opponent, Name=f"{user.username}_{opponent.username}")
-            async_to_sync(self.channel_layer.group_add)(lobby.Name, user.username)
-            async_to_sync(self.channel_layer.group_add)(lobby.Name, opponent.username)
+            async_to_sync(self.channel_layer.group_add)(lobby.Name, user.channel_name)
+            async_to_sync(self.channel_layer.group_add)(lobby.Name, opponent.channel_name)
 
 
     def searching_1v1(self):
@@ -111,12 +114,12 @@ class GameConsumer(WebsocketConsumer):
         else:
             opponent = lobby.Player1
         if user.is_playing and opponent.is_playing:
-            print("Pupu")
+            json_data = {'action': 'start_game', 'mode': 'matchmaking_1v1'}
+            async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
             return
-        print("pipi")
+        print("Popo")
         json_data = {'action': 'cancel_lobby', 'mode': 'matchmaking_1v1'}
-        async_to_sync(self.channel_layer.group_send)(lobby.Name, {'type': 'send_info', 'data': json_data})
-        print(lobby.Name)
+        async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
 
 
     def tournament(self, json_data):

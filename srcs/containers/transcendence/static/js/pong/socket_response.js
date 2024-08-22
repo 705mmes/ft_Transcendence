@@ -50,6 +50,13 @@ function responsePong() {
                 change_opponent(data.opponent);
                 setTimeout(waiting, 3000);
             }
+            else if (data.action === 'cancel_lobby')
+                to_unspecified_page('game/');
+            else if (data.action === 'start_game')
+            {
+                document.getElementById('lobby_div').remove();
+                main_game();
+            }
             else {
                 console.error("Unknown action received from server.");
             }

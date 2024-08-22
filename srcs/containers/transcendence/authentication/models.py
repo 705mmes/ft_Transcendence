@@ -12,6 +12,7 @@ class User(AbstractUser):
     is_42 = models.BooleanField(default=False)
     is_playing = models.BooleanField(default=False)
     in_research = models.BooleanField(default=False)
+    channel_name = models.CharField(blank=True)
 
     def __str__(self):
         return self.username

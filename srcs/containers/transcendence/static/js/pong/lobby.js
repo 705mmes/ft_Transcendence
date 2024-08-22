@@ -1,9 +1,7 @@
 
 function main_lobby()
 {
-
     divcanvas = document.getElementById("gamecanvas");
-    // divcanvas.height = 200;
 }
 
 main_lobby();

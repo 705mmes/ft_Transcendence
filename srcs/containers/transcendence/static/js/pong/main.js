@@ -3,7 +3,7 @@ function main_game() {
     let canevas = document.createElement("canvas");
     canevas.id = "canv";
     canevas.height = 1080;
-    canevas.width = 1920;
+    canevas.width = 2040;
     canevas.style = "border: 4px solid black";
     document.getElementById("gamecanvas").appendChild(canevas);
     // let canevas = document.getElementById("canv");
