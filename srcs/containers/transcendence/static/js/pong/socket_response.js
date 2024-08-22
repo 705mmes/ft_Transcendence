@@ -24,6 +24,12 @@ function PongSocketStatus() {
     }
 }
 
+function waiting() {
+
+    const message = JSON.stringify({mode: "match_1v1", action: 'player_ready'});
+    game_socket.send(message);
+}
+
 function responsePong() {
     PongSocketStatus();
 
@@ -42,7 +48,7 @@ function responsePong() {
             else if (data.action === 'find_opponent')
             {
                 change_opponent(data.opponent);
-
+                setTimeout(waiting, 3000);
             }
             else {
                 console.error("Unknown action received from server.");
