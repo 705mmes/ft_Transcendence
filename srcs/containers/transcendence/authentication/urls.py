@@ -1,3 +1,5 @@
+# authentication/urls.py
+
 from django.contrib import admin
 from django.urls import path, include, re_path
 from authentication import views
@@ -5,9 +7,10 @@ from authentication.views import register, start_oauth2_flow, oauth_callback
 from django.urls import path
 from two_factor.urls import urlpatterns as tf_urls
 
+
 urlpatterns = [
     path('', views.authentication),
-	path('two_factor/', include(tf_urls)),
+    path('', include(tf_urls)),
     path('login_session/', views.login_session),
     path('register_session/', views.register),
     path('oauth/start/', views.start_oauth2_flow, name='start_oauth2_flow'),
