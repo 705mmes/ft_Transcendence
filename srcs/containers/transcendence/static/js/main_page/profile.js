@@ -62,12 +62,12 @@ function display_popup(data)
 }
 
 if (document.getElementById('two_factor')) {
-    document.getElementById('two_factor').addEventListener('click', () =>{
-        const host = window.location.host;
-        const url = `http://${host}/account/two_factor/setup/`;
+    document.getElementById('two_factor').addEventListener('click', () => {
+        const url = `account/two_factor/setup/`;
         console.log("url: ", url);
-        window.location.href = url;
-    })
+
+        to_unspecified_page(url);
+    });
 }
 
 if (document.getElementById('edit_profile'))

@@ -10,7 +10,6 @@ from two_factor.urls import urlpatterns as tf_urls
 
 urlpatterns = [
     path('', views.authentication),
-    path('', include(tf_urls)),
     path('login_session/', views.login_session),
     path('register_session/', views.register),
     path('oauth/start/', views.start_oauth2_flow, name='start_oauth2_flow'),
