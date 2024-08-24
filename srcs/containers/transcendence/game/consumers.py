@@ -105,6 +105,14 @@ class GameConsumer(WebsocketConsumer):
             self.cancel_1v1()
         elif json_data['action'] == 'player_ready':
             self.check_player()
+        elif json_data['action'] == 'data from game received':
+            self.check_data()
+
+    def check_data(self):
+        #verif et predictions jsp on verra
+        print('test')
+        json_data = {'action': 'data_is_ok', 'mode': 'matchmaking_1v1'}
+        async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
 
     def check_player(self):
         user = User.objects.get(username=self.scope['user'])

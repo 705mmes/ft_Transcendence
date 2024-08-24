@@ -54,7 +54,7 @@ function responsePong() {
                 to_unspecified_page('game/');
             else if (data.action === 'start_game')
             {
-                //supp lobby.css
+                document.getElementById('lobby_css').remove();
                 document.getElementById('lobby_div').remove();
                 main_game();
             }

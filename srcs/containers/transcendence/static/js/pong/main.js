@@ -15,6 +15,7 @@ function main_game() {
         oldtime: Date.now(),
         ms: 0,
         game_begin: 0,
+        data_time: Date.now()
     }
 
     let racket_left = new racket(0, canevas.height / 2, "../static/js/images/raquetteR.png", 1000, canevas);
@@ -81,6 +82,20 @@ function lowkeyup(key, racket_left, racket_right){
         racket_left.down = false;
 }
 
+function send_game_data()
+{
+    const message = JSON.stringify({mode: "match_1v1", action: 'data from game received'});
+    game_socket.send(message);
+}
+
+function data_timeout(utils)
+{
+    if (utils.data_time + 1000 <= Date.now())
+    {
+        utils.data_time = Date.now();
+        setTimeout(send_game_data, 1000);
+    }
+}
 
 function infinite_game_loop(racket_left, racket_right, ballon, canevas, utils)
 {
@@ -108,6 +123,7 @@ function infinite_game_loop(racket_left, racket_right, ballon, canevas, utils)
     }
     if (utils.game_begin === 0)
             utils.oldtime = newtime;
+    data_timeout(utils)
 }
 
 function reseting(racket_left, racket_right, ballon, canevas)
