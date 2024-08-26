@@ -1,4 +1,3 @@
-
 function PongSocketStatus() {
     if (!game_socket) {
         console.error("Socket is not initialized.");
@@ -24,7 +23,7 @@ function PongSocketStatus() {
     }
 }
 
-function waiting() {
+function ready() {
 
     const message = JSON.stringify({mode: "match_1v1", action: 'player_ready'});
     game_socket.send(message);
@@ -48,7 +47,7 @@ function responsePong() {
             else if (data.action === 'find_opponent')
             {
                 change_opponent(data.opponent);
-                setTimeout(waiting, 3000);
+                timeoutID = setTimeout(ready, 3000);
             }
             else if (data.action === 'cancel_lobby')
                 to_unspecified_page('game/');
@@ -58,6 +57,8 @@ function responsePong() {
                 document.getElementById('lobby_div').remove();
                 main_game();
             }
+            else if (data.action === 'game_data')
+                update_racket_state(data);
             else {
                 console.error("Unknown action received from server.");
             }

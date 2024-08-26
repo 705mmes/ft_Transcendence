@@ -1,35 +1,35 @@
-function main_game() {
-    // socket = window.getWebSocket()
-    let canevas = document.createElement("canvas");
-    canevas.id = "canv";
-    canevas.height = 1080;
-    canevas.width = 2040;
-    canevas.style = "border: 4px solid black";
-    document.getElementById("gamecanvas").appendChild(canevas);
-    // let canevas = document.getElementById("canv");
-
-    let utils = {
-        canvcont: canevas.getContext("2d"),
-
-        fontsize: 80 / canevas.width,
-        oldtime: Date.now(),
-        ms: 0,
-        game_begin: 0,
-        data_time: Date.now()
-    }
-
-    let racket_left = new racket(0, canevas.height / 2, "../static/js/images/raquetteR.png", 1000, canevas);
-    let racket_right = new racket(canevas.width - 74, canevas.height / 2, "../static/js/images/raquetteL.png", 1000, canevas);
-    let ballon = new balle(canevas.width / 2, canevas.height / 2, "../static/js/images/maltesers.png", 500, canevas);
-
-    document.addEventListener("keyup", function (event) {
-        lowkeyup(event, racket_left, racket_right)
-    });
-    document.addEventListener("keydown", function (event) {
-        lowkeydown(event, racket_left, racket_right, ballon, utils, canevas)
-    });
-    const interid = setInterval(infinite_game_loop, 1000 / 60, racket_left, racket_right, ballon, canevas, utils);
-}
+// function main_game() {
+//     // socket = window.getWebSocket()
+//     let canevas = document.createElement("canvas");
+//     canevas.id = "canv";
+//     canevas.height = 1080;
+//     canevas.width = 2040;
+//     canevas.style = "border: 4px solid black";
+//     document.getElementById("gamecanvas").appendChild(canevas);
+//     // let canevas = document.getElementById("canv");
+//
+//     let utils = {
+//         canvcont: canevas.getContext("2d"),
+//
+//         fontsize: 80 / canevas.width,
+//         oldtime: Date.now(),
+//         ms: 0,
+//         game_begin: 0,
+//         data_time: Date.now()
+//     }
+//
+//     let racket_left = new racket(0, canevas.height / 2, "../static/js/images/raquetteR.png", 1000, canevas);
+//     let racket_right = new racket(canevas.width - 74, canevas.height / 2, "../static/js/images/raquetteL.png", 1000, canevas);
+//     let ballon = new balle(canevas.width / 2, canevas.height / 2, "../static/js/images/maltesers.png", 500, canevas);
+//
+//     document.addEventListener("keyup", function (event) {
+//         lowkeyup(event, racket_left, racket_right)
+//     });
+//     document.addEventListener("keydown", function (event) {
+//         lowkeydown(event, racket_left, racket_right, ballon, utils, canevas)
+//     });
+//     const interid = setInterval(infinite_game_loop, 1000 / 60, racket_left, racket_right, ballon, canevas, utils);
+// }
 
 function drawwin(racket_left, racket_right, canevas, utils) {
     let text;
@@ -97,34 +97,34 @@ function data_timeout(utils)
     }
 }
 
-function infinite_game_loop(racket_left, racket_right, ballon, canevas, utils)
-{
-    let newtime = Date.now();
-    utils.ms = (newtime - utils.oldtime) / 1000;
-    if (utils.game_begin === 2)
-        countdown(newtime, racket_left, racket_right, ballon, utils, canevas);
-    else if (utils.game_begin === 1)
-    {
-        utils.oldtime = newtime;
-        if (racket_left.score < 3 && racket_right.score < 3 && utils.game_begin === 1)
-        {
-
-            racket_right.moving(utils.ms);
-            racket_left.moving(utils.ms);
-            ballon.move(utils.ms, racket_left, racket_right);
-            utils.canvcont.clearRect(0, 0, canevas.width, canevas.height);
-            ballon.drawing(utils.canvcont);
-            racket_right.drawing(utils.canvcont);
-            racket_left.drawing(utils.canvcont);
-        }
-        else if (racket_left.score >= 3 || racket_right.score >= 3)
-            drawwin(racket_left, racket_right, canevas, utils);
-        drawscore(racket_left, racket_right, canevas, utils);
-    }
-    if (utils.game_begin === 0)
-            utils.oldtime = newtime;
-    data_timeout(utils)
-}
+// function infinite_game_loop(racket_left, racket_right, ballon, canevas, utils)
+// {
+//     let newtime = Date.now();
+//     utils.ms = (newtime - utils.oldtime) / 1000;
+//     if (utils.game_begin === 2)
+//         countdown(newtime, racket_left, racket_right, ballon, utils, canevas);
+//     else if (utils.game_begin === 1)
+//     {
+//         utils.oldtime = newtime;
+//         if (racket_left.score < 3 && racket_right.score < 3 && utils.game_begin === 1)
+//         {
+//
+//             racket_right.moving(utils.ms);
+//             racket_left.moving(utils.ms);
+//             ballon.move(utils.ms, racket_left, racket_right);
+//             utils.canvcont.clearRect(0, 0, canevas.width, canevas.height);
+//             ballon.drawing(utils.canvcont);
+//             racket_right.drawing(utils.canvcont);
+//             racket_left.drawing(utils.canvcont);
+//         }
+//         else if (racket_left.score >= 3 || racket_right.score >= 3)
+//             drawwin(racket_left, racket_right, canevas, utils);
+//         drawscore(racket_left, racket_right, canevas, utils);
+//         // data_timeout(utils);
+//     }
+//     if (utils.game_begin === 0)
+//             utils.oldtime = newtime;
+// }
 
 function reseting(racket_left, racket_right, ballon, canevas)
 {

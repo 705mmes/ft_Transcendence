@@ -1,6 +1,7 @@
 
 let game_socket;
 let socket;
+let timeoutID;
 let page_number = 0;
 let current_page ;
 let moveback = window.location.pathname
@@ -32,6 +33,11 @@ async function fetch_scripts(url, class_name)
 }
 
 reload_scripts(window.location.pathname);
+
+let game_data = {
+    my_racket: undefined,
+    opponent_racket: undefined,
+}
 
 async function reload_scripts(page)
 {

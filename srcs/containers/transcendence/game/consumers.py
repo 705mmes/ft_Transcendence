@@ -24,6 +24,9 @@ class GameConsumer(WebsocketConsumer):
         user.in_research = False
         user.is_playing = False
         user.save()
+        if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
+            lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
+            lobby.delete()
         print(f"Disconnecting : {self.scope['user']}")
 
     def receive(self, text_data):
@@ -105,26 +108,83 @@ class GameConsumer(WebsocketConsumer):
             self.cancel_1v1()
         elif json_data['action'] == 'player_ready':
             self.check_player()
-        elif json_data['action'] == 'data from game received':
-            self.check_data()
+        elif json_data['action'] == 'get_game_data':
+            self.get_game_data()
+        elif json_data['action'] == 'move_up':
+            self.move_up(json_data)
+        elif json_data['action'] == 'move_down':
+            self.move_down(json_data)
 
-    def check_data(self):
-        #verif et predictions jsp on verra
-        print('test')
-        json_data = {'action': 'data_is_ok', 'mode': 'matchmaking_1v1'}
-        async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
+
+    def move_down(self, json_data):
+        user = User.objects.get(username=self.scope['user'])
+        if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
+            lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
+            if lobby.Player1 == user:
+                lobby.Player1_posY -= 10
+                my_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY, 'speed': 1000}
+                opponent_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY, 'speed': 1000}
+                opponent_name = lobby.Player2.username
+                lobby.save()
+            else:
+                lobby.Player2_posY -= 10
+                my_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY}
+                opponent_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY}
+                opponent_name = lobby.Player1.username
+                lobby.save()
+            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
+            async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
+            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'opponent': my_racket, 'my_racket': opponent_racket}
+            async_to_sync(self.channel_layer.group_send)("game_" + opponent_name, {'type': 'send_info', 'data': json_data})
+
+
+    def move_up(self, json_data):
+        user = User.objects.get(username=self.scope['user'])
+        if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
+            lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
+            if lobby.Player1 == user:
+                lobby.Player1_posY += 10
+                my_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY, 'speed': 1000}
+                opponent_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY, 'speed': 1000}
+                opponent_name = lobby.Player2.username
+                lobby.save()
+            else:
+                lobby.Player2_posY += 10
+                my_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY}
+                opponent_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY}
+                opponent_name = lobby.Player1.username
+                lobby.save()
+            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
+            async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
+            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'opponent': my_racket, 'my_racket': opponent_racket}
+            async_to_sync(self.channel_layer.group_send)("game_" + opponent_name, {'type': 'send_info', 'data': json_data})
+
+
+    def get_game_data(self):
+        user = User.objects.get(username=self.scope['user'])
+        if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
+            lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
+            if lobby.Player1 == user:
+                my_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY, 'speed': 1000}
+                opponent_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY, 'speed': 1000}
+            else:
+                my_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY}
+                opponent_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY}
+            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
+            async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
 
     def check_player(self):
         user = User.objects.get(username=self.scope['user'])
-        lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
-        if lobby.Player1 == user:
-            opponent = lobby.Player2
-        else:
-            opponent = lobby.Player1
-        if user.is_playing and opponent.is_playing:
-            json_data = {'action': 'start_game', 'mode': 'matchmaking_1v1'}
-            async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
-            return
+        if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
+            lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
+            if lobby.Player1 == user:
+                opponent = lobby.Player2
+            else:
+                opponent = lobby.Player1
+            if user.is_playing and opponent.is_playing:
+                json_data = {'action': 'start_game', 'mode': 'matchmaking_1v1'}
+                async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
+                return
         print("Popo")
         json_data = {'action': 'cancel_lobby', 'mode': 'matchmaking_1v1'}
         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})

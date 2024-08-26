@@ -1,25 +1,18 @@
 class racket
 {
-    constructor(x, y, str, speed, canevas)
+    constructor(canevas)
     {
-        this.x = x;
-        this.y = y;
+        this.name = undefined;
+        this.x = 0;
+        this.y = 0;
         this.height = 223;
-        this.speed = speed;
+        this.speed = 1000;
         this.img = new Image();
-        this.img.src = str;
+        this.img.src =  "../static/js/images/raquetteL.png";
         this.up = false;
         this.down = false
         this.score = 0;
-        this.canevas = canevas
-    }
-
-    reset(canvcont)
-    {
-        this.score = 0;
-        this.y = this.canevas.height / 2;
-        if (this.x !== 0)
-            this.x = this.canevas.width - 74;
+        this.canevas = canevas;
     }
 
     drawing(canvcont)
@@ -43,13 +36,22 @@ class racket
     {
         if (this.up === true)
         {
-            if (this.y - (this.speed * ms) >= 0)
-                this.y -= this.speed * ms;
+    //if (this.y - (this.speed * ms) >= 0)
+    ////         {
+                console.log("c'est quoi ce bruit de golmon");
+     //           this.y -= this.speed * ms;
+                send_data('move_up');
+      //      }
         }
         if (this.down === true)
         {
-            if (this.canevas.height >= (this.y + this.height) + (this.speed * ms))
-                this.y += this.speed * ms;
+            // if (this.canevas.height >= (this.y + this.height) + (this.speed * ms))
+            // {
+                console.log("c'est quoi ce bruit de mongol");
+                // this.y += this.speed * ms;
+                send_data('move_down');
+            // }
         }
+
     }
 }

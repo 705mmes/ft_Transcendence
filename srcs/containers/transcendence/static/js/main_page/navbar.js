@@ -6,8 +6,13 @@ document.getElementById("logout").addEventListener('click', function(event){
 
 
 document.getElementById('home').addEventListener('click', function(event){
-  event.preventDefault();
-  to_unspecified_page('game/canvas/');
+    event.preventDefault();
+    if (timeoutID)
+    {
+        clearTimeout(timeoutID);
+        timeoutID = undefined;
+    }
+    to_unspecified_page('game/canvas/');
 })
 
 document.getElementById('profile').addEventListener('click', function(event){
@@ -27,6 +32,7 @@ document.getElementById('social').addEventListener('click', function(event){
 
 async function to_unspecified_page(page)
 {
+    // clearTimeout();
     navigate_to_load('/');
     let div_content = document.getElementById('content');
     await fetching_html(page, div_content);
