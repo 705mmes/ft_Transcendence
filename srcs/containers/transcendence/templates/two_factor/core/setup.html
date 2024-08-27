@@ -2,10 +2,11 @@
 {% load i18n %}
 
 {% block extra_media %}
-  {{ form.media }}
+{{ form.media }}
 {% endblock %}
 
 {% block content %}
+{% include "authentication/navbar.html" %}
   <h1>{% block title %}{% trans "Enable Two-Factor Authentication" %}{% endblock %}</h1>
   {% if wizard.steps.current == 'welcome' %}
     <p>{% blocktrans trimmed %}You are about to take your account security to the
