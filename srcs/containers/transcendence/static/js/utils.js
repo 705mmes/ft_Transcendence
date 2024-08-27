@@ -41,7 +41,7 @@ let game_data = {
 
 async function reload_scripts(page)
 {
-    if (page !== '/')
+    if (page !== '/' && !page.match("/account/"))
     {
         await always_on_script();
         if (page.match('/social/'))
@@ -51,8 +51,11 @@ async function reload_scripts(page)
         else if (page.match('/game/'))
             await load_script_form_fetch(game_script_cache);
     }
-    else
+    else {
         await load_script_form_fetch(authentication_script_cache);
+        await load_script_form_fetch(navbar_script_cache);
+        await load_script_form_fetch(navigation_script_cache);
+    }
 }
 
 async function always_on_script()

@@ -2,6 +2,7 @@
 {% load i18n %}
 
 {% block content %}
+{% include "authentication/navbar.html" %}
   <h1>{% block title %}{% trans "Backup Tokens" %}{% endblock %}</h1>
   <p>{% blocktrans trimmed %}Backup tokens can be used when your primary and backup
       phone numbers aren't available. The backup tokens below can be used
