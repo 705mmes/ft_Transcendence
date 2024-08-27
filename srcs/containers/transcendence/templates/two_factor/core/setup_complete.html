@@ -2,6 +2,7 @@
 {% load i18n %}
 
 {% block content %}
+{% include "authentication/navbar.html" %}
   <h1>{% block title %}{% trans "Enable Two-Factor Authentication" %}{% endblock %}</h1>
 
   <p>{% blocktrans trimmed %}Congratulations, you've successfully enabled two-factor

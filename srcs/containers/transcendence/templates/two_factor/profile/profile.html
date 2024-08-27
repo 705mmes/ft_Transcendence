@@ -3,12 +3,13 @@
 {% load two_factor_tags %}
 
 {% block content %}
+{% include "authentication/navbar.html" %}
   <h1>{% block title %}{% trans "Account Security" %}{% endblock %}</h1>
 
   {% if default_device %}
     <p>{% blocktrans with primary=default_device|as_action %}Primary method: {{ primary }}{% endblocktrans %}</p>
 
-    {% if available_phone_methods %}
+    <!-- {% if available_phone_methods %}
       <h2>{% trans "Backup Phone Numbers" %}</h2>
       <p>{% blocktrans trimmed %}If your primary method is not available, we are able to
         send backup tokens to the phone numbers listed below.{% endblocktrans %}</p>
@@ -29,7 +30,7 @@
       {% endif %}
       <p><a href="{% url 'two_factor:phone_create' %}"
         class="btn btn-info">{% trans "Add Phone Number" %}</a></p>
-    {% endif %}
+    {% endif %} -->
 
     <h2>{% trans "Backup Tokens" %}</h2>
     <p>

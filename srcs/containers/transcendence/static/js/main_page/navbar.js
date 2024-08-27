@@ -1,29 +1,32 @@
-document.getElementById("logout").addEventListener('click', function(event){
+if (document.getElementById("logout"))
+    document.getElementById("logout").addEventListener('click', function(event){
+        event.preventDefault();
+        socket.close();
+        to_unspecified_page('logout_btn/');
+    })
+
+if (document.getElementById('home'))
+    document.getElementById('home').addEventListener('click', function(event){
+        event.preventDefault();
+        if (timeoutID)
+        {
+            clearTimeout(timeoutID);
+            timeoutID = undefined;
+        }
+        to_unspecified_page('game/canvas/');
+    })
+
+if (document.getElementById('profile'))
+    document.getElementById('profile').addEventListener('click', function(event){
     event.preventDefault();
-    socket.close();
-    to_unspecified_page('logout_btn/');
-})
+    to_unspecified_page('profile/');
+    })
 
-
-document.getElementById('home').addEventListener('click', function(event){
+if (document.getElementById('social'))
+    document.getElementById('social').addEventListener('click', function(event){
     event.preventDefault();
-    if (timeoutID)
-    {
-        clearTimeout(timeoutID);
-        timeoutID = undefined;
-    }
-    to_unspecified_page('game/canvas/');
-})
-
-document.getElementById('profile').addEventListener('click', function(event){
-  event.preventDefault();
-  to_unspecified_page('profile/');
-})
-
-document.getElementById('social').addEventListener('click', function(event){
-  event.preventDefault();
-  to_unspecified_page('social/');
-})
+    to_unspecified_page('social/');
+    })
 
 // document.getElementById('chat').addEventListener('click', function(event){
 //   event.preventDefault();
