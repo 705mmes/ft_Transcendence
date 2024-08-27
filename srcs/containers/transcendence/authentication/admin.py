@@ -20,3 +20,4 @@ class FriendRequestAdmin(admin.ModelAdmin):
 admin.site.register(User, UserAdmin)
 admin.site.register(FriendList, FriendListAdmin)
 admin.site.register(FriendRequest, FriendRequestAdmin)
+

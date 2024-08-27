@@ -3,7 +3,7 @@ from asgiref.sync import async_to_sync, sync_to_async
 from channels.generic.websocket import WebsocketConsumer
 from channels.db import database_sync_to_async
 from authentication.models import User
-from game.models import GameLobby
+from game.models import GameLobby, PosPlayer
 from django.db.models import Q
 from django.core import serializers
 
@@ -17,6 +17,7 @@ class GameConsumer(WebsocketConsumer):
         user = User.objects.get(username=self.scope['user'])
         user.channel_name = self.channel_name
         user.save()
+        PosPlayer.objects.create(Player=user)
         self.accept()
 
     def disconnect(self, close_code):
@@ -27,6 +28,7 @@ class GameConsumer(WebsocketConsumer):
         if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
             lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
             lobby.delete()
+        PosPlayer.objects.get(Player=user).delete()
         print(f"Disconnecting : {self.scope['user']}")
 
     def receive(self, text_data):
@@ -110,77 +112,92 @@ class GameConsumer(WebsocketConsumer):
             self.check_player()
         elif json_data['action'] == 'get_game_data':
             self.get_game_data()
-        elif json_data['action'] == 'move_up':
-            self.move_up(json_data)
-        elif json_data['action'] == 'move_down':
-            self.move_down(json_data)
+        elif json_data['action'] == 'start' or json_data['action'] == 'end':
+            self.move(json_data)
 
 
-    def move_down(self, json_data):
+    # def move_down(self, json_data):
+    #     user = User.objects.get(username=self.scope['user'])
+    #     if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
+    #         lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
+    #         if lobby.Player1 == user:
+    #             lobby.Player1_dir = json_data
+    #             my_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY, 'speed': 1000}
+    #             opponent_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY, 'speed': 1000}
+    #             opponent_name = lobby.Player2.username
+    #             lobby.save()
+    #         else:
+    #             lobby.Player2_posY -= 10
+    #             my_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY}
+    #             opponent_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY}
+    #             opponent_name = lobby.Player1.username
+    #             lobby.save()
+    #         json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
+    #         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
+    #         json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'opponent': my_racket, 'my_racket': opponent_racket}
+    #         async_to_sync(self.channel_layer.group_send)("game_" + opponent_name, {'type': 'send_info', 'data': json_data})
+
+
+    def who_is_the_enemy(self, lobby):
+        if lobby.Player1 == User.objects.get(username=self.scope['user']):
+            return lobby.Player2
+        return lobby.Player1
+
+    def move(self, json_data):
         user = User.objects.get(username=self.scope['user'])
         if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
-            lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
-            if lobby.Player1 == user:
-                lobby.Player1_posY -= 10
-                my_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY, 'speed': 1000}
-                opponent_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY, 'speed': 1000}
-                opponent_name = lobby.Player2.username
-                lobby.save()
+            opponent = self.who_is_the_enemy(GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get())
+            user_pos = user.Player.get()
+            if json_data['action'] == 'start':
+                user_pos.dir = json_data['direction']
+                user_pos.save()
             else:
-                lobby.Player2_posY -= 10
-                my_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY}
-                opponent_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY}
-                opponent_name = lobby.Player1.username
-                lobby.save()
+                user_pos.dir = 'stop'
+                user_pos.save()
+            my_racket = {'x': user.Player.get().posX, 'y': user.Player.get().posY, 'speed': 1000, 'dir': user_pos.dir}
+            opponent_racket = {'x': opponent.Player.get().posX, 'y': opponent.Player.get().posY, 'speed': 1000, 'dir': opponent.Player.get().dir}
             json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
             async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
-            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'opponent': my_racket, 'my_racket': opponent_racket}
-            async_to_sync(self.channel_layer.group_send)("game_" + opponent_name, {'type': 'send_info', 'data': json_data})
-
-
-    def move_up(self, json_data):
-        user = User.objects.get(username=self.scope['user'])
-        if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
-            lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
-            if lobby.Player1 == user:
-                lobby.Player1_posY += 10
-                my_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY, 'speed': 1000}
-                opponent_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY, 'speed': 1000}
-                opponent_name = lobby.Player2.username
-                lobby.save()
-            else:
-                lobby.Player2_posY += 10
-                my_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY}
-                opponent_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY}
-                opponent_name = lobby.Player1.username
-                lobby.save()
-            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
-            async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
-            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'opponent': my_racket, 'my_racket': opponent_racket}
-            async_to_sync(self.channel_layer.group_send)("game_" + opponent_name, {'type': 'send_info', 'data': json_data})
-
+            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': opponent_racket, 'opponent': my_racket}
+            async_to_sync(self.channel_layer.group_send)("game_" + opponent.username, {'type': 'send_info', 'data': json_data})
 
     def get_game_data(self):
         user = User.objects.get(username=self.scope['user'])
         if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
             lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
             if lobby.Player1 == user:
-                my_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY, 'speed': 1000}
-                opponent_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY, 'speed': 1000}
+                print("player1 is me")
+                # my_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY, 'speed': 1000}
+                # opponent_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY, 'speed': 1000}
             else:
-                my_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY}
-                opponent_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY}
-            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
-            async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
+                print("player2 is me")
+               #  my_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY}
+               # opponent_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY}
+            # json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
+            # async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
+
+    def init_pos(self, lobby):
+        user = User.objects.get(username=self.scope['user'])
+        if lobby.Player1 == user:
+            opponent_pos = lobby.Player2.Player.get()
+            opponent_pos.set_to_player2()
+            opponent_pos.save()
+            user_pos = user.Player.get()
+            user_pos.set_to_player1()
+            user_pos.save()
+        else:
+            opponent_pos = lobby.Player1.Player.get()
+            opponent_pos.set_to_player1()
+            opponent_pos.save()
+            user_pos = user.Player.get()
+            user_pos.set_to_player2()
+            user_pos.save()
 
     def check_player(self):
         user = User.objects.get(username=self.scope['user'])
         if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
-            lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
-            if lobby.Player1 == user:
-                opponent = lobby.Player2
-            else:
-                opponent = lobby.Player1
+            self.init_pos(GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get())
+            opponent = self.who_is_the_enemy(GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get())
             if user.is_playing and opponent.is_playing:
                 json_data = {'action': 'start_game', 'mode': 'matchmaking_1v1'}
                 async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import GameHistory, GameLobby
+from .models import GameHistory, GameLobby, PosPlayer
 
 
 class GameHistoryAdmin(admin.ModelAdmin):
@@ -8,6 +8,9 @@ class GameHistoryAdmin(admin.ModelAdmin):
 class GameLobbyAdmin(admin.ModelAdmin):
     list_display = ('Player1', 'Player2')
 
+class GamePosPlayer(admin.ModelAdmin):
+    list_display = ('Player', 'posX', 'posY', 'dir')
 
 admin.site.register(GameHistory, GameHistoryAdmin)
 admin.site.register(GameLobby, GameLobbyAdmin)
+admin.site.register(PosPlayer, GamePosPlayer)

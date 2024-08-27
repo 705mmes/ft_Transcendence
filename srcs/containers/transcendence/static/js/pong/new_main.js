@@ -39,30 +39,44 @@ function main_game() {
 
 function update_racket_state(racket_data)
 {
-
     game_data.my_racket.x = racket_data.my_racket.x;
-    game_data.my_racket.y = racket_data.my_racket.y;
+    // game_data.my_racket.y = racket_data.my_racket.y;
     game_data.my_racket.speed = racket_data.my_racket.speed;
+    game_data.my_racket.dir = racket_data.my_racket.dir;
 
     game_data.opponent_racket.x = racket_data.opponent.x;
-    game_data.opponent_racket.y = racket_data.opponent.y;
+    // game_data.opponent_racket.y = racket_data.opponent.y;
     game_data.opponent_racket.speed = racket_data.opponent.speed;
+    game_data.opponent_racket.dir = racket_data.opponent.dir;
 }
 
 function key_pressed(key, my_racket){
 
-    if (key.code === "ArrowUp")
+    if (key.code === "ArrowUp" && my_racket.up !== true)
+    {
         my_racket.up = true;
-    else if (key.code === "ArrowDown")
+        send_data('start', 'move_up');
+    }
+    else if (key.code === "ArrowDown" && my_racket.down !== true)
+    {
+        send_data('start', 'move_down');
         my_racket.down = true;
+    }
 }
 
 function key_release(key, my_racket){
 
-    if (key.code === "ArrowUp")
+    if (key.code === "ArrowUp" && my_racket.up !== false)
+    {
         my_racket.up = false;
-    else if (key.code === "ArrowDown")
+        send_data('end', 'move_up')
+    }
+    else if (key.code === "ArrowDown" && my_racket.down !== false)
+    {
         my_racket.down = false;
+        send_data('end', 'move_down');
+    }
+
 }
 
 function infinite_game_loop(game_data, utils, canevas)
@@ -70,15 +84,17 @@ function infinite_game_loop(game_data, utils, canevas)
     let newtime = Date.now();
     utils.ms = (newtime - utils.oldtime) / 1000;
     utils.oldtime = newtime;
-    game_data.my_racket.moving(utils.ms);
+    //game_data.my_racket.moving(utils.ms);
     utils.canvcont.clearRect(0, 0, canevas.width, canevas.height);
+    game_data.my_racket.moving(utils.ms);
+    game_data.opponent_racket.moving(utils.ms);
     game_data.my_racket.drawing(utils.canvcont);
     game_data.opponent_racket.drawing(utils.canvcont);
 }
 
-function send_data(str_action)
+function send_data(str_action, str_direction, str_)
 {
-    const message = JSON.stringify({mode: "match_1v1", action: str_action});
+    const message = JSON.stringify({mode: "match_1v1", action: str_action, direction: str_direction});
     game_socket.send(message);
 }
 
