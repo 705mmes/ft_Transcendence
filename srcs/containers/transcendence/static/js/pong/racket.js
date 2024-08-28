@@ -4,12 +4,11 @@ class racket {
         this.x = 0;
         this.y = 0;
         this.height = 223;
-        this.speed = 16;
+        this.speed = 1000;
         this.img = new Image();
-        this.img.src = "../static/js/images/raquetteL.png";
-        this.up = false;
-        this.down = false;
         this.dir = 'stop'
+        this.up_pressed = false;
+        this.down_pressed = false;
         this.score = 0;
         this.StartInput = 0;
         this.EndInput = 0;
@@ -39,7 +38,7 @@ class racket {
                     this.StartInput = Date.now();
                     this.is_stoped = 0;
                 }
-                this.y -= this.speed;
+                this.y -= this.speed * ms;
                 console.log(ms, this.speed * ms, this.y)
             }
         }
@@ -50,7 +49,7 @@ class racket {
                     this.StartInput = Date.now();
                     this.is_stoped = 0;
                 }
-                this.y += this.speed;
+                this.y += this.speed * ms;
                 console.log(ms, this.speed * ms, this.y)
             }
         }

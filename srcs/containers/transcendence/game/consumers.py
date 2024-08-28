@@ -113,10 +113,33 @@ class GameConsumer(WebsocketConsumer):
             self.cancel_1v1()
         elif json_data['action'] == 'player_ready':
             self.check_player()
-        elif json_data['action'] == 'get_game_data':
-            self.get_game_data()
         elif json_data['action'] == 'start' or json_data['action'] == 'end':
             self.move(json_data)
+        # elif json_data['action'] == 'get_game_data':
+        #     self.get_game_data()
+
+
+    # def move_down(self, json_data):
+    #     user = User.objects.get(username=self.scope['user'])
+    #     if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
+    #         lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
+    #         if lobby.Player1 == user:
+    #             lobby.Player1_dir = json_data
+    #             my_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY, 'speed': 1000}
+    #             opponent_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY, 'speed': 1000}
+    #             opponent_name = lobby.Player2.username
+    #             lobby.save()
+    #         else:
+    #             lobby.Player2_posY -= 10
+    #             my_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY}
+    #             opponent_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY}
+    #             opponent_name = lobby.Player1.username
+    #             lobby.save()
+    #         json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
+    #         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
+    #         json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'opponent': my_racket, 'my_racket': opponent_racket}
+    #         async_to_sync(self.channel_layer.group_send)("game_" + opponent_name, {'type': 'send_info', 'data': json_data})
+
 
     def who_is_the_enemy(self, lobby):
         if lobby.Player1 == User.objects.get(username=self.scope['user']):
@@ -151,13 +174,13 @@ class GameConsumer(WebsocketConsumer):
                 user_pos.dir = json_data['direction']
                 user_pos.time_start = datetime.now()
                 print(int(user_pos.time_start.timestamp() * 1000))
-                user_pos.save()
             else:
-                user_pos.time_end = datetime.now()
-                print(int(user_pos.time_end.timestamp() * 1000))
-                user_pos.dir = 'stop'
-                self.calcul_new_pos(user_pos, json_data)
-                user_pos.save()
+                if json_data['direction'] != 'both key pressed':
+                    user_pos.time_end = datetime.now()
+                    print(int(user_pos.time_end.timestamp() * 1000))
+                    user_pos.dir = 'stop'
+                    self.calcul_new_pos(user_pos, json_data)
+            user_pos.save()
             my_racket = {'x': user.Player.get().posX, 'y': user.Player.get().posY, 'speed': 1000, 'dir': user_pos.dir}
             opponent_racket = {'x': opponent.Player.get().posX, 'y': opponent.Player.get().posY, 'speed': 1000, 'dir': opponent.Player.get().dir}
             json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}

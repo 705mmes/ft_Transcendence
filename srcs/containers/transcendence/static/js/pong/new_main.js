@@ -18,14 +18,15 @@ function main_game() {
         data_time: Date.now()
     }
 
+
     if (game_data.my_racket === undefined && game_data.opponent_racket === undefined)
     {
         game_data.my_racket = new racket(canevas);
         game_data.opponent_racket = new racket(canevas);
     }
-
-    send_data('get_game_data');
-    choose_player_img();
+    // send_data('get_game_data');
+    send_data('start', '');
+    console.log(game_data.my_racket.img)
     // let ballon = new balle(canevas.width / 2, canevas.height / 2, "../static/js/images/maltesers.png", 500, canevas);
 
     document.addEventListener("keyup", function (event) {
@@ -48,33 +49,31 @@ function update_racket_state(racket_data)
     // game_data.opponent_racket.y = racket_data.opponent.y;
     game_data.opponent_racket.speed = racket_data.opponent.speed;
     game_data.opponent_racket.dir = racket_data.opponent.dir;
+    if (game_data.my_racket.img.src.length <= 0 && game_data.opponent_racket.img.src.length <= 0)
+        choose_player_img();
 }
 
-function key_pressed(key, my_racket){
+function key_pressed(key, my_racket) {
 
-    if (key.code === "ArrowUp" && my_racket.up !== true)
-    {
-        my_racket.up = true;
-        send_data('start', 'move_up');
-    }
-    else if (key.code === "ArrowDown" && my_racket.down !== true)
-    {
-        send_data('start', 'move_down');
-        my_racket.down = true;
-    }
+    if (key.code === "ArrowUp" && !my_racket.up_pressed)
+        send_data('start', 'move_up', my_racket);
+    else if (key.code === "ArrowDown" && !my_racket.down_pressed)
+        send_data('start', 'move_down', my_racket);
 }
 
 function key_release(key, my_racket){
 
-    if (key.code === "ArrowUp" && my_racket.up !== false)
+    if (key.code === "ArrowUp" && my_racket.up_pressed)
     {
-        my_racket.up = false;
-        send_data('end', 'move_up')
+        send_data('end', 'move_up', my_racket);
+        if (my_racket.down_pressed)
+            send_data('start', 'move_down', undefined);
     }
-    else if (key.code === "ArrowDown" && my_racket.down !== false)
+    else if (key.code === "ArrowDown" && my_racket.down_pressed)
     {
-        my_racket.down = false;
-        send_data('end', 'move_down');
+        send_data('end', 'move_down', my_racket);
+        if (my_racket.up_pressed)
+            send_data('start', 'move_up', undefined);
     }
 
 }
@@ -92,22 +91,30 @@ function infinite_game_loop(game_data, utils, canevas)
     game_data.opponent_racket.drawing(utils.canvcont);
 }
 
-function send_data(str_action, str_direction, str_)
+function send_data(str_action, str_direction, my_racket)
 {
     const message = JSON.stringify({mode: "match_1v1", action: str_action, direction: str_direction});
     game_socket.send(message);
+    if (my_racket)
+    {
+        if (str_direction === 'move_up')
+            my_racket.up_pressed =  !my_racket.up_pressed;
+        else if (str_direction === 'move_down')
+            my_racket.down_pressed = !my_racket.down_pressed;
+    }
+
 }
 
 function choose_player_img()
 {
+    console.log(game_data.my_racket.x)
     if (game_data.my_racket.x === 0)
     {
-        game_data.opponent_racket.img.str = "../static/js/images/raquetteL.png";
-        game_data.my_racket.img.str = "../static/js/images/raquetteR.png";
-    }
-    else
+        game_data.opponent_racket.img.src = '../static/js/images/raquetteL.png';
+        game_data.my_racket.img.src = '../static/js/images/raquetteR.png';
+    } else
     {
-        game_data.opponent_racket.img.str = "../static/js/images/raquetteR.png";
-        game_data.my_racket.img.str = "../static/js/images/raquetteL.png";
+        game_data.opponent_racket.img.src = '../static/js/images/raquetteR.png';
+        game_data.my_racket.img.src = '../static/js/images/raquetteL.png'
     }
 }

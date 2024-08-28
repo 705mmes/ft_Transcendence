@@ -18,6 +18,7 @@ let navigation_script_cache = fetch_scripts('game/scripts/', 'navigation_script'
 let profile_script_cache = fetch_scripts('game/scripts/', 'profile_script');
 let ws_script_cache = fetch_scripts('game/scripts', 'ws_script');
 let social_script_cache = fetch_scripts('game/scripts', 'social_script');
+let two_factor_script_cache = fetch_scripts('game/scripts', '2fa_script');
 
 if (moveback !== '/')
 {
@@ -53,8 +54,8 @@ async function reload_scripts(page)
     }
     else {
         await load_script_form_fetch(authentication_script_cache);
-        await load_script_form_fetch(navbar_script_cache);
         await load_script_form_fetch(navigation_script_cache);
+        await load_script_form_fetch(two_factor_script_cache);
     }
 }
 
