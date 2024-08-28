@@ -1,8 +1,10 @@
+from datetime import datetime
 from math import trunc
 
 from django.db import models
 from django.conf import settings
 from authentication.models import User
+from django.utils.timezone import now
 
 
 class GameHistory(models.Model):
@@ -19,14 +21,18 @@ class PosPlayer(models.Model):
     posX = models.IntegerField(blank=True, null=True, default=0)
     posY = models.IntegerField(blank=True, null=True, default=1080 / 2 - 233 / 2)
     dir = models.CharField(blank=True, default="stop")
+    time_start = models.DateTimeField(default=now, blank=True)
+    time_end = models.DateTimeField(default=now, blank=True)
 
     def set_to_player1(self):
         self.posX = 0
-        self.posY = 1080 / 2 - 233 / 2
+        self.posY = 0
+        # self.posY = 1080 / 2 - 233 / 2
 
     def set_to_player2(self):
         self.posX = 2040 - 77
-        self.posY = 1080 / 2 - 233 / 2
+        self.posY = 0
+        # self.posY = 1080 / 2 - 233 / 2
 
 
 class GameLobby(models.Model):
