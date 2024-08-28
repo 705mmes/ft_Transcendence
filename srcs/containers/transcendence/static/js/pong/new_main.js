@@ -25,7 +25,7 @@ function main_game() {
         game_data.opponent_racket = new racket(canevas);
     }
     // send_data('get_game_data');
-    send_data('start', '');
+    send_data('start', '', undefined);
     console.log(game_data.my_racket.img)
     // let ballon = new balle(canevas.width / 2, canevas.height / 2, "../static/js/images/maltesers.png", 500, canevas);
 
@@ -93,7 +93,11 @@ function infinite_game_loop(game_data, utils, canevas)
 
 function send_data(str_action, str_direction, my_racket)
 {
-    const message = JSON.stringify({mode: "match_1v1", action: str_action, direction: str_direction});
+    let message;
+    if (my_racket === undefined)
+        message = JSON.stringify({mode: "match_1v1", action: str_action, direction: str_direction});
+    else
+        message = JSON.stringify({mode: "match_1v1", action: str_action, direction: str_direction, posY: my_racket.y, deltaY: my_racket.deltaY});
     game_socket.send(message);
     if (my_racket)
     {

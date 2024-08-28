@@ -8,6 +8,7 @@ from authentication.models import User
 from game.models import GameLobby, PosPlayer
 from django.db.models import Q
 from datetime import datetime
+import math
 from django.core import serializers
 
 
@@ -147,19 +148,20 @@ class GameConsumer(WebsocketConsumer):
         return lobby.Player1
 
     def calcul_new_pos(self, user_pos, json_data):
-        server_input_time = int((user_pos.time_end.timestamp() - user_pos.time_start.timestamp()) * 1000)
-        average_dt = (10 / 60)
-        move = server_input_time * average_dt
+        server_input_time = math.ceil((user_pos.time_end.timestamp() - user_pos.time_start.timestamp()) * 1000)
+        average_dt = 16
+        print(f"server_input_time * 60 / 1000 {int((server_input_time * 60 / 1000))}")
+        move = int((server_input_time * 60 / 1000)) * average_dt
         if json_data['direction'] == 'move_up':
             if user_pos.posY > 0:
                 user_pos.posY -= move
                 if user_pos.posY < 0:
                     user_pos.posY = 0
         elif json_data['direction'] == 'move_down':
-            if user_pos.posY < 857:
+            if user_pos.posY < 847:
                 user_pos.posY += move
-                if user_pos.posY > 857:
-                    user_pos.posY = 857
+                if user_pos.posY > 847:
+                    user_pos.posY = 847
         print(f"time the key is pressed = {server_input_time}")
         print(f"dt = {average_dt}")
         print(f"move in px = {move}")

@@ -13,6 +13,7 @@ class racket {
         this.StartInput = 0;
         this.EndInput = 0;
         this.is_stoped = 0;
+        this.deltaY = 0;
         this.canevas = canevas;
     }
 
@@ -37,10 +38,13 @@ class racket {
                 if (this.is_stoped === 1) {
                     this.StartInput = Date.now();
                     this.is_stoped = 0;
+                    this.deltaY = this.y;
                 }
                 this.y -= this.speed * ms;
                 console.log(ms, this.speed * ms, this.y)
             }
+            else
+                this.y = 0;
         }
         if (this.dir === 'move_down') {
             if (this.canevas.height >= (this.y + this.height) + (this.speed * ms))
@@ -48,16 +52,19 @@ class racket {
                 if (this.is_stoped === 1) {
                     this.StartInput = Date.now();
                     this.is_stoped = 0;
+                    this.deltaY = this.y;
                 }
                 this.y += this.speed * ms;
                 console.log(ms, this.speed * ms, this.y)
             }
+            else
+                this.y = this.canevas.height - this.img.height;
         }
         if (this.dir === 'stop')
         {
             if (this.is_stoped === 0) {
                 this.EndInput = Date.now();
-                console.log("Input Time =", this.EndInput - this.StartInput);
+                console.log("Input Time =", this.EndInput - this.StartInput, "PosY =", this.y, "Old_pos =",this.y - this.deltaY);
                 this.EndInput = 0;
                 this.is_stoped = 1;
             }
