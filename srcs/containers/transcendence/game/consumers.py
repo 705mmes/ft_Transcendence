@@ -150,10 +150,10 @@ class GameConsumer(WebsocketConsumer):
             user_pos = user.Player.get()
             if json_data['action'] == 'start':
                 user_pos.dir = json_data['direction']
-                user_pos.save()
             else:
-                user_pos.dir = 'stop'
-                user_pos.save()
+                if json_data['direction'] != 'both key pressed':
+                    user_pos.dir = 'stop'
+            user_pos.save()
             my_racket = {'x': user.Player.get().posX, 'y': user.Player.get().posY, 'speed': 1000, 'dir': user_pos.dir}
             opponent_racket = {'x': opponent.Player.get().posX, 'y': opponent.Player.get().posY, 'speed': 1000, 'dir': opponent.Player.get().dir}
             json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
