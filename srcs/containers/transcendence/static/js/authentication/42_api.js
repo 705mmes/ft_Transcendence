@@ -39,19 +39,21 @@ if (code) {
     })
     .then(response => {
         if (!response.ok) {
-            console.error(`Failed to fetch access token: ${response.status}`);
-            throw new Error(`Failed to fetch access token: ${response.status}`)
+            return response.json().then(data => {
+                console.log('Error response data:', data); // Log the full response data
+                throw new Error(`Failed to register: ${data.error || 'Unknown error'}`);
+            });
         }
         return response.json();
     })
     .then(data => {
-        if (data.error) {
-            console.error('Error:', data.error);
-        } else {
-            console.log(data.message);
-            window.location.href = '/game/';
-        }})
-    .catch(error => console.error('Error:', error));
+        console.log('Registration successful:', data.message);
+        window.location.href = '/game/';
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Optionally display an error message to the user
+    });
 } else {
     if (document.getElementById("42_auth_button"))
         document.getElementById("42_auth_button").addEventListener('click', startOAuth2Flow);
