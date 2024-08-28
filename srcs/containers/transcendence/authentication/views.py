@@ -99,19 +99,16 @@ def oauth_callback(request):
         return JsonResponse({'error': 'Failed to fetch protected data'}, status=response.status_code)
 
     user_data = response.json()
-    print("user data: ", user_data);
     username = user_data.get('login')
     email = user_data.get('email')
     image_data = user_data.get('image', {})
     main_image_link = image_data.get('link')
 
     result = register_api(username, email, request, main_image_link)
-
-    user = User.objects.get(username=username)
-    profile_picture_url = user.get_profile_picture()
-
-    # Check the result and respond accordingly
+    print("Sending response")
     if result['status'] == 'success':
+        user = User.objects.get(username=username)
+        profile_picture_url = user.get_profile_picture()
         return JsonResponse({
             'message': 'User registered and logged in successfully.',
             'profile_picture': profile_picture_url
@@ -121,18 +118,13 @@ def oauth_callback(request):
 
 
 def register_api(username, email, request, image):
-    # Generate a secure random password
+
+    if User.objects.filter(username=username).exists():
+        print("Username already taken.")
+        return {'status': 'error', 'message': 'Username already taken.(un jour je gererais ca)'}
     password = generate_password()
 
-    # Create a new user
-    if User.objects.filter(username=username).exists():
-        user = authenticate(username=username, password=password)
-        if user:
-            login(request, user)
-            return {'status': 'success', 'message': 'User registered and logged in successfully.'}
-        else:
-            return {'status': 'error', 'message': 'Authentication failed.'}
-
+    print("Creating user...")
     user = User.objects.create_user(username=username, email=email, password=password, profile_picture_url=image, is_42=True)
     # Authenticate and log in the user
     user = authenticate(username=username, password=password)
@@ -198,3 +190,6 @@ def logout_btn(request):
 
 def social(request):
     return render(request, 'authentication/social.html')
+
+# def two_factor_login(request):
+#     return render(request, 'two_factor/core/login.html')

@@ -25,13 +25,3 @@ document.getElementById("registration").addEventListener('submit', function(even
 	send_login_form(this, 'register_session/');
 	document.getElementById("registration_container").classList.remove('on');
 });}
-
-
-if (document.getElementById('login')) {
-    document.getElementById('login').addEventListener('click', () => {
-		const url = `account/login/`;
-        console.log("url: ", url);
-
-        to_unspecified_page(url);
-	});
-}
