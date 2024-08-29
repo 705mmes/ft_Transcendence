@@ -6,14 +6,10 @@ class racket {
         this.height = 223;
         this.speed = 1000;
         this.img = new Image();
-        this.dir = 'stop'
         this.up_pressed = false;
         this.down_pressed = false;
         this.target_y = undefined;
         this.score = 0;
-        this.StartInput = 0;
-        this.EndInput = 0;
-        this.is_stoped = 0;
         this.deltaY = 0;
         this.canevas = canevas;
     }
@@ -40,7 +36,7 @@ class racket {
             {
                 if (this.y - this.target_y < 16)
                 {
-                    console.log('here')
+                    // console.log('here')
                     this.y = this.target_y;
                     this.target_y = undefined;
                 }
@@ -54,7 +50,7 @@ class racket {
                 } else
                     this.y += this.speed * ms;
             }
-            console.log(ms, this.speed * ms, this.y, this.target_y)
+            // console.log(ms, this.speed * ms, this.y, this.target_y)
             if (this.target_y === this.y)
                 this.target_y = undefined;
         }
@@ -66,7 +62,7 @@ class racket {
             if (this.y - (this.speed * ms) >= 0)
             {
                 this.y -= this.speed * ms;
-                console.log(ms, this.speed * ms, this.y)
+                // console.log(ms, this.speed * ms, this.y)
             }
             else
                 this.y = 0;
@@ -75,7 +71,7 @@ class racket {
             if (this.canevas.height >= (this.y + this.height) + (this.speed * ms))
             {
                 this.y += this.speed * ms;
-                console.log(ms, this.speed * ms, this.y)
+                // console.log(ms, this.speed * ms, this.y)
             }
             else
                 this.y = this.canevas.height - this.img.height;

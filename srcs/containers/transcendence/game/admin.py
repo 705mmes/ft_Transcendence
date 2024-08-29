@@ -9,7 +9,7 @@ class GameLobbyAdmin(admin.ModelAdmin):
     list_display = ('Player1', 'Player2')
 
 class GamePosPlayer(admin.ModelAdmin):
-    list_display = ('Player', 'posX', 'posY', 'dir')
+    list_display = ('Player', 'posX', 'posY')
 
 admin.site.register(GameHistory, GameHistoryAdmin)
 admin.site.register(GameLobby, GameLobbyAdmin)

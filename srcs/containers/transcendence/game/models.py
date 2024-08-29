@@ -20,7 +20,8 @@ class PosPlayer(models.Model):
     Player = models.ForeignKey(User, related_name='Player', on_delete=models.CASCADE,  blank=True, null=True)
     posX = models.IntegerField(blank=True, null=True, default=0)
     posY = models.IntegerField(blank=True, null=True, default=1080 / 2 - 233 / 2)
-    dir = models.CharField(blank=True, default="stop")
+    key_up = models.BooleanField(default=False)
+    key_down = models.BooleanField(default=False)
     time_start = models.DateTimeField(default=now, blank=True)
     time_end = models.DateTimeField(default=now, blank=True)
 

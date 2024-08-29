@@ -1,4 +1,5 @@
 import json
+from time import sleep
 from xmlrpc.client import DateTime
 
 from asgiref.sync import async_to_sync, sync_to_async
@@ -38,11 +39,11 @@ class GameConsumer(WebsocketConsumer):
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
         mode = text_data_json['mode']
+        print(f"{self.scope['user']} send: {text_data_json}")
         if mode == 'match_1v1':
             self.match_1v1(text_data_json)
         elif mode == 'tournament':
             self.tournament(text_data_json)
-        # print(f"{self.scope['user']} send: {text_data_json}")
 
     def find_opponent(self):
         user = User.objects.get(username=self.scope['user'])
@@ -114,10 +115,8 @@ class GameConsumer(WebsocketConsumer):
             self.cancel_1v1()
         elif json_data['action'] == 'player_ready':
             self.check_player()
-        elif json_data['action'] == 'start' or json_data['action'] == 'end':
+        elif json_data['action'] == 'move':
             self.move(json_data)
-        # elif json_data['action'] == 'real_pos':
-        #     self.ajust_pos()
 
     def who_is_the_enemy(self, lobby):
         if lobby.Player1 == User.objects.get(username=self.scope['user']):
@@ -140,6 +139,7 @@ class GameConsumer(WebsocketConsumer):
                 user_pos.posY += move
                 if user_pos.posY > 847:
                     user_pos.posY = 847
+
         # if move - 50 < json_data['deltaY'] < move + 50:
         user_pos.posY = json_data['posY']
         user_pos.save()
@@ -150,26 +150,19 @@ class GameConsumer(WebsocketConsumer):
 
     def move(self, json_data):
         user = User.objects.get(username=self.scope['user'])
-        if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
-            opponent = self.who_is_the_enemy(GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get())
-            user_pos = user.Player.get()
-            if json_data['action'] == 'start':
-                user_pos.dir = json_data['direction']
-                # print(f"date = {json_data['time']}")
-                user_pos.time_start = datetime.now()
-                # print(int(user_pos.time_start.timestamp() * 1000))
-            else:
-                if json_data['direction'] != 'both key pressed':
-                    # print(f"date = {json_data['time']}")
-                    user_pos.time_end = datetime.now()
-                    # print(int(user_pos.time_end.timestamp() * 1000))
-                    user_pos.dir = 'stop'
-                    self.calcul_pos_server_side(user_pos, json_data)
-            user_pos.save()
-            my_racket = {'x': user.Player.get().posX, 'y': user.Player.get().posY, 'speed': 1000, 'dir': user_pos.dir}
-            opponent_racket = {'x': opponent.Player.get().posX, 'y': opponent.Player.get().posY, 'speed': 1000, 'dir': opponent.Player.get().dir}
-            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
-            async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
+        lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user))
+        if lobby.exists():
+            opponent = self.who_is_the_enemy(lobby.get())
+            user_pos = PosPlayer.objects.get(Player=user)  # Replace 'user' with the actual User instance
+            PosPlayer.objects.filter(pk=user_pos.pk).update(
+                key_up=json_data['racket']['up_pressed'],
+                key_down=json_data['racket']['down_pressed'],
+                posY=json_data['racket']['y']
+            )
+            my_racket = {'x': user.Player.get().posX, 'y': user.Player.get().posY, 'speed': 1000, 'up_pressed': user.Player.get().key_up, 'down_pressed': user.Player.get().key_down}
+            opponent_racket = {'x': opponent.Player.get().posX, 'y': opponent.Player.get().posY, 'speed': 1000,'up_pressed': opponent.Player.get().key_up, 'down_pressed': opponent.Player.get().key_down}
+            # json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
+            # async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
             json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': opponent_racket, 'opponent': my_racket}
             async_to_sync(self.channel_layer.group_send)("game_" + opponent.username, {'type': 'send_info', 'data': json_data})
 

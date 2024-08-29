@@ -34,12 +34,12 @@ function responsePong() {
 
     game_socket.onmessage = function(event)
     {
-        console.log(`Data received from server on pong: ${event.data}`);
+        // console.log(`Data received from server on pong: ${event.data}`);
         try
         {
             let data = JSON.parse(event.data);
-            console.log("parsed data pong:", data);
-            console.log(data.action);
+            // console.log("parsed data pong:", data);
+            // console.log(data.action);
             if (data.action === 'searching')
                 display_cancel_btn();
             else if (data.action === 'cancel')
