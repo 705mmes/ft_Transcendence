@@ -18,6 +18,6 @@ urlpatterns = [
 	# path('fetch_protected_data/',views.fetch_protected_data),
     path('logout_btn/', views.logout_btn),
     path('social/', views.social),
-    # path('account/login/', views.two_factor_login, name='login'),
-
+    path('api/two_factor/setup/', views.ApiSetupView.as_view(), name='api_setup'),
+    path('api/two_factor/verify/', views.ApiVerifyView.as_view(), name='api_verify'),
 ]

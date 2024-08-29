@@ -57,6 +57,8 @@ async function reload_scripts(page)
         await load_script_form_fetch(navigation_script_cache);
         await load_script_form_fetch(two_factor_script_cache);
     }
+    if (page.match("/profile/modify"))
+        await load_script_form_fetch(two_factor_script_cache);
 }
 
 async function always_on_script()

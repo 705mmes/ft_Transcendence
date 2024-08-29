@@ -61,15 +61,6 @@ function display_popup(data)
     }
 }
 
-if (document.getElementById('two_factor')) {
-    document.getElementById('two_factor').addEventListener('click', () => {
-        const url = `account/two_factor/setup/`;
-        console.log("url: ", url);
-
-        to_unspecified_page(url);
-    });
-}
-
 if (document.getElementById('edit_profile'))
 {
     document.getElementById('edit_profile').addEventListener('click', () =>{
