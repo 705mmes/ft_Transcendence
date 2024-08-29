@@ -9,6 +9,7 @@ class racket {
         this.dir = 'stop'
         this.up_pressed = false;
         this.down_pressed = false;
+        this.target_y = undefined;
         this.score = 0;
         this.StartInput = 0;
         this.EndInput = 0;
@@ -31,44 +32,55 @@ class racket {
         this.score++;
     }
 
+    smoothing(ms)
+    {
+        if (this.target_y !== undefined)
+        {
+            if (this.target_y < this.y )
+            {
+                if (this.y - this.target_y < 16)
+                {
+                    console.log('here')
+                    this.y = this.target_y;
+                    this.target_y = undefined;
+                }
+                else
+                    this.y -= this.speed * ms;
+            }
+            else if (this.y < this.target_y) {
+                if (this.target_y - this.y < 16) {
+                    this.y = this.target_y;
+                    this.target_y = undefined;
+                } else
+                    this.y += this.speed * ms;
+            }
+            console.log(ms, this.speed * ms, this.y, this.target_y)
+            if (this.target_y === this.y)
+                this.target_y = undefined;
+        }
+    }
+
     moving(ms) {
-        if (this.dir === 'move_up') {
+
+        if (this.up_pressed && !this.down_pressed) {
             if (this.y - (this.speed * ms) >= 0)
             {
-                if (this.is_stoped === 1) {
-                    this.StartInput = Date.now();
-                    this.is_stoped = 0;
-                    this.deltaY = this.y;
-                }
                 this.y -= this.speed * ms;
                 console.log(ms, this.speed * ms, this.y)
             }
             else
                 this.y = 0;
         }
-        if (this.dir === 'move_down') {
+        else if (this.down_pressed  && !this.up_pressed) {
             if (this.canevas.height >= (this.y + this.height) + (this.speed * ms))
             {
-                if (this.is_stoped === 1) {
-                    this.StartInput = Date.now();
-                    this.is_stoped = 0;
-                    this.deltaY = this.y;
-                }
                 this.y += this.speed * ms;
                 console.log(ms, this.speed * ms, this.y)
             }
             else
                 this.y = this.canevas.height - this.img.height;
         }
-        if (this.dir === 'stop')
-        {
-            if (this.is_stoped === 0) {
-                this.EndInput = Date.now();
-                console.log("Input Time =", this.EndInput - this.StartInput, "PosY =", this.y, "Old_pos =",this.y - this.deltaY);
-                this.EndInput = 0;
-                this.is_stoped = 1;
-            }
-        }
     }
+
 }
 

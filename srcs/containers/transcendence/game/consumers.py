@@ -42,7 +42,7 @@ class GameConsumer(WebsocketConsumer):
             self.match_1v1(text_data_json)
         elif mode == 'tournament':
             self.tournament(text_data_json)
-        print(f"{self.scope['user']} send: {text_data_json}")
+        # print(f"{self.scope['user']} send: {text_data_json}")
 
     def find_opponent(self):
         user = User.objects.get(username=self.scope['user'])
@@ -116,42 +116,20 @@ class GameConsumer(WebsocketConsumer):
             self.check_player()
         elif json_data['action'] == 'start' or json_data['action'] == 'end':
             self.move(json_data)
-        # elif json_data['action'] == 'get_game_data':
-        #     self.get_game_data()
-
-
-    # def move_down(self, json_data):
-    #     user = User.objects.get(username=self.scope['user'])
-    #     if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
-    #         lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
-    #         if lobby.Player1 == user:
-    #             lobby.Player1_dir = json_data
-    #             my_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY, 'speed': 1000}
-    #             opponent_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY, 'speed': 1000}
-    #             opponent_name = lobby.Player2.username
-    #             lobby.save()
-    #         else:
-    #             lobby.Player2_posY -= 10
-    #             my_racket = {'x': lobby.Player2_posX, 'y': lobby.Player2_posY}
-    #             opponent_racket = {'x': lobby.Player1_posX, 'y': lobby.Player1_posY}
-    #             opponent_name = lobby.Player1.username
-    #             lobby.save()
-    #         json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
-    #         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
-    #         json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'opponent': my_racket, 'my_racket': opponent_racket}
-    #         async_to_sync(self.channel_layer.group_send)("game_" + opponent_name, {'type': 'send_info', 'data': json_data})
-
+        # elif json_data['action'] == 'real_pos':
+        #     self.ajust_pos()
 
     def who_is_the_enemy(self, lobby):
         if lobby.Player1 == User.objects.get(username=self.scope['user']):
             return lobby.Player2
         return lobby.Player1
 
-    def calcul_new_pos(self, user_pos, json_data):
+    def calcul_pos_server_side(self, user_pos, json_data):
         server_input_time = math.ceil((user_pos.time_end.timestamp() - user_pos.time_start.timestamp()) * 1000)
         average_dt = 16
-        print(f"server_input_time * 60 / 1000 {int((server_input_time * 60 / 1000))}")
+        # print(f"server_input_time * 60 / 1000 {int((server_input_time * 60 / 1000))}")
         move = int((server_input_time * 60 / 1000)) * average_dt
+        # print(f"date = {json_data['time']}")
         if json_data['direction'] == 'move_up':
             if user_pos.posY > 0:
                 user_pos.posY -= move
@@ -162,10 +140,13 @@ class GameConsumer(WebsocketConsumer):
                 user_pos.posY += move
                 if user_pos.posY > 847:
                     user_pos.posY = 847
-        print(f"time the key is pressed = {server_input_time}")
-        print(f"dt = {average_dt}")
-        print(f"move in px = {move}")
-        print(f"posY = {user_pos.posY}")
+        # if move - 50 < json_data['deltaY'] < move + 50:
+        user_pos.posY = json_data['posY']
+        user_pos.save()
+        # print(f"time the key is pressed = {server_input_time}")
+        # print(f"dt = {average_dt}")
+        # print(f"move in px = {move}")
+        # print(f"posY = {user_pos.posY}")
 
     def move(self, json_data):
         user = User.objects.get(username=self.scope['user'])
@@ -174,14 +155,16 @@ class GameConsumer(WebsocketConsumer):
             user_pos = user.Player.get()
             if json_data['action'] == 'start':
                 user_pos.dir = json_data['direction']
+                # print(f"date = {json_data['time']}")
                 user_pos.time_start = datetime.now()
-                print(int(user_pos.time_start.timestamp() * 1000))
+                # print(int(user_pos.time_start.timestamp() * 1000))
             else:
                 if json_data['direction'] != 'both key pressed':
+                    # print(f"date = {json_data['time']}")
                     user_pos.time_end = datetime.now()
-                    print(int(user_pos.time_end.timestamp() * 1000))
+                    # print(int(user_pos.time_end.timestamp() * 1000))
                     user_pos.dir = 'stop'
-                    self.calcul_new_pos(user_pos, json_data)
+                    self.calcul_pos_server_side(user_pos, json_data)
             user_pos.save()
             my_racket = {'x': user.Player.get().posX, 'y': user.Player.get().posY, 'speed': 1000, 'dir': user_pos.dir}
             opponent_racket = {'x': opponent.Player.get().posX, 'y': opponent.Player.get().posY, 'speed': 1000, 'dir': opponent.Player.get().dir}
