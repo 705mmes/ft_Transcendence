@@ -12,6 +12,8 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
 from django_otp.decorators import otp_required
+from django_otp.plugins.otp_totp.models import TOTPDevice
+from django.utils.decorators import method_decorator
 import random
 import string
 
@@ -191,5 +193,31 @@ def logout_btn(request):
 def social(request):
     return render(request, 'authentication/social.html')
 
-# def two_factor_login(request):
-#     return render(request, 'two_factor/core/login.html')
+@method_decorator(login_required, name='dispatch')
+class ApiSetupView(View):
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        device = TOTPDevice.objects.create(user=user, name='default')
+        qr_url = device.config_url
+        response_data = {
+            'qr_url': qr_url,
+            'secret_key': device.persistent_id,
+        }
+        return JsonResponse(response_data)
+
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        # Handle 2FA setup completion
+        return JsonResponse({'status': 'success'})
+
+@method_decorator(login_required, name='dispatch')
+class ApiVerifyView(View):
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        token = data.get('token')
+        user = request.user
+        devices = TOTPDevice.objects.filter(user=user)
+        for device in devices:
+            if device.verify_token(token):
+                return JsonResponse({'status': 'success'})
+        return JsonResponse({'status': 'error', 'message': 'Invalid token'})
