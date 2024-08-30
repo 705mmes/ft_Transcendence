@@ -11,6 +11,7 @@ from django.db.models import Q
 from datetime import datetime
 import math
 from django.core import serializers
+from django.core.cache import cache
 
 
 class GameConsumer(WebsocketConsumer):
@@ -32,6 +33,9 @@ class GameConsumer(WebsocketConsumer):
         user.save()
         if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
             lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
+            opponent = self.who_is_the_enemy(lobby)
+            cache.delete(f"{opponent.username}_key")
+            cache.delete(f"{user.username}_key")
             lobby.delete()
         PosPlayer.objects.get(Player=user).delete()
         print(f"Disconnecting : {self.scope['user']}")
@@ -123,46 +127,74 @@ class GameConsumer(WebsocketConsumer):
             return lobby.Player2
         return lobby.Player1
 
-    def calcul_pos_server_side(self, user_pos, json_data):
-        server_input_time = math.ceil((user_pos.time_end.timestamp() - user_pos.time_start.timestamp()) * 1000)
+    def calcul_pos_server_side(self, user_key):
+        user_cache = cache.get(user_key)
+        start = user_cache.get('time_start')
+        end = user_cache.get('time_end')
+        print(start, end)
+        server_input_time = math.ceil((end - start) * 1000)
         average_dt = 16
         # print(f"server_input_time * 60 / 1000 {int((server_input_time * 60 / 1000))}")
         move = int((server_input_time * 60 / 1000)) * average_dt
         # print(f"date = {json_data['time']}")
-        if json_data['direction'] == 'move_up':
-            if user_pos.posY > 0:
-                user_pos.posY -= move
-                if user_pos.posY < 0:
-                    user_pos.posY = 0
-        elif json_data['direction'] == 'move_down':
-            if user_pos.posY < 847:
-                user_pos.posY += move
-                if user_pos.posY > 847:
-                    user_pos.posY = 847
+        if user_cache['up_pressed']:
+            if user_cache['posY'] > 0:
+                user_cache['posY'] -= move
+                if user_cache['posY'] < 0:
+                    user_cache['posY'] = 0
+        elif user_cache['down_pressed']:
+            if user_cache['posY'] < 847:
+                user_cache['posY'] += move
+                if user_cache['posY'] > 847:
+                    user_cache['posY'] = 847
 
-        # if move - 50 < json_data['deltaY'] < move + 50:
-        user_pos.posY = json_data['posY']
-        user_pos.save()
-        # print(f"time the key is pressed = {server_input_time}")
-        # print(f"dt = {average_dt}")
-        # print(f"move in px = {move}")
-        # print(f"posY = {user_pos.posY}")
+        user_cache['time_start'] = 0
+        user_cache['time_end'] = 0
+        # if move - 50 < json_data['delta
+        print(f"time the key is pressed = {server_input_time}")
+        print(f"dt = {average_dt}")
+        print(f"move in px = {move}")
+        print(f"posY = {user_cache['posY']}")
+        cache.set(user_key, user_cache)
+
+    def update_cache(self, json_data, user):
+        user_key = f"{user.username}_key"
+        old_cache = cache.get(user_key)
+        updated_cache = {
+                'posX': old_cache['posX'],
+                'posY': json_data['racket']['y'],
+                'up_pressed': json_data['racket']['up_pressed'],
+                'down_pressed': json_data['racket']['down_pressed'],
+                'time_end': old_cache['time_end'],
+                'time_start': old_cache['time_start'],
+        }
+        if updated_cache['up_pressed'] and updated_cache['down_pressed'] and old_cache['time_start'] != 0:
+            updated_cache['time_end'] = datetime.now().timestamp()
+        else:
+            if (updated_cache['up_pressed'] or updated_cache['down_pressed']) and old_cache['time_start'] == 0:
+                updated_cache['time_start'] = datetime.now().timestamp()
+            elif not updated_cache['up_pressed'] and old_cache['up_pressed'] and old_cache['time_end'] == 0:
+                updated_cache['time_end'] = datetime.now().timestamp()
+            elif not updated_cache['down_pressed'] and old_cache['down_pressed'] and old_cache['time_end'] == 0:
+                updated_cache['time_end'] = datetime.now().timestamp()
+        cache.set(user_key, updated_cache)
 
     def move(self, json_data):
         user = User.objects.get(username=self.scope['user'])
         lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user))
         if lobby.exists():
+            self.update_cache(json_data, user)
             opponent = self.who_is_the_enemy(lobby.get())
-            user_pos = PosPlayer.objects.get(Player=user)  # Replace 'user' with the actual User instance
-            PosPlayer.objects.filter(pk=user_pos.pk).update(
-                key_up=json_data['racket']['up_pressed'],
-                key_down=json_data['racket']['down_pressed'],
-                posY=json_data['racket']['y']
-            )
-            my_racket = {'x': user.Player.get().posX, 'y': user.Player.get().posY, 'speed': 1000, 'up_pressed': user.Player.get().key_up, 'down_pressed': user.Player.get().key_down}
-            opponent_racket = {'x': opponent.Player.get().posX, 'y': opponent.Player.get().posY, 'speed': 1000,'up_pressed': opponent.Player.get().key_up, 'down_pressed': opponent.Player.get().key_down}
-            # json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
-            # async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
+            opponent_cache = cache.get(f"{opponent.username}_key")
+            user_cache = cache.get(f"{user.username}_key")
+            if user_cache.get('time_end') != 0:
+                self.calcul_pos_server_side(f"{user.username}_key")
+            my_racket = {'x': user_cache['posX'], 'y': user_cache['posY'], 'speed': 1000,
+                         'up_pressed': user_cache['up_pressed'], 'down_pressed': user_cache['down_pressed']}
+            opponent_racket = {'x': opponent_cache['posX'], 'y': opponent_cache['posY'], 'speed': 1000,
+                               'up_pressed': opponent_cache['up_pressed'], 'down_pressed': opponent_cache['down_pressed']}
+            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
+            async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
             json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': opponent_racket, 'opponent': my_racket}
             async_to_sync(self.channel_layer.group_send)("game_" + opponent.username, {'type': 'send_info', 'data': json_data})
 
@@ -183,20 +215,29 @@ class GameConsumer(WebsocketConsumer):
 
     def init_pos(self, lobby):
         user = User.objects.get(username=self.scope['user'])
+        opponent = self.who_is_the_enemy(lobby)
         if lobby.Player1 == user:
-            opponent_pos = lobby.Player2.Player.get()
-            opponent_pos.set_to_player2()
-            opponent_pos.save()
-            user_pos = user.Player.get()
-            user_pos.set_to_player1()
-            user_pos.save()
+            cache.set(f"{user.username}_key", {
+                'posX': 0, 'posY': 1080 / 2 - 233 / 2,
+                'up_pressed': False, 'down_pressed': False,
+                'time_start': 0, 'time_end': 0
+            })
+            cache.set(f"{opponent.username}_key", {
+                'posX': 2040 - 77, 'posY': 1080 / 2 - 233 / 2,
+                'up_pressed': False, 'down_pressed': False,
+                'time_start': 0, 'time_end': 0
+            })
         else:
-            opponent_pos = lobby.Player1.Player.get()
-            opponent_pos.set_to_player1()
-            opponent_pos.save()
-            user_pos = user.Player.get()
-            user_pos.set_to_player2()
-            user_pos.save()
+            cache.set(f"{opponent.username}_key", {
+                'posX': 0, 'posY': 1080 / 2 - 233 / 2,
+                'up_pressed': False, 'down_pressed': False,
+                'time_start': 0, 'time_end': 0
+            })
+            cache.set(f"{user.username}_key", {
+                'posX': 2040 - 77, 'posY': 1080 / 2 - 233 / 2,
+                'up_pressed': False, 'down_pressed': False,
+                'time_start': 0, 'time_end': 0
+            })
 
     def check_player(self):
         user = User.objects.get(username=self.scope['user'])
