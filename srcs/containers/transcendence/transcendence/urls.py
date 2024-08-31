@@ -26,6 +26,7 @@ urlpatterns = [
     path('game/', include('game.urls')),
     # path('registration/', views.registration),
     path('profile/', include('profile_page.urls')),
+    path('account/', include('accounts.urls')),
     path('', include(tf_urls)),
 ]
 

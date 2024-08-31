@@ -1,19 +1,11 @@
-from django.shortcuts import render
 from django.shortcuts import render, redirect
-from two_factor.forms import TOTPDeviceForm
-from two_factor.views import LoginView, ProfileView
-from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.urls import reverse
 
-class CustomLoginView(LoginView):
-    template_name = 'account/login.html'
-
-class CustomProfileView(ProfileView):
-    template_name = 'account/profile.html'
-
-def activate_2fa(request):
-    form = TOTPDeviceForm(request.POST or None)
-    if form.is_valid():
-        form.save()
-        return redirect('profile')
-    return render(request, 'account/activate_2fa.html', {'form': form})
+@login_required
+def redirect_to_2fa_setup(request):
+    print("redirect_to_2fa_setup...")
+    setup_url = reverse('two_factor:setup')  # Adjust this if the URL name is different
+    return JsonResponse({'setup_url': setup_url})
 

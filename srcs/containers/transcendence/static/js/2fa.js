@@ -1,20 +1,33 @@
-async function setup2FA(data) {
-    const response = await fetch('/api/setup-2fa/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCsrfToken(),
-        },
-        body: JSON.stringify(data),
-    });
-    const result = await response.json();
-    if (response.ok) {
-        console.log('2FA setup successful:', result);
-    } else {
-        console.error('2FA setup failed:', result);
-    }
+if (document.getElementById('setup-2fa-button')) {
+	console.log("addEventListener->setup-2fa-button...");
+	document.getElementById('setup-2fa-button').addEventListener('click', function() {
+		console.log("fetching /account/two_factor/setup/start/...");
+		fetch('/account/two_factor/setup/start/')
+			.then(response => response.json())
+			.then(data => {
+				const setupUrl = data.setup_url;
+				
+				window.history.pushState({}, '', setupUrl);
+				
+				loadContent(setupUrl);
+			});
+	});
 }
 
-function getCsrfToken() {
-    // Implement function to retrieve CSRF token from cookies
+function loadContent(url) {
+    fetch(url)
+        .then(response => response.text())
+        .then(html => {
+            document.getElementById('content').innerHTML = html;
+        })
+        .catch(error => console.error('Error loading content:', error));
 }
+
+window.addEventListener('popstate', function(event) {
+	const currentUrl = window.location.pathname;
+	loadContent(currentUrl);
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+	loadContent(window.location.pathname);
+});

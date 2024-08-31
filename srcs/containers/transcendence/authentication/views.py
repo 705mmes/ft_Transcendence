@@ -2,18 +2,13 @@ import json
 from urllib.parse import quote, urlencode
 import requests
 from django.conf import settings
-from django.views import View
 from django.shortcuts import render, redirect
 from authentication.forms import LoginForm, RegistrationForm
 from .models import User
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse, HttpResponseRedirect
 from django.contrib.auth import login, authenticate, logout
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from django.views.decorators.http import require_http_methods
-from django.contrib.auth.decorators import login_required
-from django_otp.decorators import otp_required
+
 from django_otp.plugins.otp_totp.models import TOTPDevice
-from django.utils.decorators import method_decorator
 import random
 import string
 

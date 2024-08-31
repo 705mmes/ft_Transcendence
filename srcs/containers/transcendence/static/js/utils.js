@@ -18,6 +18,7 @@ let navigation_script_cache = fetch_scripts('game/scripts/', 'navigation_script'
 let profile_script_cache = fetch_scripts('game/scripts/', 'profile_script');
 let ws_script_cache = fetch_scripts('game/scripts', 'ws_script');
 let social_script_cache = fetch_scripts('game/scripts', 'social_script');
+let twofa_script_cache = fetch_scripts('game/scripts', '2fa_script');
 
 if (moveback !== '/')
 {
@@ -41,7 +42,7 @@ let game_data = {
 
 async function reload_scripts(page)
 {
-    if (page !== '/' && !page.match("/account/"))
+    if (page !== '/')
     {
         await always_on_script();
         if (page.match('/social/'))
@@ -53,16 +54,15 @@ async function reload_scripts(page)
     }
     else {
         await load_script_form_fetch(authentication_script_cache);
-        await load_script_form_fetch(navigation_script_cache);
     }
 }
 
 async function always_on_script()
 {
-    let script_list = ['navigation_script', 'game_class_script', 'ws_script']
-    let script_list_cache = [navigation_script_cache, game_class_script_cache, ws_script_cache]
+    let script_list = ['navigation_script', 'game_class_script', 'ws_script', '2fa_script']
+    let script_list_cache = [navigation_script_cache, game_class_script_cache, ws_script_cache, twofa_script_cache]
 
-    for (let a = 0; a <= 2; a++)
+    for (let a = 0; a <= 3; a++)
     {
         if (document.getElementsByClassName(script_list[a]).length === 0)
                 await  load_script_form_fetch(script_list_cache[a]);
