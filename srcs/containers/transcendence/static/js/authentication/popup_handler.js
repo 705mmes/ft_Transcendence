@@ -19,6 +19,23 @@ document.getElementById("Rclose").onclick = () => {
 	document.getElementById("registration").reset();
 }}
 
+if (document.getElementById("login")){
+document.getElementById("login").onclick = () => {
+	document.getElementById("login_container").classList.add('on');
+}}
+
+if (document.getElementById("Lclose")){
+document.getElementById("Lclose").onclick = () => {
+	document.getElementById("login_container").classList.remove('on');
+}}
+
+if (document.getElementById("loginform")){
+document.getElementById("loginform").addEventListener('submit', function(event){
+	event.preventDefault();
+	send_login_form(this, 'login_session/');
+	document.getElementById("login_container").classList.remove('on');
+});}
+
 if (document.getElementById("registration")){
 document.getElementById("registration").addEventListener('submit', function(event){
 	event.preventDefault();

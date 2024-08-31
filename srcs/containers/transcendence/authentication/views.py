@@ -192,32 +192,3 @@ def logout_btn(request):
 
 def social(request):
     return render(request, 'authentication/social.html')
-
-@method_decorator(login_required, name='dispatch')
-class ApiSetupView(View):
-    def get(self, request, *args, **kwargs):
-        user = request.user
-        device = TOTPDevice.objects.create(user=user, name='default')
-        qr_url = device.config_url
-        response_data = {
-            'qr_url': qr_url,
-            'secret_key': device.persistent_id,
-        }
-        return JsonResponse(response_data)
-
-    def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        # Handle 2FA setup completion
-        return JsonResponse({'status': 'success'})
-
-@method_decorator(login_required, name='dispatch')
-class ApiVerifyView(View):
-    def post(self, request, *args, **kwargs):
-        data = json.loads(request.body)
-        token = data.get('token')
-        user = request.user
-        devices = TOTPDevice.objects.filter(user=user)
-        for device in devices:
-            if device.verify_token(token):
-                return JsonResponse({'status': 'success'})
-        return JsonResponse({'status': 'error', 'message': 'Invalid token'})

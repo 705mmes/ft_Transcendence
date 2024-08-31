@@ -1,11 +1,9 @@
 # requirements.txt
 
-django-otp-yubikey==1.1.0
-YubiOTP==1.0.0
+djangorestframework==3.15.2
 
 # Django-related packages
 Django==5.0.6                   # The Django web framework
-django-cors-headers             # Handling Cross-Origin Resource Sharing (CORS)
 django-formtools==2.5.1         # Collection of assorted utilities for forms
 django-otp==1.5.2               # One-time password framework for Django
 django-phonenumber-field==8.0.0 # Phone number field for Django

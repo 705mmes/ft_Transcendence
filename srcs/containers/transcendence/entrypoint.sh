@@ -21,11 +21,9 @@ python manage.py flush --no-input
 if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_EMAIL" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
     python manage.py shell -c "
 from django.contrib.auth import get_user_model;
-from otp_yubikey.models import ValidationService
 from authentication.models import FriendList
 from authentication.models import FriendRequest
 from game.models import GameHistory
-from django_otp.plugins.otp_totp.models import TOTPDevice
 
 User = get_user_model();
 
@@ -34,10 +32,6 @@ if not User.objects.filter(username='$DJANGO_SUPERUSER_USERNAME').exists():
     user = User.objects.create_superuser('$DJANGO_SUPERUSER_USERNAME', '$DJANGO_SUPERUSER_EMAIL', '$DJANGO_SUPERUSER_PASSWORD')
 else:
     user = User.objects.get(username='$DJANGO_SUPERUSER_USERNAME')
-
-# # Create TOTPDevice for the superuser if not exists
-# if not TOTPDevice.objects.filter(user=user).exists():
-#     TOTPDevice.objects.create(user=user, name='default')
 
 if not User.objects.filter(username='ludo').exists():
     ludo = User.objects.create_user(username='ludo', email='ludo@maildeludo.com', password='fefe')

@@ -25,17 +25,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get("DEBUG", default=0))
 
-# SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https') if os.environ.get("USE_HTTPS") == 'true' else None
-
-# SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-# SESSION_COOKIE_SECURE = bool(os.environ.get("SESSION_COOKIE", default=0))  # Set to True in production with HTTPS
-
 CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://10.13.3.9:8000', 'http://0.0.0.0:8000', 'http://192.168.1.17:8000', 'https://localhost:4443', 'https://10.13.3.9:4443', 'https://0.0.0.0:4443', 'https://192.168.1.17:4443']
-# CSRF_COOKIE_SECURE = bool(os.environ.get("CSRF_COOKIE", default=0))
-# CSRF_COOKIE_NAME = 'csrftoken'
-
-# Cross-Origin Resource Sharing
-# CORS_ALLOW_ALL_ORIGINS = bool(os.environ.get("CORS_ALLOW_ALL"))  # Allow all origins (not recommended for production)
 
 # OAuth2 credentials
 OAUTH_CLIENT_ID = os.getenv('VITE_UID')
@@ -48,24 +38,30 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-	'corsheaders',
     'daphne',
-	'otp_yubikey',
+    'rest_framework',
+    # 2fa
 	'django_otp',
     'django_otp.plugins.otp_static',
     'django_otp.plugins.otp_totp',
     'two_factor',
+    #
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    #
     'authentication',
     'game',
     'channels',
     'profile_page',
+    'accounts',
 ]
+
+SITE_ID = 1
 
 CHANNEL_LAYERS = {
     "default": {
@@ -79,7 +75,6 @@ CHANNEL_LAYERS = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # Must be placed before CommonMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -88,31 +83,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
-# Allow specific headers and methods
-# CORS_ALLOW_HEADERS = [
-#     'content-type',
-#     'authorization',
-#     'x-requested-with',
-# ]
-
-# CORS_ALLOW_METHODS = [
-#     'GET',
-#     'POST',
-#     'PUT',
-#     'PATCH',
-#     'DELETE',
-#     'OPTIONS',
-# ]
-
-# CORS_ALLOWED_ORIGINS = [
-#     "http://localhost:8000",
-#     "http://127.0.0.1:8000",
-#     "http://0.0.0.0:8000",
-#     "http://k2r3p10:8000",
-#     "http://k2r3p9:8000",
-#     "http://k2r3p10:8000",
-# ]
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # Default
+    'django_otp.backends.OTPBackend',  # OTP support
+]
 
 ROOT_URLCONF = 'transcendence.urls'
 
@@ -198,7 +172,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 LOGIN_URL = 'two_factor:login'
-LOGIN_REDIRECT_URL = '/game/'
+LOGIN_REDIRECT_URL = '/'
 TWO_FACTOR_PATCH_ADMIN = False
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
