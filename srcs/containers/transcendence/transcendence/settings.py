@@ -80,11 +80,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# AUTHENTICATION_BACKENDS = [
-#     'django.contrib.auth.backends.ModelBackend',  # Default
-#     'django_otp.backends.OTPBackend',  # OTP support
-# ]
-
 ROOT_URLCONF = 'transcendence.urls'
 
 TEMPLATES = [
