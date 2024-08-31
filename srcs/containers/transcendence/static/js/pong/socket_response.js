@@ -38,8 +38,8 @@ function responsePong() {
         try
         {
             let data = JSON.parse(event.data);
-            // console.log("parsed data pong:", data);
-            // console.log(data.action);
+            console.log("parsed data pong:", data);
+            console.log(data.action);
             if (data.action === 'searching')
                 display_cancel_btn();
             else if (data.action === 'cancel')
@@ -55,7 +55,7 @@ function responsePong() {
             {
                 document.getElementById('lobby_css').remove();
                 document.getElementById('lobby_div').remove();
-                main_game();
+                main_game(data);
             }
             else if (data.action === 'game_data')
                 update_racket_state(data);

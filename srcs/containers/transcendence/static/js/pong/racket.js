@@ -50,14 +50,13 @@ class racket {
                 } else
                     this.y += this.speed * ms;
             }
-            console.log(ms, this.speed * ms, this.y, this.target_y)
+            console.log(ms, this.speed * ms, this.y, this.target_y, this.speed)
             if (this.target_y === this.y)
                 this.target_y = undefined;
         }
     }
 
     moving(ms) {
-
         if (this.up_pressed && !this.down_pressed) {
             if (this.y - (this.speed * ms) >= 0)
             {

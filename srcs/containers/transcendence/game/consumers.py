@@ -1,4 +1,5 @@
 import json
+from linecache import updatecache
 from time import sleep
 from xmlrpc.client import DateTime
 
@@ -36,6 +37,8 @@ class GameConsumer(WebsocketConsumer):
             opponent = self.who_is_the_enemy(lobby)
             cache.delete(f"{opponent.username}_key")
             cache.delete(f"{user.username}_key")
+            cache.delete(f"{lobby.Name}_key")
+            print(cache.get((f"{user.username}_key")))
             lobby.delete()
         PosPlayer.objects.get(Player=user).delete()
         print(f"Disconnecting : {self.scope['user']}")
@@ -122,21 +125,30 @@ class GameConsumer(WebsocketConsumer):
         elif json_data['action'] == 'move':
             self.move(json_data)
 
+
     def who_is_the_enemy(self, lobby):
         if lobby.Player1 == User.objects.get(username=self.scope['user']):
             return lobby.Player2
         return lobby.Player1
 
-    def calcul_pos_server_side(self, user_key):
+    def calcul_pos_ball(self, lobby_name):
+        old_ball_cache = cache.get(lobby_name + "_key")
+        update_time = datetime.now().timestamp()
+
+        dx = (update_time - old_ball_cache['update_time']) / 1000 * old_ball_cache['dirX']
+        dy = (update_time - old_ball_cache['update_time']) / 1000 * old_ball_cache['dirY']
+        old_ball_cache['posX'] += dx
+        old_ball_cache['posY'] += dy
+        print(f"dx ={dx} et dy = {dy} | new_posX {old_ball_cache['posX'] }, new_posY {old_ball_cache['posY']}")
+        cache.set(lobby_name + "_key", old_ball_cache)
+
+    def calcul_pos_racket(self, user_key):
         user_cache = cache.get(user_key)
         start = user_cache.get('time_start')
         end = user_cache.get('time_end')
-        print(start, end)
         server_input_time = math.ceil((end - start) * 1000)
         average_dt = 16
-        # print(f"server_input_time * 60 / 1000 {int((server_input_time * 60 / 1000))}")
         move = int((server_input_time * 60 / 1000)) * average_dt
-        # print(f"date = {json_data['time']}")
         if user_cache['up_pressed']:
             if user_cache['posY'] > 0:
                 user_cache['posY'] -= move
@@ -147,14 +159,8 @@ class GameConsumer(WebsocketConsumer):
                 user_cache['posY'] += move
                 if user_cache['posY'] > 847:
                     user_cache['posY'] = 847
-
         user_cache['time_start'] = 0
         user_cache['time_end'] = 0
-        # if move - 50 < json_data['delta
-        print(f"time the key is pressed = {server_input_time}")
-        print(f"dt = {average_dt}")
-        print(f"move in px = {move}")
-        print(f"posY = {user_cache['posY']}")
         cache.set(user_key, user_cache)
 
     def update_cache(self, json_data, user):
@@ -185,17 +191,16 @@ class GameConsumer(WebsocketConsumer):
         if lobby.exists():
             self.update_cache(json_data, user)
             opponent = self.who_is_the_enemy(lobby.get())
-            opponent_cache = cache.get(f"{opponent.username}_key")
             user_cache = cache.get(f"{user.username}_key")
             if user_cache.get('time_end') != 0:
-                self.calcul_pos_server_side(f"{user.username}_key")
-            my_racket = {'x': user_cache['posX'], 'y': user_cache['posY'], 'speed': 1000,
-                         'up_pressed': user_cache['up_pressed'], 'down_pressed': user_cache['down_pressed']}
-            opponent_racket = {'x': opponent_cache['posX'], 'y': opponent_cache['posY'], 'speed': 1000,
-                               'up_pressed': opponent_cache['up_pressed'], 'down_pressed': opponent_cache['down_pressed']}
-            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
+                self.calcul_pos_racket(f"{user.username}_key")
+            self.calcul_pos_ball(lobby.get().Name)
+            my_racket = self.json_creator_racket(user)
+            opponent_racket = self.json_creator_racket(opponent)
+            game_ball = self.json_creator_ball(lobby.get())
+            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket, 'ball': game_ball}
             async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
-            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': opponent_racket, 'opponent': my_racket}
+            json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': opponent_racket, 'opponent': my_racket, 'ball': game_ball}
             async_to_sync(self.channel_layer.group_send)("game_" + opponent.username, {'type': 'send_info', 'data': json_data})
 
     # def get_game_data(self):
@@ -213,42 +218,62 @@ class GameConsumer(WebsocketConsumer):
             # json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': my_racket, 'opponent': opponent_racket}
             # async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
 
+    def set_player(self, player1, player2):
+        cache.set(f"{player1.username}_key", {
+            'posX': 0, 'posY': 1080 / 2 - 233 / 2,
+            'up_pressed': False, 'down_pressed': False,
+            'time_start': 0, 'time_end': 0
+        })
+        cache.set(f"{player2.username}_key", {
+            'posX': 2040 - 77, 'posY': 1080 / 2 - 233 / 2,
+            'up_pressed': False, 'down_pressed': False,
+            'time_start': 0, 'time_end': 0
+        })
+
     def init_pos(self, lobby):
         user = User.objects.get(username=self.scope['user'])
         opponent = self.who_is_the_enemy(lobby)
         if lobby.Player1 == user:
-            cache.set(f"{user.username}_key", {
-                'posX': 0, 'posY': 1080 / 2 - 233 / 2,
-                'up_pressed': False, 'down_pressed': False,
-                'time_start': 0, 'time_end': 0
-            })
-            cache.set(f"{opponent.username}_key", {
-                'posX': 2040 - 77, 'posY': 1080 / 2 - 233 / 2,
-                'up_pressed': False, 'down_pressed': False,
-                'time_start': 0, 'time_end': 0
-            })
+            self.set_player(user, opponent)
         else:
-            cache.set(f"{opponent.username}_key", {
-                'posX': 0, 'posY': 1080 / 2 - 233 / 2,
-                'up_pressed': False, 'down_pressed': False,
-                'time_start': 0, 'time_end': 0
-            })
-            cache.set(f"{user.username}_key", {
-                'posX': 2040 - 77, 'posY': 1080 / 2 - 233 / 2,
-                'up_pressed': False, 'down_pressed': False,
-                'time_start': 0, 'time_end': 0
-            })
+            self.set_player(opponent, user)
+        print(lobby.Name)
+        cache.set(f"{lobby.Name}_key", {
+            'posX': 2040 / 2 - 15, 'posY':1080 / 2 - 15,
+            'dirX': -500, 'dirY': 0, 'speed': 500,
+            'update_time': datetime.now().timestamp()
+        })
+
+    def json_creator_racket(self, user):
+        user_cache = cache.get(f"{user.username}_key")
+        racket = {'x': user_cache['posX'], 'y': user_cache['posY'], 'speed': 1000,
+                     'up_pressed': user_cache['up_pressed'],
+                     'down_pressed': user_cache['down_pressed']}
+        return racket
+
+    def json_creator_ball(self, lobby):
+        ball_cache = cache.get(f"{lobby.Name}_key")
+        ball = {'posX': ball_cache['posX'], 'posY': ball_cache['posY'],
+                'speed': ball_cache['speed'],
+                'dirX': ball_cache['dirX'],
+                'dirY': ball_cache['dirY']
+             }
+        return ball
 
     def check_player(self):
         user = User.objects.get(username=self.scope['user'])
-        if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
-            self.init_pos(GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get())
-            opponent = self.who_is_the_enemy(GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get())
+        lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user))
+        if lobby.exists():
+            self.init_pos(lobby.get())
+            opponent = self.who_is_the_enemy(lobby.get())
             if user.is_playing and opponent.is_playing:
-                json_data = {'action': 'start_game', 'mode': 'matchmaking_1v1'}
+                my_racket = self.json_creator_racket(user)
+                opponent_racket = self.json_creator_racket(opponent)
+                game_ball = self.json_creator_ball(lobby.get())
+                json_data = {'action': 'start_game', 'mode': 'matchmaking_1v1', 'my_racket': my_racket,
+                             'opponent': opponent_racket, 'ball': game_ball}
                 async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
                 return
-        print("Popo")
         json_data = {'action': 'cancel_lobby', 'mode': 'matchmaking_1v1'}
         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
 
