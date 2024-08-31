@@ -5,10 +5,10 @@ class balle
 		this.y = 0;
 		this.img = new Image();
 		this.img.src = "../static/js/images/maltesers.png";
-		this.startspeed = undefined;
-		this.evospeed;
+		this.startspeed = 500;
+		this.evospeed = undefined;
 		this.dirx = undefined;
-		this.diry = undefined;
+		this.diry = 0;
 		this.size = 30;
 		this.canevas = canevas
 
@@ -23,10 +23,7 @@ class balle
 	{
 		if (this.x < 0 || this.x > this.canevas.width)
 		{
-			if (this.x > this.canevas.width)
-				my_racket.scored();
-			if (this.x < 0)
-				my_racket.scored();
+			send_data("ball_info", my_racket)
 			this.x = this.canevas.width / 2;
 			this.y = this.canevas.height / 2;
 			this.diry = 0;
@@ -39,7 +36,7 @@ class balle
 
 	hit(ms, my_racket)
 	{
-		//droite
+		// Si elle touche une racket a droite
 		if (this.dirx * ms > 0 && my_racket.x !== 0)
 		{
 			if (this.x + this.size + (this.dirx * ms) > my_racket.x + 37
@@ -54,7 +51,7 @@ class balle
 			if (this.y - (this.size / 4) + this.diry > this.canevas.height || this.y - this.size + this.diry < 0)
 				this.diry *= -1;
 		}
-		//gauche
+		// Si elle touche une racket a gauche
 		if (this.dirx * ms < 0 && my_racket.x === 0)
 		{
 			if (this.x - this.size + (this.dirx * ms) < my_racket.x + 64
@@ -73,11 +70,11 @@ class balle
 
 	move(ms, my_racket, opponent_racket)
 	{
-		this.hit(ms, my_racket);
-		this.resetballs(ms, my_racket);
-		this.hit(ms, opponent_racket);
-		this.resetballs(ms, opponent_racket);
+		// this.hit(ms, my_racket);
+		// this.resetballs(ms, my_racket);
+		// this.hit(ms, opponent_racket);
+		// this.resetballs(ms, opponent_racket);
 		this.x += this.dirx * ms;
-		this.y += this.diry;
+		this.y += this.diry * ms;
 	}
 }

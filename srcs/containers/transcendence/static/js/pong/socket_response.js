@@ -59,6 +59,8 @@ function responsePong() {
             }
             else if (data.action === 'game_data')
                 update_racket_state(data);
+            else if (data.action === 'ball_data')
+                update_ball_state(data)
             else {
                 console.error("Unknown action received from server.");
             }

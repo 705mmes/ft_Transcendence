@@ -4,7 +4,7 @@ if (document.getElementById("register"))
 	})
 
 if (document.getElementById("register")){
-document.getElementById("register").addEventListener("mouseleave", (e) => {
+	document.getElementById("register").addEventListener("mouseleave", (e) => {
 	document.getElementById("registerhover").id = "register";
 })}
 

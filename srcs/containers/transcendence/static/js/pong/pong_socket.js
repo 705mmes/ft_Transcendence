@@ -1,5 +1,5 @@
 
-function pong_websocket() {
+function pong_websocket(game_data) {
     console.log("Pong_Socket.js script !")
     if (!game_socket || game_socket.readyState === WebSocket.CLOSED) {
 
@@ -22,8 +22,13 @@ function pong_websocket() {
 
         // Event handler for when the WebSocket connection closes
         game_socket.onclose = function (event) {
+            if (game_data.BallInterId)
+                clearInterval(game_data.BallInterId);
+            if (game_data.interid !== undefined)
+                clearInterval(game_data.interid);
             if (event.wasClean) {
                 console.log(`[close] Connection pong closed cleanly, code=${event.code} reason=${event.reason}`);
+
             } else {
                 console.log('[close] Connection pong died');
                 // Optionally, implement reconnection logic here
@@ -37,4 +42,4 @@ function pong_websocket() {
     return game_socket;
 }
 
-pong_websocket();
+pong_websocket(game_data);
