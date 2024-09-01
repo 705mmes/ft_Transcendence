@@ -61,7 +61,7 @@ if (document.getElementById(login-container)) {
 				displayOTPForm(data.otp_url); // A function to dynamically load OTP form
 			} else if (data.success) {
 				// Redirect or load the next content
-				loadContent('/dashboard');
+				loadContent('/game/');
 			} else {
 				alert(data.error); // Show an error message
 			}

@@ -44,9 +44,9 @@ function displayOTPForm(otpUrl) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                loadContent('/dashboard'); // Redirect to dashboard or desired page
+                loadContent('/game/');
             } else {
-                alert(data.error); // Show an error message
+                alert(data.error);
             }
         })
         .catch(error => {
