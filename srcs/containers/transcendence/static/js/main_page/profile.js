@@ -67,3 +67,19 @@ if (document.getElementById('edit_profile'))
         to_unspecified_page('profile/modify/')
     })
 }
+
+if (document.getElementById('setup_2fa')) {
+	document.getElementById('setup_2fa').addEventListener('click', function() {
+		fetch('/account/two_factor/setup/start/')
+			.then(response => response.json())
+			.then(data => {
+				const setupUrl = data.setup_url;
+				window.history.pushState({}, '', setupUrl);
+				loadContent(setupUrl);
+			})
+			.catch(error => console.error('Fetch error:', error));
+	});
+} 
+else {
+    console.error("setup_2fa button not found");
+}

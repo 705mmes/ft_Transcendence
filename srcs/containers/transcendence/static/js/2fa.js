@@ -1,18 +1,4 @@
-if (document.getElementById('setup-2fa-button')) {
-	console.log("addEventListener->setup-2fa-button...");
-	document.getElementById('setup-2fa-button').addEventListener('click', function() {
-		console.log("fetching /account/two_factor/setup/start/...");
-		fetch('/account/two_factor/setup/start/')
-			.then(response => response.json())
-			.then(data => {
-				const setupUrl = data.setup_url;
-				
-				window.history.pushState({}, '', setupUrl);
-				
-				loadContent(setupUrl);
-			});
-	});
-}
+console.log("2fa_script loaded...");
 
 function loadContent(url) {
     fetch(url)
@@ -31,3 +17,40 @@ window.addEventListener('popstate', function(event) {
 document.addEventListener('DOMContentLoaded', function() {
 	loadContent(window.location.pathname);
 });
+
+function displayOTPForm(otpUrl) {
+    // Example of loading the OTP form dynamically
+    document.getElementById('login-container').innerHTML = `
+        <form id="otp-form">
+            <input type="text" name="otp_token" placeholder="Enter your OTP" required>
+            <button type="submit">Verify</button>
+        </form>
+    `;
+
+    const otpForm = document.getElementById('otp-form');
+    otpForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = new FormData(otpForm);
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        fetch(otpUrl, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': csrfToken
+            },
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                loadContent('/dashboard'); // Redirect to dashboard or desired page
+            } else {
+                alert(data.error); // Show an error message
+            }
+        })
+        .catch(error => {
+            console.error('Error during OTP verification:', error);
+        });
+    });
+}

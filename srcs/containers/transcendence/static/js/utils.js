@@ -54,6 +54,7 @@ async function reload_scripts(page)
     }
     else {
         await load_script_form_fetch(authentication_script_cache);
+        await load_script_form_fetch(twofa_script_cache);
     }
 }
 
