@@ -49,7 +49,7 @@ function main_game(data) {
     });
 
     game_data.interid = setInterval(infinite_game_loop, 1000 / 60, game_data, utils, canevas);
-    // game_data.BallInterId = setInterval(ball_info, 200, game_data, utils, canevas); // Je crois que je suis un golmon
+    game_data.BallInterId = setInterval(ball_info, 200, game_data, utils, canevas); // Je crois que je suis un golmon
 }
 
 function ball_info(game_data, utils)
@@ -69,15 +69,16 @@ function is_ball_data_valid(ball_data)
         console.log("la");
         return false;
     }
-    if (game_data.ball.dirx !== ball_data.posX
-        && game_data.ball.dirx !== ball_data.posY)
+    if (game_data.ball.dirx !== ball_data.dirX
+        && game_data.ball.dirx !== ball_data.dirY)
     {
-        console.log(game_data.ball.dirx !== ball_data.posX);
-        console.log(game_data.ball.dirx !== ball_data.posY);
+        console.log(game_data.ball.dirx !== ball_data.dirX);
+        console.log(game_data.ball.dirx !== ball_data.dirY);
         // Trop bizarre renvoie fase alors qu'il sont egaux
         console.log(game_data.ball.startspeed === ball_data.speed, game_data.ball.startspeed, ball_data.speed);
         return false;
     }
+    return true;
 }
 
 function update_ball_state(racket_data)
