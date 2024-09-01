@@ -17,14 +17,15 @@ function main_game(data) {
         data_time: Date.now()
     }
 
-    if (game_data.my_racket === undefined && game_data.opponent_racket === undefined && game_data.ball === undefined)
+    if (game_data.my_racket === undefined && game_data.opponent_racket === undefined)
     {
         game_data.my_racket = new racket(canevas);
         game_data.opponent_racket = new racket(canevas);
-        game_data.ball = new balle(canevas);
         game_data.interid = undefined;
         game_data.BallInterId = undefined;
     }
+    if (game_data.ball === undefined)
+        game_data.ball = new balle(canevas);
     game_data.ball.x = data.ball.posX;
     game_data.ball.y = data.ball.posY;
     game_data.ball.dirx = data.ball.dirX;
@@ -70,10 +71,10 @@ function is_ball_data_valid(ball_data)
         return false;
     }
     if (game_data.ball.dirx !== ball_data.dirX
-        && game_data.ball.dirx !== ball_data.dirY)
+        && game_data.ball.diry !== ball_data.dirY)
     {
         console.log(game_data.ball.dirx !== ball_data.dirX);
-        console.log(game_data.ball.dirx !== ball_data.dirY);
+        console.log(game_data.ball.diry !== ball_data.dirY);
         // Trop bizarre renvoie false alors qu'il sont egaux
         console.log(game_data.ball.startspeed === ball_data.speed, game_data.ball.startspeed, ball_data.speed);
         return false;
