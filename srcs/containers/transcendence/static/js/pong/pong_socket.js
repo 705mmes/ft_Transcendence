@@ -26,6 +26,7 @@ function pong_websocket(game_data) {
                 clearInterval(game_data.BallInterId);
             if (game_data.interid !== undefined)
                 clearInterval(game_data.interid);
+            game_data.ball = undefined;
             if (event.wasClean) {
                 console.log(`[close] Connection pong closed cleanly, code=${event.code} reason=${event.reason}`);
 

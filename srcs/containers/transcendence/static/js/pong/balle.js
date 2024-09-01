@@ -19,7 +19,7 @@ class balle
         canvcont.drawImage(this.img, this.x, this.y, this.size, this.size);
     }
 
-	resetballs(ms, my_racket)
+	check_balls(ms, my_racket)
 	{
 		if (this.x < 0 || this.x > this.canevas.width)
 		{
@@ -32,6 +32,10 @@ class balle
 			else if (this.dirx < 0)
 				this.dirx = this.startspeed;
 		}
+		else if (this.y < 0 || this.y > 1080)
+		{
+			send_data("ball_info", my_racket)
+		}
 	}
 
 	hit(ms, my_racket)
@@ -42,36 +46,38 @@ class balle
 			if (this.x + this.size + (this.dirx * ms) > my_racket.x + 37
 			&& (this.y + this.size > my_racket.y && this.y - this.size < my_racket.y + 223))
 			{
-				this.dirx *= -1;
-				if (this.dirx > 0 && this.startspeed * 4 > this.dirx
-					|| this.dirx < 0 && this.startspeed * 4 > this.dirx * -1)
-					this.dirx *= 1.1;
-				this.diry += my_racket.impact(this) * 7;
+				this.calcul_new_dir(my_racket)
 			}
 			if (this.y - (this.size / 4) + this.diry > this.canevas.height || this.y - this.size + this.diry < 0)
 				this.diry *= -1;
 		}
+
 		// Si elle touche une racket a gauche
 		if (this.dirx * ms < 0 && my_racket.x === 0)
 		{
 			if (this.x - this.size + (this.dirx * ms) < my_racket.x + 64
 			&& (this.y + this.size > my_racket.y && this.y - this.size < my_racket.y + 223))
 			{
-				this.dirx *= -1;
-				if (this.dirx > 0 && this.startspeed * 4 > this.dirx
-					|| this.dirx < 0 && this.startspeed * 4 > this.dirx * -1)
-					this.dirx *= 1.1;
-				this.diry += my_racket.impact(this) * 7;
+				this.calcul_new_dir(my_racket)
 			}
 			if (this.y - (this.size / 4) + this.diry > this.canevas.height || this.y - this.size + this.diry < 0)
 				this.diry *= -1;
 		}
 	}
 
-	move(ms, my_racket, opponent_racket)
+	calcul_new_dir(my_racket)
+	{
+		send_data("ball_info", my_racket)
+		this.dirx *= -1;
+		if (this.dirx > 0 && this.startspeed * 4 > this.dirx
+			|| this.dirx < 0 && this.startspeed * 4 > this.dirx * -1)
+			this.dirx *= 1.1;
+		this.diry += my_racket.impact(this) * 7;
+	}
+
+	move(ms)
 	{
 		this.x += this.dirx * ms;
-		console.log("ball x", this.x);
 		this.y += this.diry * ms;
 	}
 }

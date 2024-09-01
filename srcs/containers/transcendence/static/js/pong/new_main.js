@@ -17,7 +17,7 @@ function main_game(data) {
         data_time: Date.now()
     }
 
-    if (game_data.my_racket === undefined && game_data.opponent_racket === undefined)
+    if (game_data.my_racket === undefined && game_data.opponent_racket === undefined && game_data.ball === undefined)
     {
         game_data.my_racket = new racket(canevas);
         game_data.opponent_racket = new racket(canevas);
@@ -49,7 +49,7 @@ function main_game(data) {
     });
 
     game_data.interid = setInterval(infinite_game_loop, 1000 / 60, game_data, utils, canevas);
-    game_data.BallInterId = setInterval(ball_info, 200, game_data, utils, canevas); // Je crois que je suis un golmon
+    // game_data.BallInterId = setInterval(ball_info, 200, game_data, utils, canevas); // Je crois que je suis un golmon
 }
 
 function ball_info(game_data, utils)
@@ -162,7 +162,7 @@ function infinite_game_loop(game_data, utils, canevas)
     game_data.my_racket.drawing(utils.canvcont);
     game_data.opponent_racket.drawing(utils.canvcont);
     game_data.ball.drawing(utils.canvcont);
-    game_data.ball.resetballs(utils.ms, game_data.my_racket);
+    game_data.ball.check_balls(utils.ms, game_data.my_racket);
 }
 
 function send_data(action_msg ,my_racket)
