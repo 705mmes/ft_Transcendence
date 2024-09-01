@@ -164,7 +164,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 LOGIN_URL = 'two_factor:login'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/game/'
 TWO_FACTOR_PATCH_ADMIN = False
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

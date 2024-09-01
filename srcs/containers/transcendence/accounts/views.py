@@ -19,6 +19,7 @@ def redirect_to_2fa_login(request):
 
 
 def login_view(request):
+    print("login_view...")
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -38,5 +39,17 @@ def login_view(request):
                 return JsonResponse({'success': True, 'otp_required': False})
         else:
             return JsonResponse({'success': False, 'error': 'Invalid credentials'})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+def otp_verification_view(request):
+    print("otp_verification_view...")
+    if request.method == 'POST':
+        otp_form = OTPTokenForm(user=request.user, data=request.POST)
+        if otp_form.is_valid():
+            otp_form.save()  # Marks the OTP as verified
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'error': 'Invalid OTP'})
 
     return JsonResponse({'success': False, 'error': 'Invalid request'})
