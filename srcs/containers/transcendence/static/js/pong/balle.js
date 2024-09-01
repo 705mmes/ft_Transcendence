@@ -70,11 +70,8 @@ class balle
 
 	move(ms, my_racket, opponent_racket)
 	{
-		// this.hit(ms, my_racket);
-		// this.resetballs(ms, my_racket);
-		// this.hit(ms, opponent_racket);
-		// this.resetballs(ms, opponent_racket);
 		this.x += this.dirx * ms;
+		console.log("ball x", this.x);
 		this.y += this.diry * ms;
 	}
 }
