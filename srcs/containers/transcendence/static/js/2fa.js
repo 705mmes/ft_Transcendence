@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 function displayOTPForm(otpUrl) {
-    // Example of loading the OTP form dynamically
+	print("Display the OTP form.............");
     document.getElementById('login-container').innerHTML = `
         <form id="otp-form">
             <input type="text" name="otp_token" placeholder="Enter your OTP" required>

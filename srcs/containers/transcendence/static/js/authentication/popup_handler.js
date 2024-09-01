@@ -57,7 +57,7 @@ if (document.getElementById(login-container)) {
 		.then(response => response.json())
 		.then(data => {
 			if (data.success && data.otp_required) {
-				// Display the OTP form
+				print("Display the OTP form");
 				displayOTPForm(data.otp_url); // A function to dynamically load OTP form
 			} else if (data.success) {
 				// Redirect or load the next content
