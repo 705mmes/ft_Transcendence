@@ -164,6 +164,9 @@ function infinite_game_loop(game_data, utils, canevas)
     game_data.opponent_racket.drawing(utils.canvcont);
     game_data.ball.drawing(utils.canvcont);
     game_data.ball.check_balls(utils.ms, game_data.my_racket);
+   // game_data.ball.hit(utils.ms, game_data.my_racket);
+   // game_data.ball.hit(utils.ms, game_data.opponent_racket);
+
 }
 
 function send_data(action_msg ,my_racket)

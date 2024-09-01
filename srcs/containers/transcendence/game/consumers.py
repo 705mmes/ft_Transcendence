@@ -143,10 +143,10 @@ class GameConsumer(WebsocketConsumer):
 
     def change_dirY(self, ball_cache, ball_radius):
         ball_cache['dirY'] *= -1
-        if ball_cache['posY'] > 1080 - ball_radius:
-            ball_cache['posY'] = 1080 - ball_radius
-        elif ball_cache['posY'] < 0:
-            ball_cache['posY'] = 0
+        if ball_cache['posY'] > 1080 - ball_radius / 2:
+            ball_cache['posY'] = 1080 - ball_radius / 2
+        elif ball_cache['posY'] < 0 + ball_radius / 2:
+            ball_cache['posY'] = 0 + ball_radius / 2
         print("dirY changed !")
 
     def calcul_pos_ball(self, lobby_name):
