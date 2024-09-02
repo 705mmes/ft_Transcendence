@@ -73,7 +73,7 @@ function is_ball_data_valid(ball_data)
         && game_data.ball.dirx !== ball_data.dirY)
     {
         console.log(game_data.ball.dirx !== ball_data.dirX);
-        console.log(game_data.ball.dirx !== ball_data.dirY);
+        console.log(game_data.ball.diry !== ball_data.dirY);
         // Trop bizarre renvoie fase alors qu'il sont egaux
         console.log(game_data.ball.startspeed === ball_data.speed, game_data.ball.startspeed, ball_data.speed);
         return false;
