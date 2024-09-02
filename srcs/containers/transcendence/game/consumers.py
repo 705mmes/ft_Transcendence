@@ -138,7 +138,7 @@ class GameConsumer(WebsocketConsumer):
         ball_cache['posX'] = 2040 / 2 - 15
         ball_cache['posY'] = 1080 / 2 - 15
         ball_cache['dirX'] = ball_cache['dirX'] * -1
-        ball_cache['dirY'] = -1000
+        ball_cache['dirY'] = 0
         ball_cache['speed'] = 500
 
     def change_dirY(self, ball_cache, ball_radius):
@@ -166,7 +166,7 @@ class GameConsumer(WebsocketConsumer):
             self.reset_ball(ball_cache)
         if ball_cache['posY'] > 1080 - ball_radius or ball_cache['posY'] < 0:
             self.change_dirY(ball_cache, ball_radius)
-        self.hit_me()
+        self.hit_me(ball_cache, ball_radius)
         ball_cache['update_time'] = actual_time
         print(f"new_posX {ball_cache['dirX'] }, new_posY {ball_cache['dirY']}")
         # print(json.dumps(ball_cache, indent=1))
@@ -175,9 +175,26 @@ class GameConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
         async_to_sync(self.channel_layer.group_send)("game_" + ball_cache['opponent'], {'type': 'send_info', 'data': json_data})
 
+    def hit_me(self, ball_cache, ball_radius):
+        user_cache = cache.get(f"{self.scope['user']}_key")
+        if (ball_cache['posX'] - ball_radius + (ball_cache['dirX'] / 60) < user_cache['posX'] + 64
+            and (ball_cache['posY'] + ball_radius > user_cache['posY']
+            and ball_cache['posY'] - ball_radius < user_cache['posY'] + 223)):
+            ball_cache['dirX'] *= -1
+        elif (ball_cache['posX'] + ball_radius + (ball_cache['dirX'] / 60) > user_cache['posX'] + 37
+            and (ball_cache['posY'] + ball_radius > user_cache['posY']
+            and ball_cache['posY'] - ball_radius < user_cache['posY'] + 223)):
+            ball_cache['dirX'] *= -1
+        #if (ball_cache['dirX'] > 0 and ball_cache['speed'] * 4 > ball_cache['dirX']
+              #  or ball_cache['dirX'] < 0 and ball_cache['speed'] * 4 > ball_cache['dirX'] * -1):
+            #ball_cache['dirX'] *= 1.1
+        ball_cache['dirY'] += self.impact(ball_cache, user_cache) * 7
 
-    def hit_me(self):
-        pass
+    def impact(self, ball_cache, user_cache):
+        impact = (ball_cache['posY'] - user_cache['posY']) - (223 / 2)
+        normal = (impact / (223 / 2))
+        return normal
+
 
     def calcul_pos_racket(self, user_key):
         user_cache = cache.get(user_key)
