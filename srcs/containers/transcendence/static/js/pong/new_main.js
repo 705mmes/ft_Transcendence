@@ -71,7 +71,7 @@ function is_ball_data_valid(ball_data)
         return false;
     }
     if (game_data.ball.dirx !== ball_data.dirX
-        && game_data.ball.diry !== ball_data.dirY)
+        || game_data.ball.diry !== ball_data.dirY)
     {
         console.log(game_data.ball.dirx !== ball_data.dirX);
         console.log(game_data.ball.diry !== ball_data.dirY);

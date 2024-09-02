@@ -2,13 +2,13 @@ class balle
 {
 	constructor(canevas){
 		this.x = 0;
-		this.y = 0;
+		this.y = -1000;
 		this.img = new Image();
 		this.img.src = "../static/js/images/maltesers.png";
 		this.startspeed = 500;
 		this.evospeed = undefined;
 		this.dirx = undefined;
-		this.diry = 0;
+		this.diry = undefined;
 		this.size = 30;
 		this.canevas = canevas
 
@@ -35,6 +35,8 @@ class balle
 		else if (this.y < 0 || this.y > 1080)
 		{
 			send_data("ball_info", my_racket)
+			if (this.y + this.size > this.canevas.height || this.y < 0)
+				this.diry *= -1;
 		}
 	}
 
