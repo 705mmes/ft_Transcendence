@@ -1,6 +1,7 @@
 import json
 from urllib.parse import quote, urlencode
 import requests
+from django_otp import user_has_device
 from django.conf import settings
 from django.shortcuts import render, redirect
 from authentication.forms import LoginForm, RegistrationForm
@@ -151,18 +152,21 @@ def register(request):
 
 
 def login_session(request):
+    print("login_session...")
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
+
             if user is not None:
-                # print("about to call two_factor...")
-                # request.session['pre_2fa_user_id'] = user.pk  # Save the user's ID before 2FA
-                # return redirect('two_factor:login')  # Redirect to 2FA verification
+                if user_has_device(user):
+                    request.session['pre_2fa_user_id'] = user.id
+                    return redirect('/account/redirect/checker/')
+
                 login(request, user)
-                return (render(request, 'game/game.html'))
+                return render(request, 'game/game.html')
             else:
                 return HttpResponse('Error: Invalid login credentials')
         else:
