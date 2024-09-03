@@ -182,13 +182,13 @@ class GameConsumer(WebsocketConsumer):
     def hit_me(self, ball_cache, ball_radius):
         user_cache = cache.get(f"{self.scope['user']}_key")
         if user_cache['posX'] == 0:
-            if (ball_cache['posX'] - ball_radius + (ball_cache['dirX'] * 0.016) < user_cache['posX']
+            if (ball_cache['posX'] - ball_radius + (ball_cache['dirX'] * 0.016) < user_cache['posX'] + 33.5
                     and (ball_cache['posY'] + ball_radius > user_cache['posY']
                          and ball_cache['posY'] - ball_radius < user_cache['posY'] + 223)):
                 ball_cache['dirX'] *= -1
                 ball_cache['dirY'] += self.impact(ball_cache, user_cache) * 7
         if user_cache['posX'] != 0:
-            if (ball_cache['posX'] + ball_radius + (ball_cache['dirX'] * 0.016) > user_cache['posX']
+            if (ball_cache['posX'] + ball_radius + (ball_cache['dirX'] * 0.016) > user_cache['posX'] - 33.5
                     and (ball_cache['posY'] + ball_radius > user_cache['posY']
                          and ball_cache['posY'] - ball_radius < user_cache['posY'] + 223)):
                 ball_cache['dirX'] *= -1
@@ -201,6 +201,7 @@ class GameConsumer(WebsocketConsumer):
     def impact(self, ball_cache, user_cache):
         impact = (ball_cache['posY'] - user_cache['posY']) - (223 / 2)
         normal = (impact / (223 / 2))
+        print("normal :", normal)
         return normal
 
     def calcul_pos_racket(self, user_key):
