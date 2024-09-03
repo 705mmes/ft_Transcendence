@@ -26,11 +26,7 @@ function main_game(data) {
     }
     if (game_data.ball === undefined)
         game_data.ball = new balle(canevas);
-    game_data.ball.x = data.ball.posX;
-    game_data.ball.y = data.ball.posY;
-    game_data.ball.dirx = data.ball.dirX;
-    game_data.ball.diry = data.ball.dirY;
-    game_data.ball.startspeed = data.ball.speed;
+    set_ball_to_serv_data(data);
 
     game_data.my_racket.y = data.my_racket.y;
     game_data.my_racket.x = data.my_racket.x;
@@ -45,12 +41,8 @@ function main_game(data) {
     document.addEventListener("keydown", function (event) {
         key_pressed(event, game_data.my_racket)
     });
-    document.addEventListener("keydown", function (event) {
-        ask_ball_info(event)
-    });
 
     game_data.interid = setInterval(infinite_game_loop, 1000 / 60, game_data, utils, canevas);
-    // game_data.BallInterId = setInterval(ball_info, 200, game_data, utils, canevas); // Je crois que je suis un golmon
 }
 
 function ball_info(game_data, utils)
@@ -59,9 +51,20 @@ function ball_info(game_data, utils)
     console.log('ball info', game_data.ball);
 }
 
+function set_ball_to_serv_data(data)
+{
+    game_data.ball.x = data.ball.posX;
+    game_data.ball.y = data.ball.posY;
+    game_data.ball.dirx = data.ball.dirX;
+    game_data.ball.diry = data.ball.dirY;
+    game_data.ball.startspeed = data.ball.speed;
+}
+
 function is_ball_data_valid(ball_data)
 {
     console.log("Ball pos diff :", game_data.ball.x - ball_data.posX)
+    console.log("Ball dirx client | server :", game_data.ball.dirx, ball_data.dirX)
+    console.log("Ball dirY client | server :", game_data.ball.diry, ball_data.dirY)
     if (game_data.ball.x - ball_data.posX < -50 || game_data.ball.x - ball_data.posX > 50) {
         console.log("ici");
         return false;
@@ -70,12 +73,13 @@ function is_ball_data_valid(ball_data)
         console.log("la");
         return false;
     }
-    if (game_data.ball.dirx !== ball_data.dirX
-        || game_data.ball.diry !== ball_data.dirY)
+    if (Math.floor(game_data.ball.dirx) !== Math.floor(ball_data.dirX)
+        || Math.floor(game_data.ball.diry) !== Math.floor(ball_data.dirY))
     {
-        console.log(game_data.ball.dirx !== ball_data.dirX);
-        console.log(game_data.ball.diry !== ball_data.dirY);
-        // Trop bizarre renvoie false alors qu'il sont egaux
+        console.log("Ball dirx client | server :", game_data.ball.dirx, ball_data.dirX)
+        console.log("Ball dirY client | server :", game_data.ball.diry, ball_data.dirY)
+        console.log(Math.floor(game_data.ball.dirx) !== Math.floor(ball_data.dirX));
+        console.log(Math.floor(game_data.ball.diry) !== Math.floor(ball_data.dirY));
         console.log(game_data.ball.startspeed === ball_data.speed, game_data.ball.startspeed, ball_data.speed);
         return false;
     }
@@ -86,11 +90,7 @@ function update_ball_state(racket_data)
 {
     if (!is_ball_data_valid(racket_data.ball)) {
         console.log("Ball NOT ok !");
-        game_data.ball.x = racket_data.ball.posX;
-        game_data.ball.y = racket_data.ball.posY;
-        game_data.ball.dirx = racket_data.ball.dirX;
-        game_data.ball.diry = racket_data.ball.dirY;
-        game_data.ball.startspeed = racket_data.ball.speed;
+        set_ball_to_serv_data(racket_data)
     }
     console.log("Ball OK !");
 }
@@ -108,12 +108,6 @@ function update_racket_state(racket_data)
     game_data.opponent_racket.down_pressed = racket_data.opponent.down_pressed;
     if (!racket_data.opponent.up_pressed && !racket_data.opponent.down_pressed)
         game_data.opponent_racket.target_y = racket_data.opponent.y;
-
-    // game_data.ball.x = racket_data.ball.posX;
-    // game_data.ball.y = racket_data.ball.posY;
-    // game_data.ball.dirx = racket_data.ball.dirX;
-    // game_data.ball.diry = racket_data.ball.dirY;
-    //game_data.ball.startspeed = racket_data.ball.speed;
 }
 
 function key_pressed(key, my_racket) {
@@ -126,14 +120,6 @@ function key_pressed(key, my_racket) {
     {
         my_racket.down_pressed = true;
         send_data("move" ,my_racket);
-    }
-}
-
-function ask_ball_info(key) {
-    if (key.code === "KeyL")
-    {
-        send_data("ball_info", game_data.my_racket);
-        console.log('ball info', game_data.ball);
     }
 }
 
@@ -150,23 +136,22 @@ function key_release(key, my_racket){
     }
 }
 
-function infinite_game_loop(game_data, utils, canevas)
+function infinite_game_loop(game_data, utils, canvas)
 {
-    let newtime = Date.now();
-    utils.ms = (newtime - utils.oldtime) / 1000;
-    utils.oldtime = newtime;
+    let new_time = Date.now();
+    utils.ms = (new_time - utils.oldtime) / 1000;
+    utils.oldtime = new_time;
     game_data.my_racket.moving(utils.ms);
     game_data.opponent_racket.moving(utils.ms);
     game_data.opponent_racket.smoothing(utils.ms);
+    game_data.ball.hit(utils.ms, game_data.my_racket);
+    game_data.ball.hit_opponent(utils.ms, game_data.opponent_racket);
+    game_data.ball.move(utils.ms, game_data.my_racket, game_data.opponent_racket);
     game_data.ball.check_balls(utils.ms, game_data.my_racket);
-    game_data.ball.hit(utils.ms, game_data.my_racket)
-    game_data.ball.hit_opponent(utils.ms, game_data.opponent_racket)
-    game_data.ball.move(utils.ms, game_data.my_racket, game_data.opponent_racket)
-    utils.canvcont.clearRect(0, 0, canevas.width, canevas.height);
+    utils.canvcont.clearRect(0, 0, canvas.width, canvas.height);
     game_data.my_racket.drawing(utils.canvcont);
     game_data.opponent_racket.drawing(utils.canvcont);
     game_data.ball.drawing(utils.canvcont);
-
    // game_data.ball.hit(utils.ms, game_data.opponent_racket);
 }
 
