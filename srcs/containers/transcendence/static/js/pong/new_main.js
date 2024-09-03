@@ -66,7 +66,7 @@ function is_ball_data_valid(ball_data)
         console.log("ici");
         return false;
     }
-    if (game_data.ball.y - ball_data.posY < -50 || game_data.ball.y - ball_data.posY > 50) {
+    if (game_data.ball.y - ball_data.posY <-50 || game_data.ball.y - ball_data.posY > 50) {
         console.log("la");
         return false;
     }
@@ -155,16 +155,18 @@ function infinite_game_loop(game_data, utils, canevas)
     let newtime = Date.now();
     utils.ms = (newtime - utils.oldtime) / 1000;
     utils.oldtime = newtime;
-    utils.canvcont.clearRect(0, 0, canevas.width, canevas.height);
     game_data.my_racket.moving(utils.ms);
     game_data.opponent_racket.moving(utils.ms);
-    game_data.ball.move(utils.ms, game_data.my_racket, game_data.opponent_racket)
     game_data.opponent_racket.smoothing(utils.ms);
+    game_data.ball.check_balls(utils.ms, game_data.my_racket);
+    game_data.ball.hit(utils.ms, game_data.my_racket)
+    game_data.ball.hit_opponent(utils.ms, game_data.opponent_racket)
+    game_data.ball.move(utils.ms, game_data.my_racket, game_data.opponent_racket)
+    utils.canvcont.clearRect(0, 0, canevas.width, canevas.height);
     game_data.my_racket.drawing(utils.canvcont);
     game_data.opponent_racket.drawing(utils.canvcont);
     game_data.ball.drawing(utils.canvcont);
-    game_data.ball.check_balls(utils.ms, game_data.my_racket);
-    game_data.ball.hit(utils.ms, game_data.my_racket);
+
    // game_data.ball.hit(utils.ms, game_data.opponent_racket);
 }
 

@@ -2,7 +2,7 @@ class balle
 {
 	constructor(canevas){
 		this.x = 0;
-		this.y = -1000;
+		this.y = 0;
 		this.img = new Image();
 		this.img.src = "../static/js/images/maltesers.png";
 		this.startspeed = 500;
@@ -23,7 +23,7 @@ class balle
 	{
 		if (this.x < 0 || this.x > this.canevas.width)
 		{
-			send_data("ball_info", my_racket)
+			console.log('check_balls if');
 			this.x = this.canevas.width / 2;
 			this.y = this.canevas.height / 2;
 			this.diry = 0;
@@ -31,12 +31,13 @@ class balle
 				this.dirx = -this.startspeed;
 			else if (this.dirx < 0)
 				this.dirx = this.startspeed;
+			send_data("ball_info", this)
 		}
-		else if (this.y < 0 || this.y > 1080)
+		else if (this.y + this.size > this.canevas.height || this.y < 0)
 		{
-			send_data("ball_info", my_racket)
-			if (this.y + this.size > this.canevas.height || this.y < 0)
-				this.diry *= -1;
+			console.log('check_balls else if');
+			this.diry *= -1;
+			send_data("ball_info", this)
 		}
 	}
 
@@ -45,19 +46,64 @@ class balle
 		// Si elle touche une racket a droite
 		if (my_racket.x !== 0)
 		{
-			if (this.x + this.size + (this.dirx * ms) > my_racket.x + 37
+			if (this.x + this.size + (this.dirx * ms) > my_racket.x
 			&& (this.y + this.size > my_racket.y && this.y - this.size < my_racket.y + 223))
+			{
+				console.log('hit if');
+				this.x = 2040 - 100 - this.size;
 				this.calcul_new_dir(my_racket)
+				console.log('merde');
+
+			}
 			// if (this.y - (this.size / 4) + this.diry > this.canevas.height || this.y - this.size + this.diry < 0)
 			// 	this.diry *= -1;
 		}
 
 		// Si elle touche une racket a gauche
-		if (my_racket.x === 0)
+		else
 		{
-			if (this.x - this.size + (this.dirx * ms) < my_racket.x + 64
+			if (this.x - this.size + (this.dirx * ms) < my_racket.x + 30
 			&& (this.y + this.size > my_racket.y && this.y - this.size < my_racket.y + 223))
+			{
+				console.log('hit else');
+				this.x = 100;
 				this.calcul_new_dir(my_racket)
+				console.log('golmon');
+
+			}
+			// if (this.y - (this.size / 4) + this.diry > this.canevas.height || this.y - this.size + this.diry < 0)
+			// 	this.diry *= -1;
+		}
+	}
+
+	hit_opponent(ms, my_racket)
+	{
+		// Si elle touche une racket a droite
+		if (my_racket.x !== 0)
+		{
+			if (this.x + this.size + (this.dirx * ms) > my_racket.x
+			&& (this.y + this.size > my_racket.y && this.y - this.size < my_racket.y + 223))
+			{
+				this.x = 2040 - 100 - this.size;
+				this.dirx *= -1
+				this.diry += my_racket.impact(this) * 7;
+				console.log('merde');
+			}
+			// if (this.y - (this.size / 4) + this.diry > this.canevas.height || this.y - this.size + this.diry < 0)
+			// 	this.diry *= -1;
+		}
+
+		// Si elle touche une racket a gauche
+		else
+		{
+			if (this.x - this.size + (this.dirx * ms) < my_racket.x + 30
+			&& (this.y + this.size > my_racket.y && this.y - this.size < my_racket.y + 223))
+			{
+				this.x = 100;
+				this.dirx *= -1;
+				this.diry += my_racket.impact(this) * 7;
+				console.log('golmon');
+			}
 			// if (this.y - (this.size / 4) + this.diry > this.canevas.height || this.y - this.size + this.diry < 0)
 			// 	this.diry *= -1;
 		}
@@ -65,12 +111,13 @@ class balle
 
 	calcul_new_dir(my_racket)
 	{
-		send_data("ball_info", my_racket)
+
 		this.dirx *= -1;
 		//if (this.dirx > 0 && this.startspeed * 4 > this.dirx
 		//	|| this.dirx < 0 && this.startspeed * 4 > this.dirx * -1)
 		//	this.dirx *= 1.1;
 		this.diry += my_racket.impact(this) * 7;
+		send_data("ball_info", this)
 	}
 
 	move(ms)
