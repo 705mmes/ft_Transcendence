@@ -20,19 +20,18 @@ document.getElementById("Rclose").onclick = () => {
 }}
 
 if (document.getElementById('login')) {
-	document.getElementById("login").onclick = () => {
-		fetch('/account/two_factor/login/start/')
-			.then(response => response.json())
-			.then(data => {
-				const setupUrl = data.setup_url;
-				window.history.pushState({}, '', setupUrl);
-				loadContent(setupUrl);
+	document.getElementById('login').addEventListener('click', function(event) {
+		event.preventDefault();
+	
+		fetch('/account/redirect/login')
+			.then(response => response.text())
+			.then(html => {
+				document.getElementById('content').innerHTML = html;
+				reset_script(window.location.pathname);
+				reload_scripts(window.location.pathname);
 			})
-			.catch(error => console.error('Fetch error:', error));
-	};
-} 
-else {
-    console.error("setup_2fa button not found");
+			.catch(error => console.error('Error loading login page:', error));
+	});
 }
 
 if (document.getElementById("Lclose")){
@@ -40,44 +39,11 @@ document.getElementById("Lclose").onclick = () => {
 	document.getElementById("login_container").classList.remove('on');
 }}
 
-if (document.getElementById(login-container)) {
-	document.getElementById(login-container).addEventListener('submit', function(event) {
-		event.preventDefault(); // Prevent the default form submission
-	
-		const formData = new FormData(loginForm);
-		const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-	
-		fetch('/accounts/login/', {
-			method: 'POST',
-			headers: {
-				'X-CSRFToken': csrfToken
-			},
-			body: formData
-		})
-		.then(response => response.json())
-		.then(data => {
-			if (data.success && data.otp_required) {
-				print("Display the OTP form");
-				displayOTPForm(data.otp_url); // A function to dynamically load OTP form
-			} else if (data.success) {
-				// Redirect or load the next content
-				loadContent('/game/');
-			} else {
-				alert(data.error); // Show an error message
-			}
-		})
-		.catch(error => {
-			console.error('Error during login:', error);
-		});
-	});
-}
-
-// if (document.getElementById("loginform")){
-// document.getElementById("loginform").addEventListener('submit', function(event){
-// 	event.preventDefault();
-// 	send_login_form(this, 'login_session/');
-// 	document.getElementById("login_container").classList.remove('on');
-// });}
+if (document.getElementById("login-form")){
+document.getElementById("login-form").addEventListener('submit', function(event){
+	event.preventDefault();
+	send_login_form(this, 'login_session/');
+});}
 
 if (document.getElementById("registration")){
 document.getElementById("registration").addEventListener('submit', function(event){
