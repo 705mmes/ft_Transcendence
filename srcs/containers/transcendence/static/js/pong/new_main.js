@@ -58,41 +58,51 @@ function set_ball_to_serv_data(data)
     game_data.ball.dirx = data.ball.dirX;
     game_data.ball.diry = data.ball.dirY;
     game_data.ball.startspeed = data.ball.speed;
+    console.log(game_data.ball.x);
+    console.log(game_data.ball.y);
+    console.log(game_data.ball.dirx);
+    console.log(game_data.ball.diry);
 }
 
-function is_ball_data_valid(ball_data)
-{
-    console.log("Ball pos diff :", game_data.ball.x - ball_data.posX)
-    console.log("Ball dirx client | server :", game_data.ball.dirx, ball_data.dirX)
-    console.log("Ball dirY client | server :", game_data.ball.diry, ball_data.dirY)
-    if (game_data.ball.x - ball_data.posX < -50 || game_data.ball.x - ball_data.posX > 50) {
-        console.log("ici");
-        return false;
-    }
-    if (game_data.ball.y - ball_data.posY <-50 || game_data.ball.y - ball_data.posY > 50) {
-        console.log("la");
-        return false;
-    }
-    if (Math.floor(game_data.ball.dirx) !== Math.floor(ball_data.dirX)
-        || Math.floor(game_data.ball.diry) !== Math.floor(ball_data.dirY))
-    {
-        console.log("Ball dirx client | server :", game_data.ball.dirx, ball_data.dirX)
-        console.log("Ball dirY client | server :", game_data.ball.diry, ball_data.dirY)
-        console.log(Math.floor(game_data.ball.dirx) !== Math.floor(ball_data.dirX));
-        console.log(Math.floor(game_data.ball.diry) !== Math.floor(ball_data.dirY));
-        console.log(game_data.ball.startspeed === ball_data.speed, game_data.ball.startspeed, ball_data.speed);
-        return false;
-    }
-    return true;
-}
+// function is_ball_data_valid(ball_data)
+// {
+//     // console.log("Ball pos diff :", game_data.ball.x - ball_data.posX)
+//     // console.log("Ball dirx client | server :", game_data.ball.dirx, ball_data.dirX)
+//     // console.log("Ball posx client | server :", game_data.ball.x, ball_data.posX)
+//     console.log("Ball diry client | server :", game_data.ball.diry, ball_data.dirY)
+//     console.log("Ball posy client | server :", game_data.ball.y, ball_data.posY)
+//
+//     //console.log("Ball dirY client | server :", game_data.ball.diry, ball_data.dirY)
+//     if (game_data.ball.x - ball_data.posX < -50 || game_data.ball.x - ball_data.posX > 50) {
+//         // console.log("PosX diff");
+//         return false;
+//     }
+//     if (game_data.ball.y - ball_data.posY <-50 || game_data.ball.y - ball_data.posY > 50) {
+//         // console.log("PosY diff");
+//         return false;
+//     }
+//     if (Math.floor(game_data.ball.dirx) !== Math.floor(ball_data.dirX)
+//         || Math.floor(game_data.ball.diry) !== Math.floor(ball_data.dirY))
+//     {
+//         // console.log("DirX ou Y diff")
+//         // console.log("Ball dirx client | server :", game_data.ball.dirx, ball_data.dirX)
+//         // console.log("Ball dirY client | server :", game_data.ball.diry, ball_data.dirY)
+//         // console.log(Math.floor(game_data.ball.dirx) !== Math.floor(ball_data.dirX));
+//         // console.log(Math.floor(game_data.ball.diry) !== Math.floor(ball_data.dirY));
+//         // console.log(game_data.ball.startspeed === ball_data.speed, game_data.ball.startspeed, ball_data.speed);
+//         return false;
+//     }
+//     return true;
+// }
 
 function update_ball_state(racket_data)
 {
-    if (!is_ball_data_valid(racket_data.ball)) {
-        console.log("Ball NOT ok !");
-        set_ball_to_serv_data(racket_data)
-    }
-    console.log("Ball OK !");
+    console.log("recu !")
+    // if (!is_ball_data_valid(racket_data.ball)) {
+    //      console.log("Ball NOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOT ok !");
+    set_ball_to_serv_data(racket_data)
+    // }
+    //  console.log("Ball OK !");
 }
 
 function update_racket_state(racket_data)
@@ -144,6 +154,7 @@ function infinite_game_loop(game_data, utils, canvas)
     game_data.my_racket.moving(utils.ms);
     game_data.opponent_racket.moving(utils.ms);
     game_data.opponent_racket.smoothing(utils.ms);
+    // send_data('ball_info', game_data.ball)
     game_data.ball.hit(utils.ms, game_data.my_racket);
     game_data.ball.hit_opponent(utils.ms, game_data.opponent_racket);
     game_data.ball.move(utils.ms, game_data.my_racket, game_data.opponent_racket);
@@ -152,12 +163,15 @@ function infinite_game_loop(game_data, utils, canvas)
     game_data.my_racket.drawing(utils.canvcont);
     game_data.opponent_racket.drawing(utils.canvcont);
     game_data.ball.drawing(utils.canvcont);
-   // game_data.ball.hit(utils.ms, game_data.opponent_racket);
 }
 
 function send_data(action_msg ,my_racket)
 {
     let message = JSON.stringify({mode: "match_1v1", action: action_msg, racket: my_racket});
+    console.log(my_racket.x);
+    console.log(my_racket.y);
+    console.log(my_racket.dirx);
+    console.log(my_racket.diry);
     game_socket.send(message);
 }
 
