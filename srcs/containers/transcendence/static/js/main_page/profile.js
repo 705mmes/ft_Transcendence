@@ -68,18 +68,21 @@ if (document.getElementById('edit_profile'))
     })
 }
 
-if (document.getElementById('setup_2fa')) {
-	document.getElementById('setup_2fa').addEventListener('click', function() {
-		fetch('/account/two_factor/setup/start/')
-			.then(response => response.json())
-			.then(data => {
-				const setupUrl = data.setup_url;
-				window.history.pushState({}, '', setupUrl);
-				loadContent(setupUrl);
-			})
-			.catch(error => console.error('Fetch error:', error));
-	});
-} 
 else {
     console.error("setup_2fa button not found");
+}
+
+if (document.getElementById('setup_2fa')) {
+	document.getElementById('setup_2fa').addEventListener('click', function(event) {
+		event.preventDefault();
+	
+		fetch('/account/redirect/setup')
+			.then(response => response.text())
+			.then(html => {
+				document.getElementById('content').innerHTML = html;
+				reset_script('');
+				reload_scripts(window.location.pathname);
+			})
+			.catch(error => console.error('Error loading login page:', error));
+	});
 }

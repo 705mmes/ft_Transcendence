@@ -1,5 +1,3 @@
-console.log("42_api script loaded");
-
 // The then() method is a key feature of JavaScript's Promise API, 
 // 	designed specifically to handle asynchronous tasks like API calls.
 

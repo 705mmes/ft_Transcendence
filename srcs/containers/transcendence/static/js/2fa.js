@@ -18,39 +18,42 @@ document.addEventListener('DOMContentLoaded', function() {
 	loadContent(window.location.pathname);
 });
 
-function displayOTPForm(otpUrl) {
-	print("Display the OTP form.............");
-    document.getElementById('login-container').innerHTML = `
-        <form id="otp-form">
-            <input type="text" name="otp_token" placeholder="Enter your OTP" required>
-            <button type="submit">Verify</button>
-        </form>
-    `;
-
-    const otpForm = document.getElementById('otp-form');
-    otpForm.addEventListener('submit', function(event) {
-        event.preventDefault();
-
-        const formData = new FormData(otpForm);
-        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-
-        fetch(otpUrl, {
-            method: 'POST',
-            headers: {
-                'X-CSRFToken': csrfToken
-            },
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                loadContent('/game/');
-            } else {
-                alert(data.error);
-            }
-        })
-        .catch(error => {
-            console.error('Error during OTP verification:', error);
-        });
-    });
+if (document.getElementById('otp-form')) {
+	document.getElementById('otp-form').addEventListener('submit', function(event) {
+		event.preventDefault(); // Prevent the form from submitting the traditional way
+		
+		const form = event.target;
+		const formData = new FormData(form);
+		console.log("sending fetch to check otp-form");
+		fetch('account/redirect/setup/', {
+			method: 'POST',
+			headers: {
+				'X-CSRFToken': '{{ csrf_token }}',
+			},
+			body: formData,
+		})
+		.then(response => {
+			if (!response.ok) {
+				throw new Error('Network response was not ok');
+			}
+			return response.json();
+		})
+		.then(data => {
+			if (data.success) {
+				window.location.href = data.redirect_url;
+			} else {
+				if (data.redirect_url) {
+					window.location.href = data.redirect_url;
+				}
+				console.log(data.error);
+			}
+		})
+		.catch(error => {
+			console.error('Error:', error);
+			const errorMessageElement = document.getElementById('error-message');
+			if (errorMessageElement) {
+				errorMessageElement.textContent = 'An unexpected error occurred.';
+			}
+		});		
+	});
 }
