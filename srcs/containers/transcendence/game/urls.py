@@ -4,7 +4,7 @@ from . import views
 
 
 urlpatterns = [
-    path('', views.game),
+    path('', views.game, name='game'),
     path('canvas/', views.canvas),
     path('scripts/', views.scripts),
    # path('social/', views.social, name='social'),
