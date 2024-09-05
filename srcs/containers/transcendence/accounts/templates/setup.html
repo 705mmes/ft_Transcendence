@@ -22,6 +22,7 @@
         {% csrf_token %}
         {{ form.otp_token.label_tag }} {{ form.otp_token }}
         <button type="submit">Verify</button>
+		<div id="error-message" style="color: red;"></div>
     </form>
     
 {% endblock %}
