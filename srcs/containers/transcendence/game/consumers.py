@@ -4,7 +4,7 @@ from time import sleep
 from xmlrpc.client import DateTime
 
 from asgiref.sync import async_to_sync, sync_to_async
-from channels.generic.websocket import WebsocketConsumer
+from channels.generic.websocket import WebsocketConsumer, AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from authentication.models import User
 from game.models import GameLobby
@@ -34,9 +34,6 @@ class GameConsumer(WebsocketConsumer):
         if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
             lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
             opponent = self.who_is_the_enemy(lobby)
-            cache.delete(f"{opponent.username}_key")
-            cache.delete(f"{user.username}_key")
-            cache.delete(f"{lobby.Name}_key")
             print(cache.get((f"{lobby.Name}_key")))
             lobby.delete()
         print(f"Disconnecting : {self.scope['user']}")
@@ -122,7 +119,6 @@ class GameConsumer(WebsocketConsumer):
             self.cancel_1v1()
         elif json_data['action'] == 'player_ready':
             self.check_player()
-                # async_to_sync(self.game_loop)()
         elif json_data['action'] == 'move':
             self.move(json_data)
         elif json_data['action'] == 'ball_info':
@@ -303,13 +299,15 @@ class GameConsumer(WebsocketConsumer):
             async_to_sync(self.channel_layer.group_send)("game_" + opponent.username,
                                                          {'type': 'send_info', 'data': json_data})
 
-    def set_player(self, player1, player2):
+    def set_player(self, player1, player2, lobby_name):
         cache.set(f"{player1.username}_key", {
+            'lobby_name': lobby_name,
             'posX': 0, 'posY': 1080 / 2 - 233 / 2,
             'up_pressed': False, 'down_pressed': False,
             'time_start': 0, 'time_end': 0
         })
         cache.set(f"{player2.username}_key", {
+            'lobby_name': lobby_name,
             'posX': 2040 - 77, 'posY': 1080 / 2 - 233 / 2,
             'up_pressed': False, 'down_pressed': False,
             'time_start': 0, 'time_end': 0
@@ -319,15 +317,14 @@ class GameConsumer(WebsocketConsumer):
         user = User.objects.get(username=self.scope['user'])
         opponent = self.who_is_the_enemy(lobby)
         if lobby.Player1 == user:
-            self.set_player(user, opponent)
+            self.set_player(user, opponent, lobby.Name)
         else:
-            self.set_player(opponent, user)
+            self.set_player(opponent, user, lobby.Name)
         print(lobby.Name)
         cache.set(f"{lobby.Name}_key", {
-            'posX': 2040 / 2 - 15, 'posY': 1080 / 2 - 15,
-            'dirX': -500, 'dirY': 0, 'speed': 500,
-            'update_time': datetime.now().timestamp(),
-            'opponent': f"{opponent.username}"
+            'is_game_loop': False,
+            'user_key': f"{user.username}_key",
+            'opponent_key': f"{opponent.username}_key"
         })
 
     def json_creator_racket(self, user):
@@ -364,8 +361,28 @@ class GameConsumer(WebsocketConsumer):
         json_data = {'action': 'cancel_lobby', 'mode': 'matchmaking_1v1'}
         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
         return 1
-
     def tournament(self, json_data):
         pass
         # if json_data['action'] == 'searching':
         # await self.searching_tournament()
+
+
+class AsyncConsumer(AsyncWebsocketConsumer):
+
+    async def connect(self):
+        user = await sync_to_async(User.objects.get)(username=self.scope['user'])
+        print(user.username)
+        user_cache = await sync_to_async(cache.get)(f"{user.username}_key")
+        lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
+        opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['opponent_key']}")
+        if lobby_cache['is_game_loop'] == False:
+        print(user_cache.get('lobby_name'))
+
+        await self.accept()
+
+    async def game_loop(self, lobby_cache):
+        opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['opponent_key']}")
+        user_cache = await sync_to_async(cache.get)(f"{lobby_cache['user_key']}")
+
+    async def disconnect(self, code):
+        pass

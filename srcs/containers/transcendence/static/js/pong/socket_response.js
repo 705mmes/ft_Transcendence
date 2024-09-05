@@ -53,9 +53,10 @@ function responsePong() {
                 to_unspecified_page('game/');
             else if (data.action === 'start_game')
             {
+                close_and_reopen_socket(game_data)
                 document.getElementById('lobby_css').remove();
                 document.getElementById('lobby_div').remove();
-                main_game(data);
+                //main_game(data);
             }
             else if (data.action === 'game_data')
                 update_racket_state(data);
