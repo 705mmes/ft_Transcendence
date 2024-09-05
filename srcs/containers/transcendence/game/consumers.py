@@ -11,6 +11,7 @@ from game.models import GameLobby
 from django.db.models import Q
 from datetime import datetime
 import math
+import asyncio
 from django.core import serializers
 from django.core.cache import cache
 
@@ -375,14 +376,18 @@ class AsyncConsumer(AsyncWebsocketConsumer):
         user_cache = await sync_to_async(cache.get)(f"{user.username}_key")
         lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
         opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['opponent_key']}")
-        if lobby_cache['is_game_loop'] == False:
+        if not lobby_cache['is_game_loop']:
+            caca = asyncio.create_task(self.game_loop(lobby_cache))
         print(user_cache.get('lobby_name'))
 
         await self.accept()
 
     async def game_loop(self, lobby_cache):
+        lobby_cache['is_game_loop'] = True
         opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['opponent_key']}")
         user_cache = await sync_to_async(cache.get)(f"{lobby_cache['user_key']}")
+        while lobby_cache['is_game_loop']:
+            print(lobby_cache['lobby_name'])
 
     async def disconnect(self, code):
         pass
