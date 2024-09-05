@@ -5,8 +5,8 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 
 class OTPTokenForm(BaseOTPTokenForm):
     def __init__(self, user=None, *args, **kwargs):
+        super().__init__(user=user, *args, **kwargs)
         self.user = user
-        super().__init__(*args, **kwargs)
 
     def clean(self):
         cleaned_data = super().clean()
