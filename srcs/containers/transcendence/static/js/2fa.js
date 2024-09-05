@@ -24,12 +24,16 @@ if (document.getElementById('otp-form')) {
 
         const form = event.target;
         const formData = new FormData(form);
-        console.log("sending fetch to check otp-form");
+		const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
 
-        fetch('account/redirect/setup/', {
+        console.log("sending fetch to check otp-form");
+		for (let [key, value] of formData.entries()) {
+			console.log(`${key}: ${value}`);
+		}
+        fetch('/account/redirect/setup/', {
             method: 'POST',
             headers: {
-                'X-CSRFToken': '{{ csrf_token }}',
+                'X-CSRFToken': csrfToken,
             },
             body: formData,
         })
@@ -48,10 +52,6 @@ if (document.getElementById('otp-form')) {
                 const errorMessageElement = document.getElementById('error-message');
                 if (errorMessageElement && data.error) {
                     errorMessageElement.textContent = data.error;
-                }
-
-                if (data.redirect_url) {
-                    window.location.href = data.redirect_url;
                 }
             }
         })

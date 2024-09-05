@@ -51,6 +51,8 @@ async function reload_scripts(page)
             await load_script_form_fetch(profile_script_cache);
         else if (page.match('/game/'))
             await load_script_form_fetch(game_script_cache);
+		else if (page.match('/account/'))
+			await load_script_form_fetch(twofa_script_cache);
     }
     else {
         await load_script_form_fetch(authentication_script_cache);

@@ -1,41 +1,42 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login
-from django_otp.forms import OTPTokenForm
 from django.contrib.auth import get_user_model
 from django_otp.plugins.otp_totp.models import TOTPDevice
 import qrcode, base64
 from io import BytesIO
 from django.urls import reverse
 from django.http import JsonResponse
-from django.core.files.uploadedfile import InMemoryUploadedFile
-
+from .forms import OTPTokenForm
+from django_otp.plugins.otp_totp.models import TOTPDevice
 
 @login_required
 def redirect_to_2fa_setup(request):
-	user = request.user
+    user = request.user
 
-	print("Get or create a TOTP device for the user")
-	device, created = TOTPDevice.objects.get_or_create(user=user, name='default')
+    # Get or create a TOTP device for the user
+    device, created = TOTPDevice.objects.get_or_create(user=user, name='default')
 
-	print("generating qrcode")
-	qr = qrcode.make(device.config_url)
-	buffer = BytesIO()
-	qr.save(buffer, format='PNG')
-	qr_image = base64.b64encode(buffer.getvalue()).decode('utf-8')
+    # Generate QR code
+    qr = qrcode.make(device.config_url)
+    buffer = BytesIO()
+    qr.save(buffer, format='PNG')
+    qr_image = base64.b64encode(buffer.getvalue()).decode('utf-8')
      
-	form = OTPTokenForm(user)
+    # Initialize the form
+    form = OTPTokenForm(user)
 
-	if request.method == 'POST':
-		print("catched otp-form fetch")
-		form = OTPTokenForm(user, request.POST)
-		if form.is_valid():
-			form.save()  # Mark the OTP as verified
-			return JsonResponse({'success': True, 'redirect_url': reverse('game')})
-		else:
-			return JsonResponse({'success': False, 'error': 'Invalid token, please try again.', 'redirect_url': reverse('profile_modify')})
+    if request.method == 'POST':
+        form = OTPTokenForm(user, request.POST)
+        print(f"Form data: {request.POST}")
+        print(f"Form validation errors: {form.errors}")
 
-	return render(request, 'setup.html', {'form': form, 'qr_image': qr_image})
+        if form.is_valid():
+            form.save()  # Mark the OTP as verified
+            return JsonResponse({'success': True, 'redirect_url': reverse('game')})
+        else:
+            return JsonResponse({'success': False, 'error': 'Invalid token, please try again.'})
+    return render(request, 'setup.html', {'form': form, 'qr_image': qr_image})
 
 
 def redirect_to_login(request):
