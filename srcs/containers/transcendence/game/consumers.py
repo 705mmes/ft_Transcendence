@@ -324,8 +324,8 @@ class GameConsumer(WebsocketConsumer):
         print(lobby.Name)
         cache.set(f"{lobby.Name}_key", {
             'is_game_loop': False,
-            'user_key': f"{user.username}_key",
-            'opponent_key': f"{opponent.username}_key"
+            'user_key': f"{user.username}",
+            'opponent_key': f"{opponent.username}"
         })
 
     def json_creator_racket(self, user):
@@ -353,11 +353,12 @@ class GameConsumer(WebsocketConsumer):
             if user.is_playing and opponent.is_playing:
                 my_racket = self.json_creator_racket(user)
                 opponent_racket = self.json_creator_racket(opponent)
-                game_ball = self.json_creator_ball(lobby.first())
+                #game_ball = self.json_creator_ball(lobby.first())
                 # print(json.dumps(game_ball, indent=1))
                 json_data = {'action': 'start_game', 'mode': 'matchmaking_1v1', 'my_racket': my_racket,
-                             'opponent': opponent_racket, 'ball': game_ball}
+                             'opponent': opponent_racket}
                 async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
+                async_to_sync(self.channel_layer.group_send)("game_" + opponent.username, {'type': 'send_info', 'data': json_data})
                 return 0
         json_data = {'action': 'cancel_lobby', 'mode': 'matchmaking_1v1'}
         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
@@ -371,11 +372,12 @@ class GameConsumer(WebsocketConsumer):
 class AsyncConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
+        self.room_name = "match_" + self.scope['user'].username
         user = await sync_to_async(User.objects.get)(username=self.scope['user'])
         print(user.username)
         user_cache = await sync_to_async(cache.get)(f"{user.username}_key")
         lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
-        opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['opponent_key']}")
+        opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['opponent_key']}_key")
         if not lobby_cache['is_game_loop']:
             caca = asyncio.create_task(self.game_loop(lobby_cache))
         print(user_cache.get('lobby_name'))
@@ -383,11 +385,27 @@ class AsyncConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def game_loop(self, lobby_cache):
+        user_name = self.scope['user']
         lobby_cache['is_game_loop'] = True
-        opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['opponent_key']}")
-        user_cache = await sync_to_async(cache.get)(f"{lobby_cache['user_key']}")
+        opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['opponent_key']}_key")
+        user_cache = await sync_to_async(cache.get)(f"{lobby_cache['user_key']}_key")
+        await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
         while lobby_cache['is_game_loop']:
-            print(lobby_cache['lobby_name'])
+            print(user_cache['lobby_name'], lobby_cache['is_game_loop'])
+            lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
+            await asyncio.sleep(2)
+        cache.delete(f"{lobby_cache['opponent_key']}_key")
+        cache.delete(f"{user_cache['lobby_name']}_key")
+        cache.delete(f"{user_name}_key")
 
     async def disconnect(self, code):
-        pass
+        user_name = self.scope['user']
+        print(f"Disconnected from match : {self.scope['user']}")
+        if await sync_to_async(cache.get)(f"{user_name}_key"):
+            user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
+            lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
+            opponent_name = lobby_cache['opponent_key']
+            lobby_cache['is_game_loop'] = False
+            await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
+            json_data = {'action': 'stop_game', 'mode': 'matchmaking_1v1'}
+            await self.channel_layer.group_send("match_" + opponent_name, {'type': 'send_info', 'data': json_data})

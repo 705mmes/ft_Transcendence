@@ -42,11 +42,12 @@ async function to_unspecified_page(page)
 
     page = change_page_name(page);
     reset_script('/' + page)
-    if (page !== 'game/')
-    {
-        if (game_socket && game_socket.readyState === WebSocket.OPEN)
-            game_socket.close();
+    if (page.match('game/')) {
+        console.log('pipi');
+        open_lobby_socket(game_data);
     }
+    else
+        game_socket.close();
     reload_scripts('/' + page, 0);
     navigate(page);
 }

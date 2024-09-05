@@ -49,3 +49,25 @@ function loadPageContent(url) {
         })
         .catch(error => console.error('Error loading content:', error));
 }
+
+function open_lobby_socket(game_data)
+{
+    if (game_socket && game_socket.readyState === WebSocket.OPEN) {
+        game_socket.close();
+        console.log("closing match_socket");
+        game_socket.onclose = function (event){
+            console.log("opening lobby_socket")
+            pong_websocket(game_data);
+            responsePong();
+        }
+    }
+    else
+    {
+        pong_websocket(game_data);
+        responsePong();
+    }
+
+
+
+
+}
