@@ -28,11 +28,6 @@ if (document.getElementById('social'))
     to_unspecified_page('social/');
     })
 
-// document.getElementById('chat').addEventListener('click', function(event){
-//   event.preventDefault();
-//   to_unspecified_page('chat/');
-// })
-
 async function to_unspecified_page(page)
 {
     // clearTimeout();

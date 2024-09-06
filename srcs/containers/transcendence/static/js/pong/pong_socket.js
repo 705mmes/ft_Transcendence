@@ -44,7 +44,7 @@ function pong_websocket(game_data) {
 pong_websocket(game_data);
 
 function pong_match_websocket(game_data) {
-    console.log("Pong_Socket.js script !")
+    console.log("pong_match_websocket script !")
     if (!game_socket || game_socket.readyState === WebSocket.CLOSED) {
 
         // Initialize the WebSocket connection
@@ -56,13 +56,13 @@ function pong_match_websocket(game_data) {
         // Event handler for when the WebSocket connection opens
         game_socket.onopen = function (e) {
             console.log("[open] Connection established pong");
+            responsePong();
         };
 
         // Event handler for when a message is received from the WebSocket
-        game_socket.onmessage = function (event) {
-            // responsePong();
-            console.log(`[message] Data received from server: ${event.data}`);
-        };
+        // game_socket.onmessage = function (event) {
+        //     console.log(`[message] Data received from server: ${event.data}`);
+        // };
 
         // Event handler for when the WebSocket connection closes
         game_socket.onclose = function (event) {
@@ -94,7 +94,7 @@ function open_match_socket(game_data)
         game_socket.onclose = function (event){
             console.log("opening match_socket")
             pong_match_websocket(game_data);
+            responsePong();
         }
     }
-
 }

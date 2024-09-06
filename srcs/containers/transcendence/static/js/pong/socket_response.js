@@ -29,12 +29,19 @@ function ready() {
     game_socket.send(message);
 }
 
+function launch_game(data){
+    open_match_socket(game_data)
+    document.getElementById('lobby_css').remove();
+    document.getElementById('lobby_div').remove();
+    main_game(data);
+}
+
 function responsePong() {
     PongSocketStatus();
-
+    console.log("Gneugneu je m'appelle samuel et je fais des print professionnel, dilo t'as quel age pour encore faire des print caca ?")
     game_socket.onmessage = function(event)
     {
-        // console.log(`Data received from server on pong: ${event.data}`);
+        console.log("Bite");
         try
         {
             let data = JSON.parse(event.data);
@@ -52,12 +59,7 @@ function responsePong() {
             else if (data.action === 'cancel_lobby')
                 to_unspecified_page('game/');
             else if (data.action === 'start_game')
-            {
-                open_match_socket(game_data)
-                document.getElementById('lobby_css').remove();
-                document.getElementById('lobby_div').remove();
-                //main_game(data);
-            }
+                launch_game(data);
             else if (data.action === 'game_data')
                 update_racket_state(data);
             else if (data.action === 'ball_data')

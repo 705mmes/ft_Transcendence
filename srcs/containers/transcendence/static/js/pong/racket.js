@@ -8,6 +8,8 @@ class racket {
         this.img = new Image();
         this.up_pressed = false;
         this.down_pressed = false;
+        this.up = false;
+        this.down = false;
         this.target_y = undefined;
         this.score = 0;
         this.deltaY = 0;
@@ -57,23 +59,11 @@ class racket {
     }
 
     moving(ms) {
-        if (this.up_pressed && !this.down_pressed) {
-            if (this.y - (this.speed * ms) >= 0)
-            {
-                this.y -= this.speed * ms;
-                // console.log(ms, this.speed * ms, this.y)
-            }
-            else
-                this.y = 0;
+        if (this.up && !this.down) {
+                this.y -= this.speed * 0.016;
         }
-        else if (this.down_pressed  && !this.up_pressed) {
-            if (this.canevas.height >= (this.y + this.height) + (this.speed * ms))
-            {
-                this.y += this.speed * ms;
-                // console.log(ms, this.speed * ms, this.y)
-            }
-            else
-                this.y = this.canevas.height - this.img.height;
+        else if (this.down  && !this.up) {
+                this.y += this.speed * 0.016;
         }
     }
 

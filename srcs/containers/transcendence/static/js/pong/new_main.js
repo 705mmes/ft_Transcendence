@@ -26,7 +26,7 @@ function main_game(data) {
     }
     if (game_data.ball === undefined)
         game_data.ball = new balle(canevas);
-    set_ball_to_serv_data(data);
+    // set_ball_to_serv_data(data);
 
     game_data.my_racket.y = data.my_racket.y;
     game_data.my_racket.x = data.my_racket.x;
@@ -107,17 +107,19 @@ function update_ball_state(racket_data)
 
 function update_racket_state(racket_data)
 {
-    game_data.my_racket.x = racket_data.my_racket.x;
-    game_data.my_racket.target_y = undefined;
-    game_data.my_racket.speed = racket_data.my_racket.speed;
-    //game_data.my_racket.dir = racket_data.my_racket.dir;
+    console.log('caca')
+    //game_data.my_racket.x = racket_data.my_racket.x;
+    // game_data.my_racket.up = racket_data.my_racket.up_pressed;
+    // game_data.my_racket.down = racket_data.my_racket.down_pressed;
+    game_data.my_racket.y = racket_data.my_racket.y;
+    // game_data.my_racket.speed = racket_data.my_racket.speed;
+    // console.log(game_data.my_racket.speed);
 
-    game_data.opponent_racket.x = racket_data.opponent.x;
-    game_data.opponent_racket.speed = racket_data.opponent.speed;
-    game_data.opponent_racket.up_pressed = racket_data.opponent.up_pressed;
-    game_data.opponent_racket.down_pressed = racket_data.opponent.down_pressed;
-    if (!racket_data.opponent.up_pressed && !racket_data.opponent.down_pressed)
-        game_data.opponent_racket.target_y = racket_data.opponent.y;
+    //game_data.opponent_racket.x = racket_data.opponent.x;
+    // game_data.opponent_racket.speed = racket_data.opponent.speed;
+    // game_data.opponent_racket.up = racket_data.opponent.up_pressed;
+    // game_data.opponent_racket.down = racket_data.opponent.down_pressed;
+    game_data.opponent_racket.y = racket_data.opponent.y;
 }
 
 function key_pressed(key, my_racket) {
@@ -151,14 +153,14 @@ function infinite_game_loop(game_data, utils, canvas)
     let new_time = Date.now();
     utils.ms = (new_time - utils.oldtime) / 1000;
     utils.oldtime = new_time;
-    game_data.my_racket.moving(utils.ms);
-    game_data.opponent_racket.moving(utils.ms);
-    game_data.opponent_racket.smoothing(utils.ms);
+    // game_data.my_racket.moving(utils.ms);
+    // game_data.opponent_racket.moving(utils.ms);
+    //game_data.opponent_racket.smoothing(utils.ms);
     // send_data('ball_info', game_data.ball)
-    game_data.ball.hit(utils.ms, game_data.my_racket);
-    game_data.ball.hit_opponent(utils.ms, game_data.opponent_racket);
-    game_data.ball.move(utils.ms, game_data.my_racket, game_data.opponent_racket);
-    game_data.ball.check_balls(utils.ms, game_data.my_racket);
+    // game_data.ball.hit(utils.ms, game_data.my_racket);
+    // game_data.ball.hit_opponent(utils.ms, game_data.opponent_racket);
+    // game_data.ball.move(utils.ms, game_data.my_racket, game_data.opponent_racket);
+    // game_data.ball.check_balls(utils.ms, game_data.my_racket);
     utils.canvcont.clearRect(0, 0, canvas.width, canvas.height);
     game_data.my_racket.drawing(utils.canvcont);
     game_data.opponent_racket.drawing(utils.canvcont);
@@ -168,10 +170,10 @@ function infinite_game_loop(game_data, utils, canvas)
 function send_data(action_msg ,my_racket)
 {
     let message = JSON.stringify({mode: "match_1v1", action: action_msg, racket: my_racket});
-    console.log(my_racket.x);
-    console.log(my_racket.y);
-    console.log(my_racket.dirx);
-    console.log(my_racket.diry);
+    // console.log(my_racket.x);
+    // console.log(my_racket.y);
+    // console.log(my_racket.dirx);
+    // console.log(my_racket.diry);
     game_socket.send(message);
 }
 

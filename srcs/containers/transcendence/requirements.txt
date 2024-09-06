@@ -47,6 +47,7 @@ hyperlink==21.0.0               # Immutable, extensible URL class (used by Twist
 
 # Redis
 redis==5.0.7                    # Redis-py, a Python client for Redis
+redlock-py
 
 # PostgreSQL
 psycopg2-binary==2.9.9          # PostgreSQL adapter for Python
