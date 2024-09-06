@@ -24,12 +24,13 @@ if (document.getElementById('otp-form')) {
 
         const form = event.target;
         const formData = new FormData(form);
-		const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
+        const csrfToken = form.querySelector('[name=csrfmiddlewaretoken]').value;
 
         console.log("sending fetch to check otp-form");
-		for (let [key, value] of formData.entries()) {
-			console.log(`${key}: ${value}`);
-		}
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+
         fetch('/account/redirect/setup/', {
             method: 'POST',
             headers: {
@@ -45,10 +46,12 @@ if (document.getElementById('otp-form')) {
             return response.json();
         })
         .then(data => {
+            console.log("Processing response...");
             if (data.success) {
+                console.log("success");
                 window.location.href = data.redirect_url;
             } else {
-                // If there's an error, display it in the error-message div
+                console.log("error");
                 const errorMessageElement = document.getElementById('error-message');
                 if (errorMessageElement && data.error) {
                     errorMessageElement.textContent = data.error;
@@ -64,3 +67,4 @@ if (document.getElementById('otp-form')) {
         });
     });
 }
+

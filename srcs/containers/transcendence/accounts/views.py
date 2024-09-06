@@ -14,29 +14,33 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 def redirect_to_2fa_setup(request):
     user = request.user
 
-    # Get or create a TOTP device for the user
-    device, created = TOTPDevice.objects.get_or_create(user=user, name='default')
+    if not TOTPDevice.objects.filter(user=user).exists():
+        device = TOTPDevice.objects.create(user=user, name='default', confirmed=False)
+    else:
+        device = TOTPDevice.objects.get(user=user)
 
-    # Generate QR code
     qr = qrcode.make(device.config_url)
     buffer = BytesIO()
     qr.save(buffer, format='PNG')
     qr_image = base64.b64encode(buffer.getvalue()).decode('utf-8')
-     
-    # Initialize the form
-    form = OTPTokenForm(user)
+
+    form = OTPTokenForm(user=user)
 
     if request.method == 'POST':
-        form = OTPTokenForm(user, request.POST)
+        form = OTPTokenForm(user=user, data=request.POST)
         print(f"Form data: {request.POST}")
         print(f"Form validation errors: {form.errors}")
 
         if form.is_valid():
-            form.save()  # Mark the OTP as verified
+            form.save()
             return JsonResponse({'success': True, 'redirect_url': reverse('game')})
         else:
             return JsonResponse({'success': False, 'error': 'Invalid token, please try again.'})
+
     return render(request, 'setup.html', {'form': form, 'qr_image': qr_image})
+
+
+
 
 
 def redirect_to_login(request):
