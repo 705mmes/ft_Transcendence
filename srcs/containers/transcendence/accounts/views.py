@@ -4,39 +4,41 @@ from django.contrib.auth import login
 from django.contrib.auth import get_user_model
 from django_otp.plugins.otp_totp.models import TOTPDevice
 import qrcode, base64
+from base64 import b64encode
 from io import BytesIO
 from django.urls import reverse
 from django.http import JsonResponse
-from .forms import OTPTokenForm
+from django_otp.forms import OTPTokenForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
 
 @login_required
 def redirect_to_2fa_setup(request):
-    user = request.user
-
-    # Get or create a TOTP device for the user
-    device, created = TOTPDevice.objects.get_or_create(user=user, name='default')
-
-    # Generate QR code
-    qr = qrcode.make(device.config_url)
-    buffer = BytesIO()
-    qr.save(buffer, format='PNG')
-    qr_image = base64.b64encode(buffer.getvalue()).decode('utf-8')
-     
-    # Initialize the form
-    form = OTPTokenForm(user)
-
+    print("User:", request.user)
     if request.method == 'POST':
-        form = OTPTokenForm(user, request.POST)
-        print(f"Form data: {request.POST}")
-        print(f"Form validation errors: {form.errors}")
-
+        form = OTPTokenForm(request.POST)
+        
         if form.is_valid():
-            form.save()  # Mark the OTP as verified
-            return JsonResponse({'success': True, 'redirect_url': reverse('game')})
+            token = form.cleaned_data['otp_token']
+            if request.user.otp_device.verify_token(token):
+                return redirect('/game/')
+            else:
+                form.add_error(None, 'Invalid OTP token.')
         else:
-            return JsonResponse({'success': False, 'error': 'Invalid token, please try again.'})
-    return render(request, 'setup.html', {'form': form, 'qr_image': qr_image})
+            form.add_error(None, 'Invalid form submission.')
+    
+    else:
+        form = OTPTokenForm(user=request.user)
+    
+    device, created = TOTPDevice.objects.get_or_create(user=request.user, name='default')
+    
+    qr_code_img = qrcode.make(device.config_url)
+    buffer = BytesIO()
+    qr_code_img.save(buffer)
+    buffer.seek(0)
+    encoded_img = b64encode(buffer.read()).decode()
+    qr_code_data = f'data:image/png;base64,{encoded_img}'
+    
+    return render(request, 'setup.html', {'form': form, 'qr_url': qr_code_data})
 
 
 def redirect_to_login(request):
