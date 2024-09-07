@@ -108,14 +108,14 @@ function update_ball_state(racket_data)
 function update_racket_state(racket_data)
 {
     console.log('caca')
-    //game_data.my_racket.x = racket_data.my_racket.x;
+    game_data.my_racket.x = racket_data.my_racket.x;
     // game_data.my_racket.up = racket_data.my_racket.up_pressed;
     // game_data.my_racket.down = racket_data.my_racket.down_pressed;
     game_data.my_racket.y = racket_data.my_racket.y;
     // game_data.my_racket.speed = racket_data.my_racket.speed;
     // console.log(game_data.my_racket.speed);
 
-    //game_data.opponent_racket.x = racket_data.opponent.x;
+    game_data.opponent_racket.x = racket_data.opponent.x;
     // game_data.opponent_racket.speed = racket_data.opponent.speed;
     // game_data.opponent_racket.up = racket_data.opponent.up_pressed;
     // game_data.opponent_racket.down = racket_data.opponent.down_pressed;
