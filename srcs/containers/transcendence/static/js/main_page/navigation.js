@@ -57,14 +57,14 @@ function open_lobby_socket(game_data)
         console.log("closing match_socket");
         game_socket.onclose = function (event){
             console.log("opening lobby_socket")
-            pong_websocket(game_data);
-            responsePong();
+            pong_websocket(game_data, 'ws/game/game/');
+            //responsePong();
         }
     }
     else
     {
-        pong_websocket(game_data);
-        responsePong();
+        pong_websocket(game_data, '/ws/game/game/');
+        //responsePong();
     }
 
 

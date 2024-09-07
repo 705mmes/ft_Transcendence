@@ -1,7 +1,7 @@
 function PongSocketStatus() {
     if (!game_socket) {
         console.error("Socket is not initialized.");
-        return;
+        return false;
     }
 
     switch (game_socket.readyState) {
@@ -21,6 +21,7 @@ function PongSocketStatus() {
             console.error("Unknown WebSocket state.");
             break;
     }
+    return true
 }
 
 function ready() {
@@ -37,42 +38,44 @@ function launch_game(data){
 }
 
 function responsePong() {
-    PongSocketStatus();
-    console.log("Gneugneu je m'appelle samuel et je fais des print professionnel, dilo t'as quel age pour encore faire des print caca ?")
-    game_socket.onmessage = function(event)
+    if (PongSocketStatus())
     {
-        console.log("Bite");
-        try
+
+        console.log("Gneugneu je m'appelle samuel et je fais des print professionnel, dilo t'as quel age pour encore faire des print caca ?")
+        game_socket.onmessage = function(event)
         {
-            let data = JSON.parse(event.data);
-            console.log("parsed data pong:", data);
-            console.log(data.action);
-            if (data.action === 'searching')
-                display_cancel_btn();
-            else if (data.action === 'cancel')
-                display_research_btn("SEARCH OPPONENT");
-            else if (data.action === 'find_opponent')
+            console.log("Bite");
+            try
             {
-                change_opponent(data.opponent);
-                timeoutID = setTimeout(ready, 3000);
+                let data = JSON.parse(event.data);
+                console.log("parsed data pong:", data);
+                console.log(data.action);
+                if (data.action === 'searching')
+                    display_cancel_btn();
+                else if (data.action === 'cancel')
+                    display_research_btn("SEARCH OPPONENT");
+                else if (data.action === 'find_opponent')
+                {
+                    change_opponent(data.opponent);
+                    timeoutID = setTimeout(ready, 3000);
+                }
+                else if (data.action === 'cancel_lobby')
+                    to_unspecified_page('game/');
+                else if (data.action === 'start_game')
+                    launch_game(data);
+                else if (data.action === 'game_data')
+                    update_racket_state(data);
+                else if (data.action === 'ball_data')
+                    update_ball_state(data);
+                else {
+                    console.error("Unknown action received from server.");
+                }
             }
-            else if (data.action === 'cancel_lobby')
-                to_unspecified_page('game/');
-            else if (data.action === 'start_game')
-                launch_game(data);
-            else if (data.action === 'game_data')
-                update_racket_state(data);
-            else if (data.action === 'ball_data')
-                update_ball_state(data);
-            else {
-                console.error("Unknown action received from server.");
+            catch (e) {
+                console.error("Failed to parse message data: ", e);
             }
-        }
-        catch (e) {
-            console.error("Failed to parse message data: ", e);
-        }
-    };
+        };
+    }
 }
 
 console.log("Calling responsePong function");
-responsePong();

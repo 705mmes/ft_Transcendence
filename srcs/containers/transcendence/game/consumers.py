@@ -392,23 +392,23 @@ class AsyncConsumer(AsyncWebsocketConsumer):
         user_name = self.scope['user'].username
         while lobby_cache['is_game_loop']:
             user_cache = await sync_to_async(cache.get)(f"{lobby_cache['user_key']}_key")
-            lock_name = f"lock_{user_cache['lobby_name']}_cache"
-            lock = await sync_to_async(redlock.lock)(lock_name, 1000)
-            if lock:
-                t1 = time.perf_counter()
-                opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['opponent_key']}_key")
-                lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
-                # print(f"up: {user_cache['up_pressed']}, down: {user_cache['down_pressed']}")
-                # print(f"up op: {opponent_cache['up_pressed']}, down op: {opponent_cache['down_pressed']}")
-                await self.move(user_cache, opponent_cache)
-                # print(f"Consumer of {user_name},in {user_cache['lobby_name']}", lobby_cache['is_game_loop'])
-                await self.save_cache(user_cache, opponent_cache, lobby_cache)
-                # print(lobby_cache['opponent_key'])
-                t2 = time.perf_counter() - t1
-                await sync_to_async(redlock.unlock)(lock)
-                print('caca game loop')
-                await asyncio.sleep(0.03333 - t2)
-                # print(f"dt = {t2 - t1}")
+            #lock_name = f"lock_{user_cache['lobby_name']}_cache"
+            #lock = await sync_to_async(redlock.lock)(lock_name, 1000)
+            # if lock:
+            t1 = time.perf_counter()
+            opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['opponent_key']}_key")
+            lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
+            # print(f"up: {user_cache['up_pressed']}, down: {user_cache['down_pressed']}")
+            # print(f"up op: {opponent_cache['up_pressed']}, down op: {opponent_cache['down_pressed']}")
+            await self.move(user_cache, opponent_cache)
+            # print(f"Consumer of {user_name},in {user_cache['lobby_name']}", lobby_cache['is_game_loop'])
+            await self.save_cache(user_cache, opponent_cache, lobby_cache)
+            # print(lobby_cache['opponent_key'])
+            t2 = time.perf_counter() - t1
+            # await sync_to_async(redlock.unlock)(lock)
+            print('caca game loop')
+            await asyncio.sleep(0.03333 - t2)
+            # print(f"dt = {t2 - t1}")
         print(f"Consumer of {user_name}, in {user_cache['lobby_name']} Game STOPED !")
         await sync_to_async(cache.delete)(f"{lobby_cache['opponent_key']}_key")
         await sync_to_async(cache.delete)(f"{user_cache['lobby_name']}_key")
