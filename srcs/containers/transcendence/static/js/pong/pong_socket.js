@@ -15,16 +15,8 @@ function pong_websocket(game_data, url) {
             console.log("[open] Connection established pong");
         };
 
-        // Event handler for when a message is received from the WebSocket
-        game_socket.onmessage = function (event) {
-            console.log(`[message] Data received from server: ${event.data}`);
-        };
-
         // Event handler for when the WebSocket connection closes
         game_socket.onclose = function (event) {
-            if (game_data.interid !== undefined)
-                clearInterval(game_data.interid);
-            game_data.ball = undefined;
             if (event.wasClean) {
                 console.log(`[close] Connection pong closed cleanly, code=${event.code} reason=${event.reason}`);
 
@@ -41,17 +33,18 @@ function pong_websocket(game_data, url) {
     return game_socket;
 }
 
-function open_match_socket(game_data)
-{
-    if (game_socket && game_socket.readyState === WebSocket.OPEN)
-    {
+function open_match_socket(game_data) {
+    if (game_socket && game_socket.readyState === WebSocket.OPEN) {
         game_socket.close();
         console.log("closing lobby_socket");
-        game_socket.onclose = function (event){
-            console.log("opening match_socket")
-            setTimeout(pong_websocket(game_data, '/ws/game/match/'), 1000);
-        }
+        game_socket.onclose = function (event) {
+            console.log("opening match_socket");
+            // setTimeout(function() {
+            pong_websocket(game_data, '/ws/game/match/');
+            // }, 1000);
+        };
     }
 }
+
 
 pong_websocket(game_data, '/ws/game/game/');

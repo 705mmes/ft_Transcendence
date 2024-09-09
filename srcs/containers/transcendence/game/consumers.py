@@ -17,7 +17,7 @@ import redis
 from django.core import serializers
 from django.core.cache import cache
 from time import process_time
-from redlock import Redlock
+from game.PlayerClass import Player
 
 
 class GameConsumer(WebsocketConsumer):
@@ -132,12 +132,6 @@ class GameConsumer(WebsocketConsumer):
             lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).first()
             if lobby:
                 self.calcul_pos_ball(lobby.Name, json_data['racket'])  # Racket c'est la ball enfaite
-
-
-    # async def game_loop(self):
-    #     while (1):
-    #         print("caca")
-    #         sleep(0.016)
 
     def who_is_the_enemy(self, lobby):
         if lobby.Player1 == User.objects.get(username=self.scope['user']):
@@ -262,26 +256,26 @@ class GameConsumer(WebsocketConsumer):
         user_cache['time_end'] = 0
         cache.set(user_key, user_cache)
 
-
-
-
     def set_player(self, player1, player2, lobby_name):
         cache.set(f"{player1.username}_key", {
             'lobby_name': lobby_name,
             'name': player1.username,
-            'speed': 1000,
-            'posX': 0, 'posY': 1080 / 2 - 233 / 2,
+            'posX': 0,
+            'posY': (1080 - 233) / 2,
+            'id': 1,
             'up_pressed': False, 'down_pressed': False,
-            'time_start': 0, 'time_end': 0, 'game_loop': True
+            'game_loop': True
         })
         cache.set(f"{player2.username}_key", {
             'lobby_name': lobby_name,
             'name': player2.username,
-            'speed': 1000,
-            'posX': 2040 - 77, 'posY': 1080 / 2 - 233 / 2,
+            'posX': 2040 - 77,
+            'posY': (1080 - 233) / 2,
+            'id': 2,
             'up_pressed': False, 'down_pressed': False,
-            'time_start': 0, 'time_end': 0, 'game_loop': False
+            'game_loop': False
         })
+
 
     def init_pos(self, lobby):
         user = User.objects.get(username=self.scope['user'])
@@ -300,9 +294,11 @@ class GameConsumer(WebsocketConsumer):
 
     def json_creator_racket(self, user):
         user_cache = cache.get(f"{user.username}_key")
-        racket = {'x': user_cache['posX'], 'y': user_cache['posY'], 'speed': 1000,
-                  'up_pressed': user_cache['up_pressed'],
-                  'down_pressed': user_cache['down_pressed']}
+        racket = {'up_pressed': user_cache['up_pressed'],
+                  'down_pressed': user_cache['down_pressed'],
+                  'posX': user_cache['posX'],
+                  'posY': user_cache['posY'],
+                  }
         return racket
 
     def json_creator_ball(self, lobby):
@@ -349,7 +345,9 @@ class AsyncConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_add(self.room_name, self.channel_name)
         user_cache = await sync_to_async(cache.get)(f"{self.scope['user'].username}_key")
         lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
-        opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['opponent_key']}_key")
+        opponent_cache = await sync_to_async(cache.get)(f"{self.who_is_the_enemy(lobby_cache)}_key")
+        self.user = Player(user_cache['id'], user_cache['name'])
+        self.opponent = Player(opponent_cache['id'], opponent_cache['name'])
         print(f"Consumer of {self.scope['user']} state game loop : {lobby_cache['is_game_loop']}")
         if user_cache['game_loop'] and not lobby_cache['is_game_loop']:
             lobby_cache['is_game_loop'] = True
@@ -365,7 +363,7 @@ class AsyncConsumer(AsyncWebsocketConsumer):
         if await sync_to_async(cache.get)(f"{user_name}_key"):
             user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
             lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
-            opponent_name = lobby_cache['opponent_key']
+            opponent_name = self.who_is_the_enemy(lobby_cache)
             lobby_cache['is_game_loop'] = False
             await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
             json_data = {'action': 'cancel_game', 'mode': 'matchmaking_1v1'}
@@ -379,8 +377,9 @@ class AsyncConsumer(AsyncWebsocketConsumer):
         if text_data_json['action'] == 'move':
             await self.update_cache(text_data_json)
 
-    async def json_creator_racket(self, user_cache):
-        racket = {'x': user_cache['posX'], 'y': user_cache['posY'],
+    async def json_creator_racket(self, user):
+        user_cache = await sync_to_async(cache.get)(f"{user.name}_key")
+        racket = {'x': user.x, 'y': user.y ,
                   'up_pressed': user_cache['up_pressed'],
                   'down_pressed': user_cache['down_pressed']}
         return racket
@@ -389,92 +388,61 @@ class AsyncConsumer(AsyncWebsocketConsumer):
         data = event['data']
         await self.send(text_data=json.dumps(data))
 
+    async def ft_sleep(self, delay):
+        now = time.time()
+        while (time.time() < now + delay):
+            continue
+
+    def check_move(self, user_cache, opponent_cache):
+        if user_cache['up_pressed'] != self.user.up_pressed or user_cache['down_pressed'] != self.user.down_pressed:
+            self.user.up_pressed = user_cache['up_pressed']
+            self.user.down_pressed = user_cache['down_pressed']
+            return False
+        elif opponent_cache['up_pressed'] != self.opponent.up_pressed or opponent_cache['down_pressed'] != self.opponent.down_pressed:
+            self.opponent.up_pressed = opponent_cache['up_pressed']
+            self.opponent.down_pressed = opponent_cache['down_pressed']
+            return False
+        return True
+
+    def who_is_the_enemy(self, lobby_cache):
+        if self.scope['user'].username == lobby_cache['user_key']:
+            return lobby_cache['opponent_key']
+        else:
+            return lobby_cache['user_key']
+
     # GAME LOGIQUE HERE
 
     async def game_loop(self, lobby_cache):
         user_name = self.scope['user'].username
         while lobby_cache['is_game_loop']:
-            user_cache = await sync_to_async(cache.get)(f"{lobby_cache['user_key']}_key")
             t1 = time.perf_counter()
-            opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['opponent_key']}_key")
+            user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
+            opponent_cache = await sync_to_async(cache.get)(f"{self.who_is_the_enemy(lobby_cache)}_key")
             lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
-            # print(f"up: {user_cache['up_pressed']}, down: {user_cache['down_pressed']}")
-            # print(f"up op: {opponent_cache['up_pressed']}, down op: {opponent_cache['down_pressed']}")
-            await self.move(user_cache, opponent_cache)
-            await self.save_cache(user_cache, opponent_cache, lobby_cache)
-            # print(f"Consumer of {user_name},in {user_cache['lobby_name']}", lobby_cache['is_game_loop'])
-            # print(lobby_cache['opponent_key'])
-            t2 = time.perf_counter() - t1
-            print('caca game loop')
-            await asyncio.sleep(0.01667 - t2)
-            # print(f"dt = {t2 - t1}")
+            if not self.check_move(user_cache, opponent_cache):
+                await self.send_data(self.user.get_class(), self.opponent.get_class(), lobby_cache)
+                await self.send_data(self.opponent.get_class(), self.user.get_class(), lobby_cache)
+            self.user.move(user_cache['up_pressed'], user_cache['down_pressed'])
+            self.opponent.move(opponent_cache['up_pressed'], opponent_cache['down_pressed'])
+            await self.ft_sleep(0.01667 - (time.perf_counter() - t1))
         print(f"Consumer of {user_name}, in {user_cache['lobby_name']} Game STOPED !")
         await sync_to_async(cache.delete)(f"{lobby_cache['opponent_key']}_key")
         await sync_to_async(cache.delete)(f"{user_cache['lobby_name']}_key")
         await sync_to_async(cache.delete)(f"{user_name}_key")
 
-    async def move(self, user_cache, opponent_cache):
-        # print(f"up: {user_cache['up_pressed']}, down: {user_cache['down_pressed']}")
-        # print(f"up op: {opponent_cache['up_pressed']}, down op: {opponent_cache['down_pressed']}")
-        if user_cache['up_pressed']:
-            user_cache['posY'] -= user_cache['speed'] * 0.01667
-        if user_cache['down_pressed']:
-            user_cache['posY'] += user_cache['speed'] * 0.01667
-        if user_cache['posY'] < 0:
-            user_cache['posY'] = 0
-        elif user_cache['posY'] > 1080 - 233:
-            user_cache['posY'] = 1080 - 233
-        if opponent_cache['up_pressed']:
-            opponent_cache['posY'] -= opponent_cache['speed'] * 0.01667
-        if opponent_cache['down_pressed']:
-            opponent_cache['posY'] += opponent_cache['speed'] * 0.01667
-        if opponent_cache['posY'] < 0:
-            opponent_cache['posY'] = 0
-        elif opponent_cache['posY'] > 1080 - 233:
-            opponent_cache['posY'] = 1080 - 233
-
     async def update_cache(self, json_data):
         user_name = self.scope['user'].username
         user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
-        lock_name = f"lock_{user_name}_cache"
-        start_time = time.time()
-        while time.time() - start_time < 2:
-            lock = await sync_to_async(redis_lock.set)(lock_name, 'locked', nx=True, ex=16)
-            if lock:
-                try:
-                    user_cache['up_pressed'] = json_data['racket']['up_pressed']
-                    user_cache['down_pressed'] = json_data['racket']['down_pressed']
-                    print(f"move up: {user_cache['up_pressed']}, move down: {user_cache['down_pressed']}")
-                    await sync_to_async(cache.set)(f"{user_name}_key", user_cache)
-                finally:
-                    print(lock_name, "let me save please sir i am under the water")
-                    await sync_to_async(redis_lock.delete)(lock_name)
-                break
+        user_cache['up_pressed'] = json_data['racket']['up_pressed']
+        user_cache['down_pressed'] = json_data['racket']['down_pressed']
+        lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
+        print(f"move up: {user_cache['up_pressed']}, move down: {user_cache['down_pressed']}")
+        await sync_to_async(cache.set)(f"{user_name}_key", user_cache)
 
-    async def save_cache_user(self, player1, player2, lobby_cache):
+    async def send_data(self, player1, player2, lobby_cache):
         user_json = await self.json_creator_racket(player1)
         opponent_json = await self.json_creator_racket(player2)
-        await sync_to_async(cache.set)(f"{player1['name']}_key", player1)
         json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': user_json,
                      'opponent': opponent_json, 'ball': lobby_cache}
-        await self.channel_layer.group_send("match_" + player1['name'], {'type': 'send_match_info', 'data': json_data})
+        await self.channel_layer.group_send("match_" + player1.name, {'type': 'send_match_info', 'data': json_data})
 
-    async def save_cache(self, user_cache, opponent_cache, lobby_cache):
-        lock_name_user = f"lock_{lobby_cache['user_key']}_cache"
-        lock_name_opponent = f"lock_{lobby_cache['opponent_key']}_cache"
-
-        lock_user = await sync_to_async(redis_lock.set)(lock_name_user, 'locked', nx=True, ex=1)
-        lock_opponent = await sync_to_async(redis_lock.set)(lock_name_opponent, 'locked', nx=True, ex=1)
-        if lock_user:
-            try:
-                await self.save_cache_user(user_cache, opponent_cache, lobby_cache)
-            finally:
-                print(lock_name_user, 'data racingg goes brrrrrrrrrrrrrrrr')
-                await sync_to_async(redis_lock.delete)(lock_name_user)
-        if lock_opponent:
-            try:
-                await self.save_cache_user(opponent_cache, user_cache, lobby_cache)
-            finally:
-                print(lock_name_opponent, ': data racingg goes paappapapapapapapapa')
-                await sync_to_async(redis_lock.delete)(lock_name_opponent)
-        await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
