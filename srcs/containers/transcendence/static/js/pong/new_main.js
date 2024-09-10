@@ -24,11 +24,9 @@ function main_game(data)
     }
     if (game_data.ball === undefined)
         game_data.ball = new balle(canevas);
-
-    game_data.my_racket.y = data.my_racket.posY;
-    game_data.my_racket.x = data.my_racket.posX;
-    game_data.opponent_racket.y = data.opponent.posY;
-    game_data.opponent_racket.x = data.opponent.posX;
+    set_racket(data.my_racket, game_data.my_racket)
+    set_racket(data.opponent, game_data.opponent_racket)
+    get_ball(data);
     choose_player_img();
 
     document.addEventListener("keyup", function (event) {
@@ -41,18 +39,31 @@ function main_game(data)
     game_data.interid = setInterval(infinite_game_loop, 1000 / 60, game_data, utils, canevas);
 }
 
+function get_ball(ball_data)
+{
+    game_data.ball.x = ball_data.ball.posX;
+    game_data.ball.y = ball_data.ball.posY;
+    game_data.ball.dirx = ball_data.ball.dirX;
+    game_data.ball.diry = ball_data.ball.dirY;
+    game_data.ball.startspeed = ball_data.ball.speed;
+}
+
+function set_racket(my_racket, racket)
+{
+    racket.score = my_racket.score;
+    racket.up = my_racket.up_pressed;
+    racket.down = my_racket.down_pressed;
+    racket.x = my_racket.x;
+    racket.y = my_racket.y;
+}
+
 function update_racket_state(racket_data)
 {
     console.log('caca')
-    game_data.my_racket.up = racket_data.my_racket.up_pressed;
-    game_data.my_racket.down = racket_data.my_racket.down_pressed;
-    game_data.my_racket.x = racket_data.my_racket.x;
-    game_data.my_racket.y = racket_data.my_racket.y;
+    set_racket(racket_data.my_racket, game_data.my_racket)
+    set_racket(racket_data.opponent, game_data.opponent_racket)
+    get_ball(racket_data);
 
-    game_data.opponent_racket.up = racket_data.opponent.up_pressed;
-    game_data.opponent_racket.down = racket_data.opponent.down_pressed;
-    game_data.opponent_racket.x = racket_data.opponent.x;
-    game_data.opponent_racket.y = racket_data.opponent.y;
 }
 
 function key_pressed(key, my_racket) {
@@ -81,6 +92,24 @@ function key_release(key, my_racket){
     }
 }
 
+function drawscore(game_data, utils, canevas)
+{
+    let actualfontsize = utils.fontsize * canevas.width;
+
+    utils.canvcont.font = (actualfontsize) + "px serif";
+    utils.canvcont.fillStyle = "Black";
+    if (game_data.my_racket.x === 0)
+    {
+        utils.canvcont.fillText(game_data.my_racket.score, canevas.width / 4, actualfontsize);
+        utils.canvcont.fillText(game_data.opponent_racket.score, (canevas.width / 4) * 3, actualfontsize);
+    }
+    else
+    {
+        utils.canvcont.fillText(game_data.opponent_racket.score, canevas.width / 4, actualfontsize);
+        utils.canvcont.fillText(game_data.my_racket.score, (canevas.width / 4) * 3, actualfontsize);
+    }
+}
+
 function infinite_game_loop(game_data, utils, canvas)
 {
     let new_time = Date.now();
@@ -88,10 +117,12 @@ function infinite_game_loop(game_data, utils, canvas)
     utils.oldtime = new_time;
     game_data.my_racket.moving(utils.ms);
     game_data.opponent_racket.moving(utils.ms);
+    game_data.ball.move(utils.ms);
     utils.canvcont.clearRect(0, 0, canvas.width, canvas.height);
     game_data.my_racket.drawing(utils.canvcont);
     game_data.opponent_racket.drawing(utils.canvcont);
     game_data.ball.drawing(utils.canvcont);
+    drawscore(game_data, utils, canvas);
     console.log("Loops");
 }
 

@@ -26,10 +26,6 @@ class racket {
         return (normal);
     }
 
-    scored() {
-        this.score++;
-    }
-
     smoothing(ms)
     {
         if (this.target_y !== undefined)

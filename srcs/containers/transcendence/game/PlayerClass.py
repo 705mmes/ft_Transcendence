@@ -11,6 +11,7 @@ class Player:
 		self.name = name
 		self.up_pressed = False
 		self.down_pressed = False
+		self.score = 0
 
 	def set_pos(self, x, y):
 		self.y = y
@@ -26,6 +27,9 @@ class Player:
 			self.y = 0
 		elif self.y > 1080 - 233:
 			self.y = 1080 - 233
+
+	def scored(self):
+		self.score += 1
 
 	def get_class(self):
 		return self
