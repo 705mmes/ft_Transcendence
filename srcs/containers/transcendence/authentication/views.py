@@ -163,11 +163,11 @@ def login_session(request):
                 if user.is_authenticated:
                     if user_has_device(user):
                         print("Redirecting to 2FA checker page")
-                        return JsonResponse({'success': True, 'redirect_url': '/accounts/redirect/checker/'})
+                        return JsonResponse({'success': True, 'redirect_url': '/account/redirect/checker'})
                     else:
                         print("Logging in and redirecting to game page")
                         login(request, user)
-                        return JsonResponse({'success': True, 'redirect_url': '/game/'})
+                        return JsonResponse({'success': True, 'redirect_url': '/game'})
                 else:
                     print("Anonymous user detected. Blocking login.")
                     return JsonResponse({'success': False, 'error': 'Anonymous users cannot log in'}, status=400)

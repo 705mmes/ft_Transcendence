@@ -35,7 +35,7 @@ def redirect_to_2fa_setup(request):
             print("Device:", device, "Token:", token)
     
             if device and device.verify_token(token):
-                return JsonResponse({'success': True, 'redirect_url': '/game/'})
+                return JsonResponse({'success': True, 'redirect_url': '/game'})
             else:
                 return JsonResponse({'success': False, 'error': 'Invalid OTP token.'})
         else:

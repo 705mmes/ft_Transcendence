@@ -57,7 +57,7 @@ if (document.getElementById('login-form')) {
             const result = await response.json();
 
             if (result.success) {
-                window.location.href = result.redirect_url;
+                loadContent(result.redirect_url);
             } else {
                 errorMessageDiv.textContent = result.error || 'Login failed. Please try again.';
             }
@@ -72,12 +72,6 @@ if (document.getElementById("Lclose")){
 document.getElementById("Lclose").onclick = () => {
 	document.getElementById("login_container").classList.remove('on');
 }}
-
-// if (document.getElementById("login-form")){
-// document.getElementById("login-form").addEventListener('submit', function(event){
-// 	event.preventDefault();
-// 	send_login_form(this, 'login_session/');
-// });}
 
 if (document.getElementById("registration")){
 document.getElementById("registration").addEventListener('submit', function(event){
