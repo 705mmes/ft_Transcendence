@@ -55,13 +55,13 @@ class racket {
     moving(ms) {
         if (this.up && !this.down) {
             if (this.y > 0)
-                this.y -= this.speed * 0.016;
+                this.y -= this.speed * 0.01667;
             else
                 this.y = 0;
         }
         else if (this.down  && !this.up) {
             if (this.y < 1080 - 233)
-                this.y += this.speed * 0.016;
+                this.y += this.speed * 0.01667;
             else
                 this.y = 1080 - 233;
         }

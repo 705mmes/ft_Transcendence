@@ -21,7 +21,7 @@ class balle
 
 	move(ms)
 	{
-		this.x += this.dirx * ms;
+		this.x += this.dirx * 0.01667;
 		this.y += this.diry;
 	}
 }

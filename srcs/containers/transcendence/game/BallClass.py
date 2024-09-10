@@ -23,16 +23,16 @@ class Ball:
 			self.dirX = -self.speed
 		return True
 
-	def move(self, user, opponent):
+	async def move(self, user, opponent):
 		self.x += self.dirX * 0.01667
 		self.y += self.dirY
-		if self.hit(user) or self.hit(opponent):
+		if await self.hit(user) or await self.hit(opponent):
 			return True
-		if self.field_boundary(user, opponent):
+		if await self.field_boundary(user, opponent):
 			return True
 		return False
 
-	def hit(self, player):
+	async def hit(self, player):
 		if player.x == 0:
 			if self.x - self.size < player.x + 37 and (self.y + self.size > player.y and self.y - self.size < player.y + 223):
 				self.dirX *= -1
@@ -57,7 +57,7 @@ class Ball:
 		print("normal :", normal)
 		return normal
 
-	def field_boundary(self, user, opponent):
+	async def field_boundary(self, user, opponent):
 		if self.y < 0:
 			self.y = 0
 			self.dirY *= -1

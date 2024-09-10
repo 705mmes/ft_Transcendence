@@ -41,11 +41,14 @@ function main_game(data)
 
 function get_ball(ball_data)
 {
-    game_data.ball.x = ball_data.ball.posX;
-    game_data.ball.y = ball_data.ball.posY;
-    game_data.ball.dirx = ball_data.ball.dirX;
-    game_data.ball.diry = ball_data.ball.dirY;
-    game_data.ball.startspeed = ball_data.ball.speed;
+    if (ball_data.ball)
+    {
+        game_data.ball.x = ball_data.ball.posX;
+        game_data.ball.y = ball_data.ball.posY;
+        game_data.ball.dirx = ball_data.ball.dirX;
+        game_data.ball.diry = ball_data.ball.dirY;
+        game_data.ball.startspeed = ball_data.ball.speed;
+    }
 }
 
 function set_racket(my_racket, racket)
@@ -60,8 +63,11 @@ function set_racket(my_racket, racket)
 function update_racket_state(racket_data)
 {
     console.log('caca')
-    set_racket(racket_data.my_racket, game_data.my_racket)
-    set_racket(racket_data.opponent, game_data.opponent_racket)
+    if (racket_data.my_racket && racket_data.opponent)
+    {
+        set_racket(racket_data.my_racket, game_data.my_racket)
+        set_racket(racket_data.opponent, game_data.opponent_racket)
+    }
     get_ball(racket_data);
 
 }
