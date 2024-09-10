@@ -150,9 +150,8 @@ def register(request):
             else:
                 return (HttpResponse('Error'))
 
-
 def login_session(request):
-    print("login_session...")
+    print("login session")
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -161,19 +160,28 @@ def login_session(request):
             user = authenticate(username=username, password=password)
 
             if user is not None:
-                if user_has_device(user):
-                    request.session['pre_2fa_user_id'] = user.id
-                    return redirect('/account/redirect/checker/')
-
-                login(request, user)
-                return render(request, 'game/game.html')
+                if user.is_authenticated:
+                    if user_has_device(user):
+                        print("Redirecting to 2FA checker page")
+                        return JsonResponse({'success': True, 'redirect_url': '/accounts/redirect/checker/'})
+                    else:
+                        print("Logging in and redirecting to game page")
+                        login(request, user)
+                        return JsonResponse({'success': True, 'redirect_url': '/game/'})
+                else:
+                    print("Anonymous user detected. Blocking login.")
+                    return JsonResponse({'success': False, 'error': 'Anonymous users cannot log in'}, status=400)
             else:
-                return HttpResponse('Error: Invalid login credentials')
+                print("Invalid login credentials")
+                return JsonResponse({'success': False, 'error': 'Invalid login credentials'}, status=400)
         else:
-            return HttpResponse('Error: Form is not valid')
+            print("Form validation failed")
+            return JsonResponse({'success': False, 'error': 'Form is invalid'}, status=400)
     else:
+        print("render auth_page")
         form = LoginForm()
         return render(request, 'authentication/auth_page.html', {'login_form': form})
+
 
 
 

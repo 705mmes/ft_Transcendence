@@ -3,7 +3,7 @@
 
 {% block page_content %}
 <h1>Login</h1>
-<form method="post" id="login-form">
+<form method="POST" id="login-form" action="{% url 'login_session' %}">
     {% csrf_token %}
     <label for="username">Username:</label>
     <input type="text" id="username" name="username" required>
@@ -13,5 +13,6 @@
 
     <button type="submit">Login</button>
 </form>
+<div id="error-message" style="color: red;"></div>
 {% endblock %}
 

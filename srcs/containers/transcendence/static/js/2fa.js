@@ -44,7 +44,7 @@ if (document.getElementById('otp-form')) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                loadContent(data.redirect_url); // Redirect on success
+                loadContent(data.redirect_url);
             } else {
                 if (errorDiv) {
                     errorDiv.innerHTML = `<p>${data.error}</p>`; // Display error message
