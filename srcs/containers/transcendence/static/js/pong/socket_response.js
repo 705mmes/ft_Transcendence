@@ -34,14 +34,15 @@ function launch_game(data){
     open_match_socket(game_data)
     document.getElementById('lobby_css').remove();
     document.getElementById('lobby_div').remove();
+    console.log(data.my_racket.y, data.my_racket.x);
+    console.log(data.opponent.y, data.opponent.x);
     main_game(data);
 }
 
 function responsePong() {
     if (PongSocketStatus())
     {
-        console.log("Gneugneu je m'appelle samuel et je fais des print professionnel, dilo t'as quel age pour encore faire des print caca ?")
-
+        console.log("Gneugneugneu je m'appelle samuel et je fais des print professionnel, dilo t'as quel age pour encore faire des print caca ?");
         game_socket.onmessage = function(event)
         {
             console.log("Bite");
