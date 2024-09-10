@@ -38,7 +38,6 @@ class racket {
             {
                 if (this.y - this.target_y < 16)
                 {
-                    // console.log('here')
                     this.y = this.target_y;
                     this.target_y = undefined;
                 }
@@ -52,7 +51,6 @@ class racket {
                 } else
                     this.y += this.speed * ms;
             }
-            // console.log(ms, this.speed * ms, this.y, this.target_y, this.speed)
             if (this.target_y === this.y)
                 this.target_y = undefined;
         }

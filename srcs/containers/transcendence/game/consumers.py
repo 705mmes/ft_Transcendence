@@ -235,27 +235,6 @@ class GameConsumer(WebsocketConsumer):
     #     print("normal :", normal)
     #     return normal
 
-    def calcul_pos_racket(self, user_key):
-        user_cache = cache.get(user_key)
-        start = user_cache.get('time_start')
-        end = user_cache.get('time_end')
-        server_input_time = math.ceil((end - start) * 1000)
-        average_dt = 16
-        move = int((server_input_time * 60 / 1000)) * average_dt
-        if user_cache['up_pressed']:
-            if user_cache['posY'] > 0:
-                user_cache['posY'] -= move
-                if user_cache['posY'] < 0:
-                    user_cache['posY'] = 0
-        elif user_cache['down_pressed']:
-            if user_cache['posY'] < 847:
-                user_cache['posY'] += move
-                if user_cache['posY'] > 847:
-                    user_cache['posY'] = 847
-        user_cache['time_start'] = 0
-        user_cache['time_end'] = 0
-        cache.set(user_key, user_cache)
-
     def set_player(self, player1, player2, lobby_name):
         cache.set(f"{player1.username}_key", {
             'lobby_name': lobby_name,
@@ -319,12 +298,12 @@ class GameConsumer(WebsocketConsumer):
             if user.is_playing and opponent.is_playing:
                 my_racket = self.json_creator_racket(user)
                 opponent_racket = self.json_creator_racket(opponent)
-                #game_ball = self.json_creator_ball(lobby.first())
-                # print(json.dumps(game_ball, indent=1))
                 json_data = {'action': 'start_game', 'mode': 'matchmaking_1v1', 'my_racket': my_racket,
                              'opponent': opponent_racket}
                 async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
-                async_to_sync(self.channel_layer.group_send)("game_" + opponent.username, {'type': 'send_info', 'data': json_data})
+                json_data_2 = {'action': 'start_game', 'mode': 'matchmaking_1v1', 'my_racket': opponent_racket,
+                             'opponent': my_racket}
+                async_to_sync(self.channel_layer.group_send)("game_" + opponent.username, {'type': 'send_info', 'data': json_data_2})
                 return
         json_data = {'action': 'cancel_lobby', 'mode': 'matchmaking_1v1'}
         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})

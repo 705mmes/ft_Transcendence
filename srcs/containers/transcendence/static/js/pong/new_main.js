@@ -1,12 +1,11 @@
-function main_game(data) {
-    // socket = window.getWebSocket()
+function main_game(data)
+{
     let canevas = document.createElement("canvas");
     canevas.id = "canv";
     canevas.height = 1080;
     canevas.width = 2040;
     canevas.style = "border: 4px solid black";
     document.getElementById("gamecanvas").appendChild(canevas);
-    // let canevas = document.getElementById("canv");
 
     let utils = {
         canvcont: canevas.getContext("2d"),
@@ -26,10 +25,10 @@ function main_game(data) {
     if (game_data.ball === undefined)
         game_data.ball = new balle(canevas);
 
-    game_data.my_racket.y = data.my_racket.y;
-    game_data.my_racket.x = data.my_racket.x;
-    game_data.opponent_racket.y = data.opponent.y;
-    game_data.opponent_racket.x = data.opponent.x;
+    game_data.my_racket.y = data.my_racket.posY;
+    game_data.my_racket.x = data.my_racket.posX;
+    game_data.opponent_racket.y = data.opponent.posY;
+    game_data.opponent_racket.x = data.opponent.posX;
     choose_player_img();
 
     document.addEventListener("keyup", function (event) {
@@ -93,7 +92,7 @@ function infinite_game_loop(game_data, utils, canvas)
     game_data.my_racket.drawing(utils.canvcont);
     game_data.opponent_racket.drawing(utils.canvcont);
     game_data.ball.drawing(utils.canvcont);
-    console.log("utils.ms");
+    console.log("Loops");
 }
 
 function send_data(action_msg ,my_racket)
