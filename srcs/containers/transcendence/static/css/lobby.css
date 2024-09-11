@@ -53,6 +53,11 @@
     height: 70vh;
 }
 
+.button_off
+{
+    opacity: 0;
+}
+
 #lobby_div {
     justify-content: center;
     align-items: center;

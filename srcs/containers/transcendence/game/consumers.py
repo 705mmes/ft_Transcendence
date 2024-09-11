@@ -321,8 +321,20 @@ class AsyncConsumer(AsyncWebsocketConsumer):
             self.opponent.move(opponent_cache['up_pressed'], opponent_cache['down_pressed'])
             await self.send_data_all(self.user.get_class(), self.opponent.get_class())
             await self.send_data_all(self.opponent.get_class(), self.user.get_class())
+            if self.user.score == 3 or self.opponent.score == 3:
+                await self.endgame(user_cache, lobby_cache, user_name)
+                break
             await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
-        print(f"Consumer of {user_name}, in {user_cache['lobby_name']} Game STOPED !")
+        # print(f"Consumer of {user_name}, in {user_cache['lobby_name']} Game STOPED !")
+
+    async def endgame(self, user_cache, lobby_cache, user_name):
+        if self.user.score == 3:
+            await self.send_data(self.user.get_class(), self.opponent.get_class())
+        elif self.opponent.score == 3:
+            await self.send_data(self.opponent.get_class(), self.user.get_class())
+
+        # sauvegarder le resultat dans la db ici
+
         await sync_to_async(cache.delete)(f"{lobby_cache['opponent_key']}_key")
         await sync_to_async(cache.delete)(f"{user_cache['lobby_name']}_key")
         await sync_to_async(cache.delete)(f"{user_name}_key")
@@ -336,9 +348,13 @@ class AsyncConsumer(AsyncWebsocketConsumer):
         await sync_to_async(cache.set)(f"{user_name}_key", user_cache)
 
     async def send_data(self, player1, player2):
-        ball_json = await self.json_creator_ball()
-        json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1','ball': ball_json}
+        result = {
+            'winner': player1.name,
+            'looser': player2.name,
+        }
+        json_data = {'action': 'end_game', 'mode': 'matchmaking_1v1', 'result': result}
         await self.channel_layer.group_send("match_" + player1.name, {'type': 'send_match_info', 'data': json_data})
+        await self.channel_layer.group_send("match_" + player2.name, {'type': 'send_match_info', 'data': json_data})
 
     async def send_data_racket(self, player1, player2):
         user_json = await self.json_creator_racket(player1)
