@@ -37,6 +37,10 @@ if not User.objects.filter(username='ludo').exists():
     ludo = User.objects.create_user(username='ludo', email='ludo@maildeludo.com', password='fefe')
 if not User.objects.filter(username='leon').exists():
     leon = User.objects.create_user(username='leon', email='leon@maildeludo.com', password='caca')
+if not User.objects.filter(username='basi').exists():
+    basi = User.objects.create_user(username='basi', email='basi@maildeludo.com', password='caca')
+if not User.objects.filter(username='anto').exists():
+    anto = User.objects.create_user(username='anto', email='anto@maildeludo.com', password='caca')
 if not User.objects.filter(username='abel').exists():
     abel = User.objects.create_user(username='abel', email='abel@maildeludo.com', password='caca')
 if not User.objects.filter(username='dcandan').exists():

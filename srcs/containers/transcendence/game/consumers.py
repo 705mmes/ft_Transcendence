@@ -311,18 +311,16 @@ class AsyncConsumer(AsyncWebsocketConsumer):
             user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
             opponent_cache = await sync_to_async(cache.get)(f"{self.who_is_the_enemy(lobby_cache)}_key")
             lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
-            # print(f"Consumer of {user_name}, after getting cache, is {(time.perf_counter() - t1)} ms")
-            if await self.ball.move(self.user.get_class(), self.opponent.get_class()):
-                await self.send_data(self.user.get_class(), self.opponent.get_class())
-                await self.send_data(self.opponent.get_class(), self.user.get_class())
-            # print(f"Consumer of {user_name}, after ball move, is {(time.perf_counter() - t1)} ms")
+            # if await self.ball.move(self.user.get_class(), self.opponent.get_class()):
+            await self.ball.move(self.user.get_class(), self.opponent.get_class())
+                # await self.send_data(self.user.get_class(), self.opponent.get_class())
+                # await self.send_data(self.opponent.get_class(), self.user.get_class())
             # if not await self.check_move(user_cache, opponent_cache):
-            await self.send_data_racket(self.user.get_class(), self.opponent.get_class())
-            await self.send_data_racket(self.opponent.get_class(), self.user.get_class())
-            # print(f"Consumer of {user_name}, after check move, is {(time.perf_counter() - t1)} ms")
+            await self.check_move(user_cache, opponent_cache)
             self.user.move(user_cache['up_pressed'], user_cache['down_pressed'])
             self.opponent.move(opponent_cache['up_pressed'], opponent_cache['down_pressed'])
-            # print(f"Consumer of {user_name}, after user + opponent move, is {(time.perf_counter() - t1)} ms")
+            await self.send_data_all(self.user.get_class(), self.opponent.get_class())
+            await self.send_data_all(self.opponent.get_class(), self.user.get_class())
             await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
         print(f"Consumer of {user_name}, in {user_cache['lobby_name']} Game STOPED !")
         await sync_to_async(cache.delete)(f"{lobby_cache['opponent_key']}_key")
@@ -347,4 +345,12 @@ class AsyncConsumer(AsyncWebsocketConsumer):
         opponent_json = await self.json_creator_racket(player2)
         json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': user_json,
                      'opponent': opponent_json}
+        await self.channel_layer.group_send("match_" + player1.name, {'type': 'send_match_info', 'data': json_data})
+
+    async def send_data_all(self, player1, player2):
+        user_json = await self.json_creator_racket(player1)
+        opponent_json = await self.json_creator_racket(player2)
+        ball_json = await self.json_creator_ball()
+        json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': user_json,
+                     'opponent': opponent_json, 'ball': ball_json}
         await self.channel_layer.group_send("match_" + player1.name, {'type': 'send_match_info', 'data': json_data})
