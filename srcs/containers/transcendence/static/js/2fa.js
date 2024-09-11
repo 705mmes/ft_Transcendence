@@ -1,30 +1,5 @@
 console.log("2fa_script loaded...");
 
-function loadContent(url) {
-    fetch(url)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.text();
-        })
-        .then(html => {
-            document.getElementById('content').innerHTML = html;
-            history.pushState(null, '', url);
-        })
-        .catch(error => console.error('Error loading content:', error));
-}
-
-window.addEventListener('popstate', function(event) {
-    const currentUrl = window.location.pathname;
-    loadContent(currentUrl);
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-    loadContent(window.location.pathname);
-});
-
-
 if (document.getElementById('otp-form')) {
 
     if (document.getElementById('error-message'))
@@ -44,7 +19,7 @@ if (document.getElementById('otp-form')) {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                loadContent(data.redirect_url);
+                to_unspecified_page(data.redirect_url);
             } else {
                 if (errorDiv) {
                     errorDiv.innerHTML = `<p>${data.error}</p>`; // Display error message

@@ -84,7 +84,7 @@ async function to_unspecified_page(page) {
 
 	if (page.match('game')) {
 		navigate('/' + page);
-		reload_scripts('/' + page, 0);
+		await reload_scripts('/' + page, 0);
 		console.log('Opening WebSocket...');
 		open_lobby_socket(game_data);
 		return ;

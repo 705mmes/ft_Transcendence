@@ -24,6 +24,7 @@ function main_game(data)
     }
     if (game_data.ball === undefined)
         game_data.ball = new balle(canevas);
+    game_data.game_start = true
     set_racket(data.my_racket, game_data.my_racket)
     set_racket(data.opponent, game_data.opponent_racket)
     console.log(game_data.my_racket.name, game_data.opponent_racket.name)
@@ -75,6 +76,7 @@ function update_racket_state(racket_data)
     get_ball(racket_data);
 
 }
+
 
 function key_pressed(key, my_racket) {
     if (key.code === "ArrowUp" && !my_racket.up_pressed)
@@ -131,6 +133,8 @@ function draw_score(utils, canevas)
 
 function infinite_game_loop(game_data, utils, canvas)
 {
+    if (game_data.game_start === false)
+        end_it_all(game_data, utils, canvas);
     let new_time = Date.now();
     utils.ms = (new_time - utils.oldtime) / 1000;
     utils.oldtime = new_time;
@@ -168,3 +172,38 @@ function choose_player_img()
         game_data.opponent_racket.side = 'right';
     }
 }
+function end_game(data)
+{
+    game_data.winner = data.winner;
+    game_data.looser = data.looser;
+    game_data.game_start = false
+}
+
+function end_it_all(game_data, utils, canvas)
+{
+    utils.canvcont.clearRect(0, 0, canvas.width, canvas.height);
+    let actualfontsize = utils.fontsize * canvas.width;
+
+    utils.canvcont.font = (actualfontsize) + "px serif";
+    utils.canvcont.fillStyle = "Black";
+    if (game_data.my_racket.score === 3 || game_data.opponent_racket.score === 3)
+    {
+        utils.canvcont.fillText("WINNER IS " + game_data.winner, canvas.width / 4,canvas.height / 2,  actualfontsize);
+        utils.canvcont.fillText("LOOSER IS " + game_data.looser, (canvas.width / 4) * 3, canvas.height / 2 , actualfontsize);
+    }
+    else
+        utils.canvcont.fillText("ERROR", canevas.width / 2, canvas.height / 2, actualfontsize);
+    clearInterval(game_data.interid);
+    document.getElementById('continue').className = 'button';
+}
+
+if (document.getElementById('continue'))
+    document.getElementById('continue').addEventListener('click', function(event){
+        event.preventDefault();
+        if (timeoutID)
+        {
+            clearTimeout(timeoutID);
+            timeoutID = undefined;
+        }
+        to_unspecified_page('game/canvas/');
+    })
