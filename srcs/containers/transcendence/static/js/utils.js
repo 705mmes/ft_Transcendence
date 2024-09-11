@@ -43,15 +43,15 @@ async function reload_scripts(page)
     if (page !== '/')
     {
         await always_on_script();
-        if (page.match('/social/'))
+        if (page.match('/social'))
             await load_script_form_fetch(social_script_cache);
-        else if (page.match('/profile/'))
+        else if (page.match('/profile'))
             await load_script_form_fetch(profile_script_cache);
         else if (page.match('/game')) {
 			console.log("reloading game scripts...");
             await load_script_form_fetch(game_script_cache);
 		}
-		else if (page.match('/account/'))
+		else if (page.match('/account'))
 			await load_script_form_fetch(twofa_script_cache);
     }
     else {

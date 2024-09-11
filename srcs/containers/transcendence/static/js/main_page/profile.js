@@ -64,7 +64,7 @@ function display_popup(data)
 if (document.getElementById('edit_profile'))
 {
     document.getElementById('edit_profile').addEventListener('click', () =>{
-        to_unspecified_page('profile/modify/')
+        to_unspecified_page('/profile/modify')
     })
 }
 

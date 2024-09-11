@@ -80,6 +80,7 @@ def oauth_callback(request):
         'redirect_uri': REDIRECT_URI,
         'code': code,
     }
+    print(data)
     response = requests.post(token_endpoint, data=data)
     if response.status_code != 200:
         return JsonResponse({'error': 'Failed to fetch access token'}, status=response.status_code)
