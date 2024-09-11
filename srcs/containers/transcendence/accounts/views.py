@@ -35,7 +35,7 @@ def redirect_to_2fa_setup(request):
             print("Device:", device, "Token:", token)
     
             if device and device.verify_token(token):
-                return JsonResponse({'success': True, 'redirect_url': '/game'})
+                return JsonResponse({'success': True, 'redirect_url': '/game/'})
             else:
                 return JsonResponse({'success': False, 'error': 'Invalid OTP token.'})
         else:
@@ -67,24 +67,4 @@ def redirect_to_checker(request):
     print("redirect_to_checker...")
     return render(request, 'checker.html')
 
-
-
-def two_factor_login(request):
-    user_id = request.session.get('pre_2fa_user_id')
-    if not user_id:
-        return redirect('login')
-
-    user = get_user_model().objects.get(id=user_id)
-
-    if request.method == 'POST':
-        form = OTPTokenForm(user, request.POST)
-        if form.is_valid():
-            form.save() 
-            login(request, user)
-            return redirect('game/')
-        else:
-            return render(request, 'login.html', {'form': form, 'error': 'Invalid token'})
-    else:
-        form = OTPTokenForm(user)
-        return render(request, 'login.html', {'form': form})
 

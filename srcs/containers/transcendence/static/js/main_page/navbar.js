@@ -19,30 +19,11 @@ if (document.getElementById('home'))
 if (document.getElementById('profile'))
     document.getElementById('profile').addEventListener('click', function(event){
     event.preventDefault();
-    to_unspecified_page('profile/');
+    to_unspecified_page('profile');
     })
 
 if (document.getElementById('social'))
     document.getElementById('social').addEventListener('click', function(event){
     event.preventDefault();
-    to_unspecified_page('social/');
+    to_unspecified_page('social');
     })
-
-async function to_unspecified_page(page)
-{
-    // clearTimeout();
-    navigate_to_load('/');
-    let div_content = document.getElementById('content');
-    await fetching_html(page, div_content);
-
-    page = change_page_name(page);
-    reset_script('/' + page)
-    if (page.match('game/')) {
-        console.log('pipi');
-        open_lobby_socket(game_data);
-    }
-    else
-        game_socket.close();
-    reload_scripts('/' + page, 0);
-    navigate(page);
-}
