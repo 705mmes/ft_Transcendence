@@ -179,7 +179,8 @@ class GameConsumer(WebsocketConsumer):
                   'down_pressed': user_cache['down_pressed'],
                   'x': user_cache['x'],
                   'y': user_cache['y'],
-                  'score' : 0
+                  'score': 0,
+                  'name': user.username,
                   }
         return racket
 

@@ -26,6 +26,7 @@ function main_game(data)
         game_data.ball = new balle(canevas);
     set_racket(data.my_racket, game_data.my_racket)
     set_racket(data.opponent, game_data.opponent_racket)
+    console.log(game_data.my_racket.name, game_data.opponent_racket.name)
     get_ball(data);
     choose_player_img();
 
@@ -53,11 +54,14 @@ function get_ball(ball_data)
 
 function set_racket(my_racket, racket)
 {
+    if (my_racket.name !== undefined)
+        racket.name = my_racket.name;
     racket.score = my_racket.score;
     racket.up = my_racket.up_pressed;
     racket.down = my_racket.down_pressed;
     racket.x = my_racket.x;
     racket.y = my_racket.y;
+    console.log(racket.name);
 }
 
 function update_racket_state(racket_data)
@@ -103,27 +107,26 @@ function game_ended(data){
     game_data.ball.y = undefined;
      if (game_data.interid !== undefined)
         clearInterval(game_data.interid);
-    // Display End screen
-    game_data.my_racket.display_end_screen();
-    game_data.opponent_racket.display_end_screen();
+    console.log("Display end Screen !")
+    // game_data.my_racket.display_end_screen();
+    // game_data.opponent_racket.display_end_screen();
 }
 
-function drawscore(game_data, utils, canevas)
+function draw_score(utils, canevas)
 {
-    let actualfontsize = utils.fontsize * canevas.width;
+    let actual_fontsize = utils.fontsize * canevas.width;
 
-    utils.canvcont.font = (actualfontsize) + "px serif";
+    utils.canvcont.font = (actual_fontsize) + "px serif";
     utils.canvcont.fillStyle = "Black";
-    if (game_data.my_racket.x === 0)
-    {
-        utils.canvcont.fillText(game_data.my_racket.score, canevas.width / 4, actualfontsize);
-        utils.canvcont.fillText(game_data.opponent_racket.score, (canevas.width / 4) * 3, actualfontsize);
-    }
+    let str = undefined;
+    if (game_data.my_racket.side === 'left')
+        str = game_data.opponent_racket.score + " | " + game_data.my_racket.score;
     else
-    {
-        utils.canvcont.fillText(game_data.opponent_racket.score, canevas.width / 4, actualfontsize);
-        utils.canvcont.fillText(game_data.my_racket.score, (canevas.width / 4) * 3, actualfontsize);
-    }
+        str = game_data.my_racket.score + " | " + game_data.opponent_racket.score;
+    let text = utils.canvcont.measureText(str);
+    utils.canvcont.fillText(str, canevas.width / 2 - text.width / 2, 10 + actual_fontsize);
+    game_data.my_racket.draw_name(utils.canvcont, actual_fontsize);
+    game_data.opponent_racket.draw_name(utils.canvcont, actual_fontsize);
 }
 
 function infinite_game_loop(game_data, utils, canvas)
@@ -138,7 +141,7 @@ function infinite_game_loop(game_data, utils, canvas)
     game_data.my_racket.drawing(utils.canvcont);
     game_data.opponent_racket.drawing(utils.canvcont);
     game_data.ball.drawing(utils.canvcont);
-    drawscore(game_data, utils, canvas);
+    draw_score(utils, canvas);
     console.log("Loops");
 }
 
