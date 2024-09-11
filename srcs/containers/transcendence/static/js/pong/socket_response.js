@@ -66,6 +66,8 @@ function responsePong() {
                     launch_game(data);
                 else if (data.action === 'game_data')
                     update_racket_state(data);
+                else if (data.action === 'game_end')
+                    game_ended(data);
                 else {
                     console.error("Unknown action received from server.");
                 }

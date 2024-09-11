@@ -98,6 +98,16 @@ function key_release(key, my_racket){
     }
 }
 
+function game_ended(data){
+    game_data.ball.x = undefined;
+    game_data.ball.y = undefined;
+     if (game_data.interid !== undefined)
+        clearInterval(game_data.interid);
+    // Display End screen
+    game_data.my_racket.display_end_screen();
+    game_data.opponent_racket.display_end_screen();
+}
+
 function drawscore(game_data, utils, canevas)
 {
     let actualfontsize = utils.fontsize * canevas.width;
@@ -145,9 +155,13 @@ function choose_player_img()
     {
         game_data.opponent_racket.img.src = '../static/js/images/raquetteL.png';
         game_data.my_racket.img.src = '../static/js/images/raquetteR.png';
+        game_data.my_racket.side = 'right';
+        game_data.opponent_racket.side = 'left';
     } else
     {
         game_data.opponent_racket.img.src = '../static/js/images/raquetteR.png';
         game_data.my_racket.img.src = '../static/js/images/raquetteL.png'
+        game_data.my_racket.side = 'left';
+        game_data.opponent_racket.side = 'right';
     }
 }

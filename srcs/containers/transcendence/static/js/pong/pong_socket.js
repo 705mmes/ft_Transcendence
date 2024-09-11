@@ -39,9 +39,7 @@ function open_match_socket(game_data) {
         console.log("closing lobby_socket");
         game_socket.onclose = function (event) {
             console.log("opening match_socket");
-            // setTimeout(function() {
             pong_websocket(game_data, '/ws/game/match/');
-            // }, 1000);
         };
     }
 }

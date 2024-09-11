@@ -10,45 +10,22 @@ class racket {
         this.down_pressed = false;
         this.up = false;
         this.down = false;
-        this.target_y = undefined;
         this.score = 0;
-        this.deltaY = 0;
         this.canevas = canevas;
+        this.side = undefined;
     }
 
     drawing(canvcont) {
         canvcont.drawImage(this.img, this.x, this.y);
     }
 
-    impact(ball) {
-        let impact = (ball.y - this.y) - (this.height / 2)
-        let normal = (impact / (this.height / 2));
-        return (normal);
-    }
-
-    smoothing(ms)
-    {
-        if (this.target_y !== undefined)
-        {
-            if (this.target_y < this.y )
-            {
-                if (this.y - this.target_y < 16)
-                {
-                    this.y = this.target_y;
-                    this.target_y = undefined;
-                }
-                else
-                    this.y -= this.speed * ms;
-            }
-            else if (this.y < this.target_y) {
-                if (this.target_y - this.y < 16) {
-                    this.y = this.target_y;
-                    this.target_y = undefined;
-                } else
-                    this.y += this.speed * ms;
-            }
-            if (this.target_y === this.y)
-                this.target_y = undefined;
+    display_end_screen() {
+        let canvas_ctxt = this.canevas.getContext("2d");
+        if (this.side === 'left') {
+            canvas_ctxt.fillText("Hello caca", 50, this.canevas.width / 4);
+        }
+        else if (this.side === 'right') {
+            canvas_ctxt.fillText("Hello pipi", 50, (this.canevas.width / 4) * 3);
         }
     }
 

@@ -36,12 +36,11 @@ class GameConsumer(WebsocketConsumer):
     def disconnect(self, close_code):
         user = User.objects.get(username=self.scope['user'])
         user.in_research = False
-        user.is_playing = False
         user.save()
         if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
             lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
-            opponent = self.who_is_the_enemy(lobby)
-            print(cache.get((f"{lobby.Name}_key")))
+            # opponent = self.who_is_the_enemy(lobby)
+            print("Lobby delete :", cache.get((f"{lobby.Name}_key")))
             lobby.delete()
         print(f"Disconnecting : {self.scope['user']}")
 
@@ -241,6 +240,9 @@ class AsyncConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, code):
         user_name = self.scope['user'].username
+        user = await sync_to_async(User.objects.get)(username=user_name)
+        user.is_playing = False
+        await sync_to_async(user.save)()
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
         print(f"Disconnected from match : {self.scope['user'].username}")
         if await sync_to_async(cache.get)(f"{user_name}_key"):
@@ -249,8 +251,11 @@ class AsyncConsumer(AsyncWebsocketConsumer):
             opponent_name = self.who_is_the_enemy(lobby_cache)
             lobby_cache['is_game_loop'] = False
             await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
-            json_data = {'action': 'cancel_game', 'mode': 'matchmaking_1v1'}
-            await self.channel_layer.group_send("match_" + opponent_name, {'type': 'send_info', 'data': json_data})
+            opponent = await sync_to_async(User.objects.get)(username=user_name)
+            if opponent.is_playing:
+                json_data = {'action': 'game_end', 'mode': 'matchmaking_1v1'}
+                await self.channel_layer.group_send("match_" + opponent_name, {'type': 'send_match_info', 'data': json_data})
+
 
     # UTILS HERE
     async def receive(self, text_data):
@@ -311,21 +316,29 @@ class AsyncConsumer(AsyncWebsocketConsumer):
             user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
             opponent_cache = await sync_to_async(cache.get)(f"{self.who_is_the_enemy(lobby_cache)}_key")
             lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
-            # if await self.ball.move(self.user.get_class(), self.opponent.get_class()):
             await self.ball.move(self.user.get_class(), self.opponent.get_class())
-                # await self.send_data(self.user.get_class(), self.opponent.get_class())
-                # await self.send_data(self.opponent.get_class(), self.user.get_class())
-            # if not await self.check_move(user_cache, opponent_cache):
             await self.check_move(user_cache, opponent_cache)
             self.user.move(user_cache['up_pressed'], user_cache['down_pressed'])
             self.opponent.move(opponent_cache['up_pressed'], opponent_cache['down_pressed'])
-            await self.send_data_all(self.user.get_class(), self.opponent.get_class())
-            await self.send_data_all(self.opponent.get_class(), self.user.get_class())
+            await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
+            await self.send_data(self.opponent.get_class(), self.user.get_class(), 'game_data')
+            if await self.check_game(self.user.get_class(), self.opponent.get_class()):
+                break
             await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
         print(f"Consumer of {user_name}, in {user_cache['lobby_name']} Game STOPED !")
+        await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_end')
+        await self.send_data(self.opponent.get_class(), self.user.get_class(), 'game_end')
         await sync_to_async(cache.delete)(f"{lobby_cache['opponent_key']}_key")
         await sync_to_async(cache.delete)(f"{user_cache['lobby_name']}_key")
         await sync_to_async(cache.delete)(f"{user_name}_key")
+
+    async def check_game(self, user, opponent):
+        if user.score >= 5:
+            return True
+        elif opponent.score >= 5:
+            return True
+        return False
+    #     if a player disconnect Return true
 
     async def update_cache(self, json_data):
         user_name = self.scope['user'].username
@@ -335,22 +348,10 @@ class AsyncConsumer(AsyncWebsocketConsumer):
         print(f"move up: {user_cache['up_pressed']}, move down: {user_cache['down_pressed']}")
         await sync_to_async(cache.set)(f"{user_name}_key", user_cache)
 
-    async def send_data(self, player1, player2):
-        ball_json = await self.json_creator_ball()
-        json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1','ball': ball_json}
-        await self.channel_layer.group_send("match_" + player1.name, {'type': 'send_match_info', 'data': json_data})
-
-    async def send_data_racket(self, player1, player2):
-        user_json = await self.json_creator_racket(player1)
-        opponent_json = await self.json_creator_racket(player2)
-        json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': user_json,
-                     'opponent': opponent_json}
-        await self.channel_layer.group_send("match_" + player1.name, {'type': 'send_match_info', 'data': json_data})
-
-    async def send_data_all(self, player1, player2):
+    async def send_data(self, player1, player2, action):
         user_json = await self.json_creator_racket(player1)
         opponent_json = await self.json_creator_racket(player2)
         ball_json = await self.json_creator_ball()
-        json_data = {'action': 'game_data', 'mode': 'matchmaking_1v1', 'my_racket': user_json,
+        json_data = {'action': action, 'mode': 'matchmaking_1v1', 'my_racket': user_json,
                      'opponent': opponent_json, 'ball': ball_json}
         await self.channel_layer.group_send("match_" + player1.name, {'type': 'send_match_info', 'data': json_data})
