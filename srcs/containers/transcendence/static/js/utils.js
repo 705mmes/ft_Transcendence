@@ -3,7 +3,7 @@ let game_socket;
 let socket;
 let timeoutID;
 let page_number = 0;
-let current_page ;
+let current_page;
 let moveback = window.location.pathname
 if (window.location.pathname !== '/')
 {
@@ -20,6 +20,10 @@ let ws_script_cache = fetch_scripts('game/scripts', 'ws_script');
 let social_script_cache = fetch_scripts('game/scripts', 'social_script');
 let twofa_script_cache = fetch_scripts('game/scripts', '2fa_script');
 
+let game_data = {
+	my_racket: undefined,
+	opponent_racket: undefined,
+}
 if (moveback !== '/')
 {
     console.log('moveback :', moveback);
@@ -33,15 +37,9 @@ async function fetch_scripts(url, class_name)
     return (script_list);
 }
 
-reload_scripts(window.location.pathname);
-
-let game_data = {
-    my_racket: undefined,
-    opponent_racket: undefined,
-}
-
 async function reload_scripts(page)
 {
+	console.log("reloading scripts...", page);
     if (page !== '/')
     {
         await always_on_script();
@@ -49,13 +47,16 @@ async function reload_scripts(page)
             await load_script_form_fetch(social_script_cache);
         else if (page.match('/profile/'))
             await load_script_form_fetch(profile_script_cache);
-        else if (page.match('/game/'))
+        else if (page.match('/game')) {
+			console.log("reloading game scripts...");
             await load_script_form_fetch(game_script_cache);
+		}
 		else if (page.match('/account/'))
 			await load_script_form_fetch(twofa_script_cache);
     }
     else {
         await load_script_form_fetch(authentication_script_cache);
+		await load_script_form_fetch(navigation_script_cache);
         await load_script_form_fetch(twofa_script_cache);
     }
 }
@@ -165,3 +166,5 @@ function navigate(link)
         link = '/' + link;
     history.replaceState(current_page, null, link)
 }
+
+reload_scripts(window.location.pathname);

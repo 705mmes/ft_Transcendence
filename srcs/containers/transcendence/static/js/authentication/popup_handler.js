@@ -57,7 +57,7 @@ if (document.getElementById('login-form')) {
             const result = await response.json();
 
             if (result.success) {
-                loadContent(result.redirect_url);
+                to_unspecified_page(result.redirect_url);
             } else {
                 errorMessageDiv.textContent = result.error || 'Login failed. Please try again.';
             }
