@@ -73,6 +73,3 @@ if (document.getElementById('setup_2fa')) {
 	    to_unspecified_page('/account/redirect/setup')
     })
 }
-else {
-    console.error("setup_2fa button not found");
-}

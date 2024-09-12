@@ -6,6 +6,7 @@ if (document.getElementById('otp-form')) {
         errorDiv = document.getElementById('error-message')
     document.getElementById('otp-form').addEventListener('submit', function(event) {
         event.preventDefault(); // Prevent the form from submitting normally
+        isFormSubmitted = true;
         form = document.getElementById('otp-form');
         const formData = new FormData(form);
         fetch(form.action, {

@@ -26,7 +26,7 @@ async function back_to_unspecified_page(page) {
     let div_content = document.getElementById('content');
     await fetching_html(page, div_content);
     reset_script(page);
-    reload_scripts(page, 0);
+    await reload_scripts(page, 0);
 }
 
 
@@ -80,7 +80,7 @@ async function to_unspecified_page(page) {
 
 
 	reset_script('/' + page);
-    reload_scripts('/' + page, 0);
+    await reload_scripts('/' + page, 0);
 	if (page.match('game')) {
         console.log('Opening WebSocket...');
 		open_lobby_socket(game_data);
