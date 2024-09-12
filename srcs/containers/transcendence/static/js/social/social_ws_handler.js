@@ -76,7 +76,7 @@ function checkSocketStatus() {
 async function friend_profile_request(data)
 {
     console.log('here');
-    navigate_to_load('/');
+    navigate('/');
     let div_content = document.getElementById('profile_popup_content');
     await fetching_html_add(`profile/friend_profile/?target_name=${encodeURIComponent(data.target)}`, div_content)
     document.getElementById("profile_popup").classList.add('on')
