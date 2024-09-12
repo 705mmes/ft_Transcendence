@@ -7,6 +7,20 @@ function main_lobby()
 main_lobby();
 display_research_btn("SEARCH OPPONENT");
 
+function choose_message(str_action)
+{
+    let mode_name = document.getElementById("mode_name");
+    let game_mode = undefined;
+    if (mode_name.className === 'match_tournament')
+        game_mode = "match_tournament";
+    else if (mode_name.className === 'match_ai')
+        game_mode = "match_ai";
+    else
+        game_mode = "match_1v1";
+    let message = {mode: game_mode, action: str_action}
+    return JSON.stringify(message);
+}
+
 function display_research_btn(content)
 {
     let fuck_btn = document.getElementById("cancel_research");
@@ -17,16 +31,37 @@ function display_research_btn(content)
     btn_play.className = "button"
     btn_play.id = "start_research"
     btn_play.onclick = () => {
-        const message = JSON.stringify({mode: "match_1v1", action: 'searching'});
-        game_socket.send(message);
+        game_socket.send(choose_message('searching'));
     }
     if (!document.getElementById('start_research'))
         document.getElementById("lobby_div").appendChild(btn_play);
     change_opponent(undefined);
+    if (document.getElementById("option_div").style.display === 'none')
+        document.getElementById("option_div").style.display = 'flex';
+}
+
+function display_cancel_btn()
+{
+    let btn = document.getElementById("start_research");
+    if (btn)
+        btn.remove();
+    let cancel_btn = document.createElement("button");
+    cancel_btn.innerHTML = "CANCEL RESEARCH";
+    cancel_btn.id = "cancel_research";
+    cancel_btn.className = 'button'
+    cancel_btn.onclick = () => {
+        game_socket.send(choose_message('cancel'));
+    }
+    if (!document.getElementById('cancel_research'))
+        document.getElementById("lobby_div").appendChild(cancel_btn);
+    change_opponent(undefined);
+    document.getElementById("option_div").style.display = 'none';
 }
 
 document.getElementById("btn_matchmaking_1v1").onclick = () => {
-    document.getElementById("mode_name").innerHTML = "MatchMaking 1v1";
+    let mode_name = document.getElementById("mode_name");
+    mode_name.innerHTML = "MatchMaking 1v1";
+    mode_name.className = "match_1v1";
     if (!document.getElementById("start_research"))
         display_research_btn("SEARCH OPPONENT");
     else
@@ -37,7 +72,9 @@ document.getElementById("btn_matchmaking_1v1").onclick = () => {
 }
 
 document.getElementById("btn_tournament").onclick = () => {
-    document.getElementById("mode_name").innerHTML = "Tournament";
+    let mode_name = document.getElementById("mode_name");
+    mode_name.innerHTML = "Tournament";
+    mode_name.className = "match_tournament";
     if (!document.getElementById("start_research"))
         display_research_btn("SEARCH TOURNAMENT");
     else
@@ -48,7 +85,9 @@ document.getElementById("btn_tournament").onclick = () => {
 }
 
 document.getElementById("btn_match_ai").onclick = () => {
-    document.getElementById("mode_name").innerHTML = "Match vs AI";
+    let mode_name = document.getElementById("mode_name");
+    mode_name.innerHTML = "Match vs AI";
+    mode_name.className = "match_ai";
     if (!document.getElementById("start_research"))
         display_research_btn("LAUNCH GAME");
     else
@@ -101,22 +140,4 @@ function change_opponent(opponent) {
     }
     else
         match_found(opponent);
-}
-
-function display_cancel_btn()
-{
-    let btn = document.getElementById("start_research");
-    if (btn)
-        btn.remove();
-    let cancel_btn = document.createElement("button");
-    cancel_btn.innerHTML = "CANCEL RESEARCH";
-    cancel_btn.id = "cancel_research";
-    cancel_btn.className = 'button'
-    cancel_btn.onclick = () => {
-        const message = JSON.stringify({mode: "match_1v1", action: 'cancel'});
-        game_socket.send(message);
-    }
-    if (!document.getElementById('cancel_research'))
-        document.getElementById("lobby_div").appendChild(cancel_btn);
-    change_opponent(undefined);
 }

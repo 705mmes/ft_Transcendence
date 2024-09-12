@@ -49,7 +49,7 @@ class LobbyConsumer(WebsocketConsumer):
         print(f"{self.scope['user']} send: {text_data_json}")
         if mode == 'match_1v1':
             self.match_1v1(text_data_json)
-        elif mode == 'tournament':
+        elif mode == 'match_tournament':
             self.tournament(text_data_json)
 
     def find_opponent(self):
@@ -213,7 +213,20 @@ class LobbyConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
         return
 
+    def searching_tournament(self):
+        self.change_in_research(True, self.scope['user'])
+        json_data = json.dumps({'action': 'searching', 'mode': 'match_tournament'})
+        self.send(json_data)
+
+    def cancel_tournament(self):
+        self.change_in_research(False, self.scope['user'])
+        json_data = json.dumps({'action': 'cancel', 'mode': 'match_tournament'})
+        self.send(json_data)
+
     def tournament(self, json_data):
-        pass
-        # if json_data['action'] == 'searching':
-        # await self.searching_tournament()
+        if json_data['action'] == 'searching':
+            self.searching_tournament()
+        elif json_data['action'] == 'cancel':
+            self.cancel_tournament()
+        # elif json_data['action'] == 'player_ready':
+        #     self.check_player_tournament()
