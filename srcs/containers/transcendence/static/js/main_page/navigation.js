@@ -1,11 +1,15 @@
+function navigate(link, replace = false) {
+    console.log("navigate", link);
+    if (link[0] !== '/') link = '/' + link;
+    const pageState = { page: link };
 
-function navigate(link)
-{
-	console.log("navigate", link);
-    if (link[0] !== '/')
-        link = '/' + link;
-    history.replaceState(current_page, null, link)
+    if (replace) {
+        history.replaceState(pageState, null, link);
+    } else {
+        history.pushState(pageState, null, link);
+    }
 }
+
 
 function change_page_name(page) {
 	console.log("change page name");
@@ -18,30 +22,23 @@ function change_page_name(page) {
 }
 
 
-async function back_to_unspecified_page(page)
-{
-    navigate('/');
+async function back_to_unspecified_page(page) {
     let div_content = document.getElementById('content');
     await fetching_html(page, div_content);
-
-    reset_script(page)
-
+    reset_script(page);
     reload_scripts(page, 0);
-    navigate(page);
 }
 
-window.onpopstate = (function (event)
-{
-    if (current_page !== event.state.page)
-    {
-        if (event.state.page < current_page)
-            current_page--;
-        else if (event.state.page > current_page)
-            current_page++;
-        else if (window.location.pathname !== '/')
-            back_to_unspecified_page(window.location.pathname);
+
+window.onpopstate = (function(event) {
+    if (event.state && event.state.page) {
+        back_to_unspecified_page(event.state.page);
+    } else {
+        back_to_unspecified_page(window.location.pathname);
     }
-})
+});
+
+
 
 function loadPageContent(url) {
     fetch(url)
@@ -80,19 +77,17 @@ async function to_unspecified_page(page) {
 	await fetching_html(page, div_content);
 	page = change_page_name(page);
 	console.log("page=", page);
-	reset_script('/' + page);
 
+
+	reset_script('/' + page);
+    reload_scripts('/' + page, 0);
 	if (page.match('game')) {
-		navigate('/' + page);
-		await reload_scripts('/' + page, 0);
-		console.log('Opening WebSocket...');
+        console.log('Opening WebSocket...');
 		open_lobby_socket(game_data);
-		return ;
 	} else {
-		if (game_socket) game_socket.close();
+        if (game_socket) game_socket.close();
 	}
 
-	navigate('/' + page);
-	reload_scripts('/' + page, 0);
+    navigate('/' + page);
 }
 
