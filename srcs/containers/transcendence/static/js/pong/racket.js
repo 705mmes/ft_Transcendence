@@ -19,20 +19,28 @@ class racket {
         canvcont.drawImage(this.img, this.x, this.y);
     }
 
-    display_end_screen(canv_ctx) {
+    display_end_screen() {
+        let canvcont = this.canevas.getContext("2d");
+        let result;
+        let actual_fontsize = 100 * this.canevas.width;
+
+        canvcont.font = (actual_fontsize) + "px serif";
+        canvcont.fillStyle = "Black";
+        canvcont.clearRect(0, 0, this.canevas.width, this.canevas.height);
         console.log("this.side =", this.side);
-        if (this.side === 'left') {
-            canv_ctx.fillText("", this.canevas.width / 4, 50);
-        }
-        else if (this.side === 'right') {
-            canv_ctx.fillText("", (this.canevas.width / 4) * 3, 50);
-        }
+        if (this.score === 5)
+            result = "WINNER"
+        else
+            result = "LOOSER"
+        let text = canvcont.measureText(result);
+        let text_height = text.actualBoundingBoxAscent + text.actualBoundingBoxDescent;
+       canvcont.fillText(result, this.canevas.width / 2 - text.width / 2, this.canevas / 2 - text_height / 2);
+
     }
 
     draw_name(canvas_ctx, actual_fontsize) {
         console.log("this.side =", this.side, "Name :", this.name);
         let text = canvas_ctx.measureText(this.name);
-        let text_height = text.actualBoundingBoxAscent + text.actualBoundingBoxDescent;
         if (this.side === 'left') {
             canvas_ctx.fillText(this.name, this.canevas.width - text.width - 15, 15 + actual_fontsize );
         }
