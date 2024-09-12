@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.http import require_POST
 from django.contrib.auth import login
 from django.contrib.auth import get_user_model
 from django_otp.plugins.otp_totp.models import TOTPDevice
 import qrcode, base64
 from base64 import b64encode
 from io import BytesIO
+from authentication.models import User
 from django.urls import reverse
 from django.http import JsonResponse
 from django_otp.forms import OTPTokenForm
@@ -15,7 +17,7 @@ from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 @login_required
 def redirect_to_2fa_setup(request):
     print("User:", request.user)
-
+    user = User.objects.get(username=request.user)
     try:
         device = TOTPDevice.objects.get(user=request.user, name='default')
     except MultipleObjectsReturned:
@@ -35,6 +37,8 @@ def redirect_to_2fa_setup(request):
             print("Device:", device, "Token:", token)
     
             if device and device.verify_token(token):
+                user.twofa_submitted = True
+                user.save()
                 return JsonResponse({'success': True, 'redirect_url': '/game'})
             else:
                 return JsonResponse({'success': False, 'error': 'Invalid OTP token.'})
@@ -56,7 +60,6 @@ def redirect_to_2fa_setup(request):
         print("Error: No device")       
     
     return render(request, 'setup.html', {'form': form, 'qr_url': qr_code_data})
-
 
 def redirect_to_login(request):
     print("redirect_to_2fa_login...")

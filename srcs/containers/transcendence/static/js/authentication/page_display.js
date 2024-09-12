@@ -27,7 +27,7 @@ async function DisplayCanvas() {
 
 async function AddGameCanvas()
 {
-    navigate_to_load('/');
+    navigate('/');
     let div_content = document.getElementById('content');
     await fetching_html('game/', div_content);
 

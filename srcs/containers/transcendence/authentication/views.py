@@ -8,7 +8,6 @@ from authentication.forms import LoginForm, RegistrationForm
 from .models import User
 from django.http import JsonResponse, HttpResponseBadRequest, HttpResponse, HttpResponseRedirect
 from django.contrib.auth import login, authenticate, logout
-
 from django_otp.plugins.otp_totp.models import TOTPDevice
 import random
 import string
@@ -163,8 +162,15 @@ def login_session(request):
             if user is not None:
                 if user.is_authenticated:
                     if user_has_device(user):
-                        print("Redirecting to 2FA checker page")
-                        return JsonResponse({'success': True, 'redirect_url': '/account/redirect/checker'})
+                        if user.twofa_submitted == False:
+                            print("Need to delete TOTPDevice")
+                            device = TOTPDevice.objects.get(user=user, name='default')
+                            device.delete()
+                            login(request, user)
+                            return JsonResponse({'success': True, 'redirect_url': '/game'})
+                        else:
+                            print("Redirecting to 2FA checker page")
+                            return JsonResponse({'success': True, 'redirect_url': '/account/redirect/checker'})
                     else:
                         print("Logging in and redirecting to game page")
                         login(request, user)

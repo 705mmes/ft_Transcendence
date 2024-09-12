@@ -22,7 +22,10 @@
 		<!-- 2FA Token Form -->
 		<form id="otp-form" action="{% url 'redirect_to_2fa_setup' %}" method="post">
             {% csrf_token %}
-            {{ form.as_p }}
+			<label for="otp_device">Select OTP Device:</label>
+    		{{ form.otp_device }}
+			<label for="otp_token">OTP token:</label>
+            {{ form.otp_token }}
             <button type="submit">Verify</button>
             <div id="error-message" style="color: red;">
 				{% if form.errors %}
