@@ -18,8 +18,8 @@ function main_game(data)
 
     if (game_data.my_racket === undefined && game_data.opponent_racket === undefined)
     {
-        game_data.my_racket = new racket(canevas);
-        game_data.opponent_racket = new racket(canevas);
+        game_data.my_racket = new racket(canevas, utils.canvcont);
+        game_data.opponent_racket = new racket(canevas, utils.canvcont);
         game_data.interid = undefined;
     }
     if (game_data.ball === undefined)
@@ -31,10 +31,10 @@ function main_game(data)
     get_ball(data);
     choose_player_img();
 
-    document.addEventListener("keyup", function (event) {
+    document.addEventListener("keyup",  function (event) {
         key_release(event, game_data.my_racket)
     });
-    document.addEventListener("keydown", function (event) {
+    document.addEventListener("keydown",  function (event) {
         key_pressed(event, game_data.my_racket)
     });
 
@@ -105,16 +105,30 @@ function key_release(key, my_racket){
 
 function post_game_lobby()
 {
-    clearInterval(game_data.interid)
+    if (game_data.interid !== undefined)
+        clearInterval(game_data.interid)
+    document.removeEventListener('keyup', key_release);
+    document.removeEventListener('keydown', key_pressed);
     document.getElementById('continue').className = 'button';
-    game_data.my_racket.display_end_screen();
+    let result;
+    if (game_data.my_racket.score === 1)
+        result = "WINNER"
+    else
+        result = "LOOSER"
+    let text = game_data.my_racket.canvcont.measureText(result);
+    let x = game_data.my_racket.canevas.width / 2 - text.width / 2;
+    game_data.my_racket.canvcont.fillText(result, x, 500);
+    if (timeoutID)
+    {
+        clearTimeout(timeoutID);
+        timeoutID = undefined;
+    }
 }
 
 function game_ended(data){
-    game_data.ball.x = undefined;
-    game_data.ball.y = undefined;
-    if (game_data.interid !== undefined)
-        timeoutID = setTimeout(post_game_lobby,50);
+    game_data.ball.x = -30;
+    game_data.ball.y = -30;
+    timeoutID = setTimeout(post_game_lobby,50);
     console.log("Display end Screen !")
     //game_data.opponent_racket.display_end_screen();
 }
@@ -178,10 +192,5 @@ function choose_player_img()
 if (document.getElementById('continue'))
     document.getElementById('continue').addEventListener('click', function(event){
         event.preventDefault();
-        if (timeoutID)
-        {
-            clearTimeout(timeoutID);
-            timeoutID = undefined;
-        }
         to_unspecified_page('game/canvas/');
     })

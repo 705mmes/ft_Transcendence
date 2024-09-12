@@ -1,5 +1,5 @@
 class racket {
-    constructor(canevas) {
+    constructor(canevas, canvcont) {
         this.name = undefined;
         this.x = 0;
         this.y = 0;
@@ -12,6 +12,7 @@ class racket {
         this.down = false;
         this.score = 0;
         this.canevas = canevas;
+        this.canvcont = canvcont;
         this.side = undefined;
     }
 
@@ -19,24 +20,6 @@ class racket {
         canvcont.drawImage(this.img, this.x, this.y);
     }
 
-    display_end_screen() {
-        let canvcont = this.canevas.getContext("2d");
-        let result;
-        let actual_fontsize = 100 * this.canevas.width;
-
-        canvcont.font = (actual_fontsize) + "px serif";
-        canvcont.fillStyle = "Black";
-        canvcont.clearRect(0, 0, this.canevas.width, this.canevas.height);
-        console.log("this.side =", this.side);
-        if (this.score === 5)
-            result = "WINNER"
-        else
-            result = "LOOSER"
-        let text = canvcont.measureText(result);
-        let text_height = text.actualBoundingBoxAscent + text.actualBoundingBoxDescent;
-       canvcont.fillText(result, this.canevas.width / 2 - text.width / 2, this.canevas / 2 - text_height / 2);
-
-    }
 
     draw_name(canvas_ctx, actual_fontsize) {
         console.log("this.side =", this.side, "Name :", this.name);
