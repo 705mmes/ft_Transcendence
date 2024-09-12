@@ -7,7 +7,7 @@ from asgiref.sync import async_to_sync, sync_to_async
 from channels.generic.websocket import WebsocketConsumer, AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from authentication.models import User
-from game.models import GameLobby
+from game.models import GameLobby, GameHistory
 from django.db.models import Q
 from datetime import datetime
 import math
@@ -136,6 +136,10 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def check_game(self, user, opponent):
         if user.score >= 1 or opponent.score >= 1:
+            user = await sync_to_async(User.objects.get)(username=user.name)
+            opponent = await sync_to_async(User.objects.get)(username=opponent.name)
+            await sync_to_async(GameHistory.objects.create)(History1=user, History2=opponent,
+                                                            Score1=self.user.score, Score2=self.opponent.score)
             return True
         return False
     #     if a player disconnect Return true

@@ -58,7 +58,6 @@ function open_lobby_socket(game_data)
         game_socket.onclose = function (event){
             if (game_data.interid !== undefined)
                 clearInterval(game_data.interid);
-            game_data.ball = undefined;
             console.log("opening lobby_socket")
             pong_websocket(game_data, '/ws/game/game/');
         }
@@ -67,9 +66,10 @@ function open_lobby_socket(game_data)
     {
         if (game_data.interid !== undefined)
             clearInterval(game_data.interid);
-        game_data.ball = undefined;
         pong_websocket(game_data, '/ws/game/game/');
     }
+    game_data.my_racket = undefined;
+    game_data.opponent_racket = undefined;
 }
 
 async function to_unspecified_page(page) {

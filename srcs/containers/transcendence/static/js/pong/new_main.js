@@ -31,12 +31,8 @@ function main_game(data)
     get_ball(data);
     choose_player_img();
 
-    document.addEventListener("keyup",  function (event) {
-        key_release(event, game_data.my_racket)
-    });
-    document.addEventListener("keydown",  function (event) {
-        key_pressed(event, game_data.my_racket)
-    });
+    document.addEventListener("keyup", key_release);
+    document.addEventListener("keydown", key_pressed)
 
     game_data.interid = setInterval(infinite_game_loop, 1000 / 60, game_data, utils, canevas);
 }
@@ -77,29 +73,29 @@ function update_racket_state(racket_data)
 }
 
 
-function key_pressed(key, my_racket) {
-    if (key.code === "ArrowUp" && !my_racket.up_pressed)
+function key_pressed(key) {
+    if (key.code === "ArrowUp" && !game_data.my_racket.up_pressed)
     {
-        my_racket.up_pressed = true
-        send_data("move" ,my_racket);
+        game_data.my_racket.up_pressed = true
+        send_data("move" ,game_data.my_racket);
     }
-    else if (key.code === "ArrowDown" && !my_racket.down_pressed)
+    else if (key.code === "ArrowDown" && !game_data.my_racket.down_pressed)
     {
-        my_racket.down_pressed = true;
-        send_data("move" ,my_racket);
+        game_data.my_racket.down_pressed = true;
+        send_data("move" ,game_data.my_racket);
     }
 }
 
-function key_release(key, my_racket){
-    if (key.code === "ArrowUp" && my_racket.up_pressed)
+function key_release(key){
+    if (key.code === "ArrowUp" && game_data.my_racket.up_pressed)
     {
-        my_racket.up_pressed = false;
-        send_data("move" ,my_racket);
+        game_data.my_racket.up_pressed = false;
+        send_data("move" ,game_data.my_racket);
     }
-    else if (key.code === "ArrowDown" && my_racket.down_pressed)
+    else if (key.code === "ArrowDown" && game_data.my_racket.down_pressed)
     {
-        my_racket.down_pressed = false;
-        send_data("move" ,my_racket);
+        game_data.my_racket.down_pressed = false;
+        send_data("move" ,game_data.my_racket);
     }
 }
 
@@ -109,7 +105,6 @@ function post_game_lobby()
         clearInterval(game_data.interid)
     document.removeEventListener('keyup', key_release);
     document.removeEventListener('keydown', key_pressed);
-    document.getElementById('continue').className = 'button';
     let result;
     if (game_data.my_racket.score === 1)
         result = "WINNER"
@@ -118,17 +113,13 @@ function post_game_lobby()
     let text = game_data.my_racket.canvcont.measureText(result);
     let x = game_data.my_racket.canevas.width / 2 - text.width / 2;
     game_data.my_racket.canvcont.fillText(result, x, 500);
-    if (timeoutID)
-    {
-        clearTimeout(timeoutID);
-        timeoutID = undefined;
-    }
+    document.getElementById('continue').className = 'button';
 }
 
 function game_ended(data){
     game_data.ball.x = -30;
     game_data.ball.y = -30;
-    timeoutID = setTimeout(post_game_lobby,50);
+    timeoutID = setTimeout(post_game_lobby,100);
     console.log("Display end Screen !")
     //game_data.opponent_racket.display_end_screen();
 }
@@ -163,6 +154,7 @@ function infinite_game_loop(game_data, utils, canvas)
     game_data.opponent_racket.drawing(utils.canvcont);
     game_data.ball.drawing(utils.canvcont);
     draw_score(utils, canvas);
+    console.log(utils.canvcont);
     console.log("Loops");
 }
 
