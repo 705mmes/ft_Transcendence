@@ -42,7 +42,7 @@ function launch_game(data){
 function responsePong() {
     if (PongSocketStatus())
     {
-        console.log("Gneugneugneu je m'appelle samuel et je fais des print professionnel, dilo t'as quel age pour encore faire des print caca ?");
+        // console.log("Gneugneugneu je m'appelle samuel et je fais des print professionnel, dilo t'as quel age pour encore faire des print caca ?");
         game_socket.onmessage = function(event)
         {
             console.log("Bite");
@@ -66,8 +66,10 @@ function responsePong() {
                     launch_game(data);
                 else if (data.action === 'game_data')
                     update_racket_state(data);
-                else if (data.action === 'game_end')
+                else if (data.action === 'game_end') {
+                    update_racket_state(data);
                     game_ended(data);
+                }
                 else {
                     console.error("Unknown action received from server.");
                 }

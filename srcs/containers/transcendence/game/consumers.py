@@ -249,10 +249,10 @@ class AsyncConsumer(AsyncWebsocketConsumer):
         if await sync_to_async(cache.get)(f"{user_name}_key"):
             user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
             lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
-            opponent_name = self.who_is_the_enemy(lobby_cache)
+            opponent_name = self.opponent.name
             lobby_cache['is_game_loop'] = False
             await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
-            opponent = await sync_to_async(User.objects.get)(username=user_name)
+            opponent = await sync_to_async(User.objects.get)(username=opponent_name)
             if opponent.is_playing:
                 json_data = {'action': 'game_end', 'mode': 'matchmaking_1v1'}
                 await self.channel_layer.group_send("match_" + opponent_name, {'type': 'send_match_info', 'data': json_data})
@@ -334,9 +334,7 @@ class AsyncConsumer(AsyncWebsocketConsumer):
         await sync_to_async(cache.delete)(f"{user_name}_key")
 
     async def check_game(self, user, opponent):
-        if user.score >= 5:
-            return True
-        elif opponent.score >= 5:
+        if user.score >= 5 or opponent.score >= 5:
             return True
         return False
     #     if a player disconnect Return true

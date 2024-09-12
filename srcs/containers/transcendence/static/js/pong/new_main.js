@@ -74,7 +74,6 @@ function update_racket_state(racket_data)
         set_racket(racket_data.opponent, game_data.opponent_racket)
     }
     get_ball(racket_data);
-
 }
 
 
@@ -157,7 +156,6 @@ function send_data(action_msg ,my_racket)
 
 function choose_player_img()
 {
-    // console.log(game_data.my_racket.x)
     if (game_data.my_racket.x === 0)
     {
         game_data.opponent_racket.img.src = '../static/js/images/raquetteL.png';

@@ -34,10 +34,10 @@ class racket {
         let text = canvas_ctx.measureText(this.name);
         let text_height = text.actualBoundingBoxAscent + text.actualBoundingBoxDescent;
         if (this.side === 'left') {
-            canvas_ctx.fillText(this.name, 15, 15 + actual_fontsize);
+            canvas_ctx.fillText(this.name, this.canevas.width - text.width - 15, 15 + actual_fontsize );
         }
         else if (this.side === 'right') {
-            canvas_ctx.fillText(this.name, this.canevas.width - text.width - 15, 15 + actual_fontsize );
+            canvas_ctx.fillText(this.name, 15, 15 + actual_fontsize);
         }
     }
 
