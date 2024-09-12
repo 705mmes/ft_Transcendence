@@ -42,7 +42,6 @@ function launch_game(data){
 function responsePong() {
     if (PongSocketStatus())
     {
-        // console.log("Gneugneugneu je m'appelle samuel et je fais des print professionnel, dilo t'as quel age pour encore faire des print caca ?");
         game_socket.onmessage = function(event)
         {
             console.log("Bite");

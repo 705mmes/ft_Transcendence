@@ -103,14 +103,20 @@ function key_release(key, my_racket){
     }
 }
 
+function post_game_lobby()
+{
+    clearInterval(game_data.interid)
+    document.getElementById('continue').className = 'button';
+    game_data.my_racket.display_end_screen();
+}
+
 function game_ended(data){
     game_data.ball.x = undefined;
     game_data.ball.y = undefined;
-     if (game_data.interid !== undefined)
-        clearInterval(game_data.interid);
+    if (game_data.interid !== undefined)
+        timeoutID = setTimeout(post_game_lobby,50);
     console.log("Display end Screen !")
-    // game_data.my_racket.display_end_screen();
-    // game_data.opponent_racket.display_end_screen();
+    //game_data.opponent_racket.display_end_screen();
 }
 
 function draw_score(utils, canevas)
@@ -132,8 +138,6 @@ function draw_score(utils, canevas)
 
 function infinite_game_loop(game_data, utils, canvas)
 {
-    if (game_data.game_start === false)
-        end_it_all(game_data, utils, canvas);
     let new_time = Date.now();
     utils.ms = (new_time - utils.oldtime) / 1000;
     utils.oldtime = new_time;
@@ -169,30 +173,6 @@ function choose_player_img()
         game_data.my_racket.side = 'left';
         game_data.opponent_racket.side = 'right';
     }
-}
-function end_game(data)
-{
-    game_data.winner = data.winner;
-    game_data.looser = data.looser;
-    game_data.game_start = false
-}
-
-function end_it_all(game_data, utils, canvas)
-{
-    utils.canvcont.clearRect(0, 0, canvas.width, canvas.height);
-    let actualfontsize = utils.fontsize * canvas.width;
-
-    utils.canvcont.font = (actualfontsize) + "px serif";
-    utils.canvcont.fillStyle = "Black";
-    if (game_data.my_racket.score === 3 || game_data.opponent_racket.score === 3)
-    {
-        utils.canvcont.fillText("WINNER IS " + game_data.winner, canvas.width / 4,canvas.height / 2,  actualfontsize);
-        utils.canvcont.fillText("LOOSER IS " + game_data.looser, (canvas.width / 4) * 3, canvas.height / 2 , actualfontsize);
-    }
-    else
-        utils.canvcont.fillText("ERROR", canevas.width / 2, canvas.height / 2, actualfontsize);
-    clearInterval(game_data.interid);
-    document.getElementById('continue').className = 'button';
 }
 
 if (document.getElementById('continue'))
