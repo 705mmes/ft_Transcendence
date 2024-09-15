@@ -1,10 +1,4 @@
 
-function main_lobby()
-{
-    divcanvas = document.getElementById("gamecanvas");
-}
-
-main_lobby();
 display_research_btn("SEARCH OPPONENT");
 
 function choose_message(str_action)
@@ -38,6 +32,7 @@ function display_research_btn(content)
     change_opponent(undefined);
     if (document.getElementById("option_div").style.display === 'none')
         document.getElementById("option_div").style.display = 'flex';
+    console.log("display btn research !")
 }
 
 function display_cancel_btn()
@@ -56,6 +51,7 @@ function display_cancel_btn()
         document.getElementById("lobby_div").appendChild(cancel_btn);
     change_opponent(undefined);
     document.getElementById("option_div").style.display = 'none';
+    console.log("display cancel btn research !")
 }
 
 document.getElementById("btn_matchmaking_1v1").onclick = () => {
@@ -69,6 +65,8 @@ document.getElementById("btn_matchmaking_1v1").onclick = () => {
         let btn = document.getElementById("start_research");
         btn.innerHTML = "SEARCH OPPONENT";
     }
+    let lobby_content = document.getElementById('lobby_content');
+    fetching_html("game/match_1v1", lobby_content);
 }
 
 document.getElementById("btn_tournament").onclick = () => {
@@ -82,6 +80,8 @@ document.getElementById("btn_tournament").onclick = () => {
         let btn = document.getElementById("start_research");
         btn.innerHTML = "SEARCH TOURNAMENT";
     }
+    let lobby_content = document.getElementById('lobby_content');
+    fetching_html("game/tournament", lobby_content);
 }
 
 document.getElementById("btn_match_ai").onclick = () => {
@@ -128,14 +128,15 @@ function match_found(opponent)
 
 function change_opponent(opponent) {
     if (opponent === undefined) {
-        let text_opponent = document.getElementById("opponent_name");
-        if (document.getElementById("start_research")) {
-            text_opponent.className = "";
-            text_opponent.innerHTML = "...";
-        }
-        else if (document.getElementById("cancel_research")){
-            text_opponent.className = "loader";
-            text_opponent.innerHTML = "";
+        if (document.getElementById("opponent_name")) {
+            let text_opponent = document.getElementById("opponent_name");
+            if (document.getElementById("start_research")) {
+                text_opponent.className = "";
+                text_opponent.innerHTML = "...";
+            } else if (document.getElementById("cancel_research")) {
+                text_opponent.className = "loader";
+                text_opponent.innerHTML = "";
+            }
         }
     }
     else

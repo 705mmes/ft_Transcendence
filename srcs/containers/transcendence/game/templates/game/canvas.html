@@ -15,15 +15,7 @@
         </div>
         <h1 id="mode_name">MatchMaking 1v1</h1>
         <div id="lobby_content">
-            <div class="player_div">
-                <h2>Player 1</h2>
-                <p>{{ user.username }}</p>
-            </div>
-            <div class="center_div">VS</div>
-            <div class="player_div">
-                <h2>Player 2</h2>
-                <p id="opponent_name">...</p>
-            </div>
+            {% include 'game/1v1_match.html' %}
         </div>
     </div>
 </div>

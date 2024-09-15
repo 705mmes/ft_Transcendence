@@ -19,3 +19,11 @@ def social(request):
 
 def new_game(request):
     return render(request, "game/new_game.html")
+
+
+def match_1v1(request):
+    return render(request, "game/1v1_match.html")
+
+
+def tournament(request):
+    return render(request, "game/tournament.html")

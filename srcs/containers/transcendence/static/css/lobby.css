@@ -59,7 +59,7 @@
     align-items: center;
     width: 60%;
     height: 80%;
-    max-height: 50%;
+    max-height: 70%;
     max-width: 80%;
     padding: 15px;
     margin: 10px 0;
@@ -74,7 +74,20 @@
 
 #lobby_content {
     display: flex;
-    justify-content: center;
+    flex-direction: : column;
+}
+
+@media (min-width: 450px) {
+  #lobby_content {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+#lobby_content div
+{
+    flex: 0 0 calc(33.333% - 10px); /* Chaque div prend un tiers de la largeur */
+    margin: 5px;
+    background-color: lightblue;
 }
 
 #cancel_research,
@@ -105,4 +118,3 @@
 #loading{
     margin: auto;
 }
-
