@@ -117,7 +117,6 @@ class GameAIConsumer(AsyncWebsocketConsumer):
             if await self.check_game(self.user.get_class(), self.opponent.get_class()):
                 break
             await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
-        print(f"Consumer of {user_name}, in {user_cache['lobby_name']} Game STOPED !")
         await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_end')
         await sync_to_async(cache.delete)(f"{lobby_cache['opponent_key']}_key")
         await sync_to_async(cache.delete)(f"{user_cache['lobby_name']}_key")
@@ -156,11 +155,14 @@ class GameAIConsumer(AsyncWebsocketConsumer):
 # AI GAMEPLAY
 
     async def up_down_ai(self):
-        if self.ball.y < 1080 / 2:
+        if self.opponent.y > self.ball.y:
             self.opponent.down_pressed = False
             self.opponent.up_pressed = True
-        elif self.ball.y > 1080 / 2:
+        elif self.opponent.y < self.ball.y:
             self.opponent.down_pressed = True
             self.opponent.up_pressed = False
+        if self.opponent.y == self.ball.y:
+            self.opponent.up_pressed = False
+            self.opponent.down_pressed = False
 
 
