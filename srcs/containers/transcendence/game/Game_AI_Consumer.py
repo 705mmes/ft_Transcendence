@@ -20,18 +20,17 @@ from time import process_time
 from game.PlayerClass import Player
 from game.BallClass import Ball
 
-class GameConsumer(AsyncWebsocketConsumer):
+class GameAIConsumer(AsyncWebsocketConsumer):
 
     async def connect(self):
         self.room_name = "match_" + self.scope['user'].username
         await self.channel_layer.group_add(self.room_name, self.channel_name)
         user_cache = await sync_to_async(cache.get)(f"{self.scope['user'].username}_key")
         lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
-        opponent_cache = await sync_to_async(cache.get)(f"{self.who_is_the_enemy(lobby_cache)}_key")
+        opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['ai']}_key")
         self.user = Player(user_cache['id'], user_cache['name'])
         self.opponent = Player(opponent_cache['id'], opponent_cache['name'])
         self.ball = Ball()
-        print(f"Consumer of {self.scope['user']} state game loop : {lobby_cache['is_game_loop']}")
         if user_cache['game_loop'] and not lobby_cache['is_game_loop']:
             lobby_cache['is_game_loop'] = True
             await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
@@ -49,17 +48,13 @@ class GameConsumer(AsyncWebsocketConsumer):
         if await sync_to_async(cache.get)(f"{user_name}_key"):
             user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
             lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
-            opponent_name = self.opponent.name
             if lobby_cache:
                 lobby_cache['is_game_loop'] = False
                 await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
-            opponent = await sync_to_async(User.objects.get)(username=opponent_name)
-            if opponent.is_playing:
-                json_data = {'action': 'game_end', 'mode': 'matchmaking_1v1'}
-                await self.channel_layer.group_send("match_" + opponent_name, {'type': 'send_match_info', 'data': json_data})
 
 
-    # UTILS HERE
+#utils
+
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         action = text_data_json['action']
@@ -77,26 +72,21 @@ class GameConsumer(AsyncWebsocketConsumer):
         while time.time() < (now + delay):
             continue
 
-    async def check_move(self, user_cache, opponent_cache):
+
+
+# game
+
+    async def check_move(self, user_cache):
         if user_cache['up_pressed'] != self.user.up_pressed or user_cache['down_pressed'] != self.user.down_pressed:
             self.user.up_pressed = user_cache['up_pressed']
             self.user.down_pressed = user_cache['down_pressed']
             return False
-        elif opponent_cache['up_pressed'] != self.opponent.up_pressed or opponent_cache['down_pressed'] != self.opponent.down_pressed:
-            self.opponent.up_pressed = opponent_cache['up_pressed']
-            self.opponent.down_pressed = opponent_cache['down_pressed']
-            return False
         return True
 
-    def who_is_the_enemy(self, lobby_cache):
-        if self.scope['user'].username == lobby_cache['user_key']:
-            return lobby_cache['opponent_key']
-        else:
-            return lobby_cache['user_key']
 
     async def json_creator_racket(self, user):
         user_cache = await sync_to_async(cache.get)(f"{user.name}_key")
-        racket = {'x': user.x, 'y': user.y ,
+        racket = {'x': user.x, 'y': user.y,
                   'up_pressed': user_cache['up_pressed'],
                   'down_pressed': user_cache['down_pressed'],
                   'score': user.score}
@@ -116,19 +106,18 @@ class GameConsumer(AsyncWebsocketConsumer):
         while lobby_cache['is_game_loop']:
             t1 = time.perf_counter()
             user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
-            opponent_cache = await sync_to_async(cache.get)(f"{self.who_is_the_enemy(lobby_cache)}_key")
             lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
+            opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['ai']}_key")
             await self.ball.move(self.user.get_class(), self.opponent.get_class())
-            await self.check_move(user_cache, opponent_cache)
+            await self.check_move(user_cache)
+            await self.up_down_ai()
             self.user.move(user_cache['up_pressed'], user_cache['down_pressed'])
-            self.opponent.move(opponent_cache['up_pressed'], opponent_cache['down_pressed'])
+            self.opponent.move(self.opponent.up_pressed, self.opponent.down_pressed)
             await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
-            await self.send_data(self.opponent.get_class(), self.user.get_class(), 'game_data')
             if await self.check_game(self.user.get_class(), self.opponent.get_class()):
                 break
             await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
         print(f"Consumer of {user_name}, in {user_cache['lobby_name']} Game STOPED !")
-        await self.send_data(self.opponent.get_class(), self.user.get_class(), 'game_end')
         await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_end')
         await sync_to_async(cache.delete)(f"{lobby_cache['opponent_key']}_key")
         await sync_to_async(cache.delete)(f"{user_cache['lobby_name']}_key")
@@ -149,13 +138,29 @@ class GameConsumer(AsyncWebsocketConsumer):
         user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
         user_cache['up_pressed'] = json_data['racket']['up_pressed']
         user_cache['down_pressed'] = json_data['racket']['down_pressed']
-        print(f"move up: {user_cache['up_pressed']}, move down: {user_cache['down_pressed']}")
         await sync_to_async(cache.set)(f"{user_name}_key", user_cache)
 
     async def send_data(self, player1, player2, action):
         user_json = await self.json_creator_racket(player1)
-        opponent_json = await self.json_creator_racket(player2)
+        opponent_json = {'up_pressed': self.opponent.up_pressed,
+                         'down_pressed': self.opponent.down_pressed,
+                         'x': self.opponent.x,
+                         'y': self.opponent.y,
+                         'score': self.opponent.score,
+                         'name': 'ai'}
         ball_json = await self.json_creator_ball()
-        json_data = {'action': action, 'mode': 'matchmaking_1v1', 'my_racket': user_json,
+        json_data = {'action': action, 'mode': 'match_ai', 'my_racket': user_json,
                      'opponent': opponent_json, 'ball': ball_json}
         await self.channel_layer.group_send("match_" + player1.name, {'type': 'send_match_info', 'data': json_data})
+
+# AI GAMEPLAY
+
+    async def up_down_ai(self):
+        if self.ball.y < 1080 / 2:
+            self.opponent.down_pressed = False
+            self.opponent.up_pressed = True
+        elif self.ball.y > 1080 / 2:
+            self.opponent.down_pressed = True
+            self.opponent.up_pressed = False
+
+

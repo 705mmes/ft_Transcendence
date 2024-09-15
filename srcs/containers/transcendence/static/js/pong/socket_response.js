@@ -31,11 +31,14 @@ function ready() {
 }
 
 function launch_game(data){
-    open_match_socket(game_data)
+    if (data.mode === 'match_ai')
+        open_match_ai_socket(game_data);
+    else if (data.mode === 'matchmaking_1v1')
+        open_match_socket(game_data)
     document.getElementById('lobby_css').remove();
     document.getElementById('lobby_div').remove();
     console.log(data.my_racket.y, data.my_racket.x);
-    console.log(data.opponent.y, data.opponent.x);
+    //console.log(data.opponent.y, data.opponent.x);
     main_game(data);
 }
 

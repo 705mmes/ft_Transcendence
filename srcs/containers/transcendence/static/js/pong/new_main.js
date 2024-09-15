@@ -106,7 +106,7 @@ function post_game_lobby()
     document.removeEventListener('keyup', key_release);
     document.removeEventListener('keydown', key_pressed);
     let result;
-    if (game_data.my_racket.score === 1)
+    if (game_data.my_racket.score === 5)
         result = "WINNER"
     else
         result = "LOOSER"

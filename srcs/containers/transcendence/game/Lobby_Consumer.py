@@ -51,6 +51,8 @@ class LobbyConsumer(WebsocketConsumer):
             self.match_1v1(text_data_json)
         elif mode == 'match_tournament':
             self.tournament(text_data_json)
+        elif mode == 'match_ai':
+            self.ai_match(text_data_json)
 
     def find_opponent(self):
         user = User.objects.get(username=self.scope['user'])
@@ -230,3 +232,68 @@ class LobbyConsumer(WebsocketConsumer):
             self.cancel_tournament()
         # elif json_data['action'] == 'player_ready':
         #     self.check_player_tournament()
+
+
+# AI LOBBY
+    def ai_match(self, json_data):
+        if json_data['action'] == 'searching':
+            self.start_game_ia()
+
+    def searching_ai(self):
+        self.change_in_research(False, self.scope['user'])
+        json_data = json.dumps({'action': 'find_opponent', 'mode': 'match_ai'})
+        self.send(json_data)
+
+    def start_game_ia(self):
+        user = User.objects.get(username=self.scope['user'])
+        self.change_in_research(False, self.scope['user'])
+        self.init_ai(user)
+        my_racket = self.json_creator_racket(user)
+        ai_cache = cache.get(f"{user.username}_ai_key")
+        ai_racket = {'up_pressed': ai_cache['up_pressed'],
+                     'down_pressed': ai_cache['down_pressed'],
+                     'x': ai_cache['x'],
+                     'y': ai_cache['y'],
+                     'score': 0,
+                     'name': 'ai'}
+        ball_cache = cache.get(f"{ai_cache['lobby_name']}_key")
+        json_ball = {'posX': ball_cache['posX'], 'posY': ball_cache['posY'],
+                     'speed': ball_cache['speed'],
+                     'dirX': ball_cache['dirX'],
+                     'dirY': ball_cache['dirY']}
+        json_data = json.dumps({'action': 'start_game', 'mode': 'match_ai',
+                                'my_racket': my_racket, 'opponent': ai_racket, 'ball': json_ball})
+        self.send(json_data)
+
+    def init_ai(self, user):
+        cache.set(f"{user.username}_key", {
+            'lobby_name': user.username + "_lobby_ai",
+            'name': user.username,
+            'x': 0,
+            'y': (1080 - 233) / 2,
+            'id': 1,
+            'up_pressed': False, 'down_pressed': False,
+            'game_loop': True
+        })
+        cache.set(f"{user.username}_ai_key", {
+            'lobby_name': user.username + "_lobby_ai",
+            'name': 'ai',
+            'x': 2040 - 77,
+            'y': (1080 - 233) / 2,
+            'id': 2,
+            'up_pressed': False, 'down_pressed': False,
+            'game_loop': False
+        })
+        cache.set(f"{user.username}_lobby_ai_key", {
+            'is_game_loop': False,
+            'test': False,
+            'user_key': f"{user.username}",
+            'ai': f"{user.username}_ai",
+            'posX': (2040 - 30) / 2,
+            'posY': (1080 - 30) / 2,
+            'speed': 500,
+            'dirX': 500,
+            'dirY': 0
+        })
+
+
