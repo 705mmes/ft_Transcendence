@@ -14,7 +14,7 @@ class GameHistory(models.Model):
     Score2 = models.IntegerField()
 
     def __str__(self):
-        return f"{self.History1.username} - {self.History2.username}"
+        return f"{self.History1} - {self.History2}"
 
 
 class GameLobby(models.Model):

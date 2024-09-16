@@ -103,11 +103,16 @@ class GameAIConsumer(AsyncWebsocketConsumer):
 
     async def game_loop(self, lobby_cache):
         user_name = self.scope['user'].username
+        ia_time = time.time()
         while lobby_cache['is_game_loop']:
             t1 = time.perf_counter()
             user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
             lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
             opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['ai']}_key")
+            if time.time() - ia_time > 1:
+                print('caca')
+                ia_time = time.time()
+                self.ball.ia_ball_snapshot()
             await self.ball.move(self.user.get_class(), self.opponent.get_class())
             await self.check_move(user_cache)
             await self.up_down_ai()
@@ -118,15 +123,14 @@ class GameAIConsumer(AsyncWebsocketConsumer):
                 break
             await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
         await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_end')
-        await sync_to_async(cache.delete)(f"{lobby_cache['opponent_key']}_key")
+        await sync_to_async(cache.delete)(f"{lobby_cache['ai']}_key")
         await sync_to_async(cache.delete)(f"{user_cache['lobby_name']}_key")
         await sync_to_async(cache.delete)(f"{user_name}_key")
 
     async def check_game(self, user, opponent):
         if user.score >= 5 or opponent.score >= 5:
             user = await sync_to_async(User.objects.get)(username=user.name)
-            opponent = await sync_to_async(User.objects.get)(username=opponent.name)
-            await sync_to_async(GameHistory.objects.create)(History1=user, History2=opponent,
+            await sync_to_async(GameHistory.objects.create)(History1=user, History2=None,
                                                             Score1=self.user.score, Score2=self.opponent.score)
             return True
         return False
@@ -155,14 +159,16 @@ class GameAIConsumer(AsyncWebsocketConsumer):
 # AI GAMEPLAY
 
     async def up_down_ai(self):
-        if self.opponent.y > self.ball.y:
+        if  self.opponent.y > self.ball.ia_y:
             self.opponent.down_pressed = False
             self.opponent.up_pressed = True
-        elif self.opponent.y < self.ball.y:
+        elif self.opponent.y + 223 < self.ball.ia_y:
             self.opponent.down_pressed = True
             self.opponent.up_pressed = False
-        if self.opponent.y == self.ball.y:
+        else:
+            print("stopped")
             self.opponent.up_pressed = False
             self.opponent.down_pressed = False
+        print("ai posy = ", self.opponent.y, "ai posy extreme = ", self.opponent.y + 223, "ball snapshot = ", self.ball.ia_y)
 
 

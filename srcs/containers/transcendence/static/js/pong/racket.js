@@ -22,7 +22,6 @@ class racket {
 
 
     draw_name(canvas_ctx, actual_fontsize) {
-        console.log("this.side =", this.side, "Name :", this.name);
         let text = canvas_ctx.measureText(this.name);
         if (this.side === 'left') {
             canvas_ctx.fillText(this.name, this.canevas.width - text.width - 15, 15 + actual_fontsize );

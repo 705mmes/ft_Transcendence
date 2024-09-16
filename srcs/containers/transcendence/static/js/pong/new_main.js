@@ -27,7 +27,6 @@ function main_game(data)
     game_data.game_start = true
     set_racket(data.my_racket, game_data.my_racket)
     set_racket(data.opponent, game_data.opponent_racket)
-    console.log(game_data.my_racket.name, game_data.opponent_racket.name)
     get_ball(data);
     choose_player_img();
 
@@ -58,12 +57,10 @@ function set_racket(my_racket, racket)
     racket.down = my_racket.down_pressed;
     racket.x = my_racket.x;
     racket.y = my_racket.y;
-    console.log(racket.name);
 }
 
 function update_racket_state(racket_data)
 {
-    console.log('caca')
     if (racket_data.my_racket && racket_data.opponent)
     {
         set_racket(racket_data.my_racket, game_data.my_racket)
@@ -154,8 +151,6 @@ function infinite_game_loop(game_data, utils, canvas)
     game_data.opponent_racket.drawing(utils.canvcont);
     game_data.ball.drawing(utils.canvcont);
     draw_score(utils, canvas);
-    console.log(utils.canvcont);
-    console.log("Loops");
 }
 
 function send_data(action_msg ,my_racket)

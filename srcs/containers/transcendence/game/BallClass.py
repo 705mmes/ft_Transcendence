@@ -5,6 +5,8 @@ class Ball:
 	def __init__(self):
 		self.y = (1080 - 30) / 2
 		self.x = (2040 - 30) / 2
+		self.ia_x = (2040 - 30) / 2
+		self.ia_y = (1080 - 30) / 2
 		self.speed = 500
 		self.dirY = 0
 		self.dirX = 500
@@ -83,3 +85,7 @@ class Ball:
 
 	def get_class(self):
 		return self
+
+	def ia_ball_snapshot(self):
+		self.ia_x = self.x
+		self.ia_y = self.y
