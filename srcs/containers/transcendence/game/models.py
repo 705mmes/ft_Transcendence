@@ -25,3 +25,13 @@ class GameLobby(models.Model):
     def __str__(self):
         return f"{self.Player1.Player.username} - {self.Player2.Player.username}"
 
+class TournamentLobby(models.Model):
+    P1 = models.ForeignKey(User, related_name='P1', on_delete=models.CASCADE,  blank=True, null=True)
+    P2 = models.ForeignKey(User, related_name='P2', on_delete=models.CASCADE,  blank=True, null=True)
+    P3 = models.ForeignKey(User, related_name='P3', on_delete=models.CASCADE,  blank=True, null=True)
+    P4 = models.ForeignKey(User, related_name='P4', on_delete=models.CASCADE,  blank=True, null=True)
+    Name = models.CharField(blank=True)
+
+    def __str__(self):
+        return f"{self.P1.Player.username} - {self.P2.Player.username}"
+

@@ -7,7 +7,7 @@ from asgiref.sync import async_to_sync, sync_to_async
 from channels.generic.websocket import WebsocketConsumer, AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from authentication.models import User
-from game.models import GameLobby
+from game.models import GameLobby, TournamentLobby
 from django.db.models import Q
 from datetime import datetime
 import math
@@ -215,10 +215,39 @@ class LobbyConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
         return
 
+# Tournament lobby
+
+    def find_3_opponent(self):
+        user = User.objects.get(username=self.scope['user'])
+        queryset = User.objects.filter(in_research=True).order_by('id')
+        if len(queryset) >= 4:
+            lobby = TournamentLobby.objects.create()
+            lobby.P1 = queryset.pop()
+            lobby.P2 = queryset.pop()
+            lobby.P3 = queryset.pop()
+            lobby.P4 = queryset.pop()
+            print("Caca")
+
     def searching_tournament(self):
-        self.change_in_research(True, self.scope['user'])
+        self.change_tournament_research(True, self.scope['user'])
         json_data = json.dumps({'action': 'searching', 'mode': 'match_tournament'})
         self.send(json_data)
+        # opponent_name = self.find_3_opponent()
+        # if opponent_name is not None:
+        #     opponent = User.objects.get(username=opponent_name)
+        #     json_data = {'action': 'find_opponent', 'mode': 'matchmaking_1v1', 'opponent': opponent_name}
+        #     async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
+        #     json_data_2 = {'action': 'find_opponent', 'mode': 'matchmaking_1v1',
+        #                    'opponent': self.scope['user'].username}
+        #     async_to_sync(self.channel_layer.group_send)("game_" + opponent_name,
+        #                                                  {'type': 'send_info', 'data': json_data_2})
+        #     print(f"game_{opponent.username} | room name {self.room_name}")
+        #     self.create_lobby(opponent_name)
+
+    def change_tournament_research(self, new_state, username):
+        user = User.objects.get(username=username)
+        user.tournament_research = new_state
+        user.save()
 
     def cancel_tournament(self):
         self.change_in_research(False, self.scope['user'])
