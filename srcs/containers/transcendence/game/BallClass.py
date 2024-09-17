@@ -7,6 +7,9 @@ class Ball:
 		self.x = (2040 - 30) / 2
 		self.ia_x = (2040 - 30) / 2
 		self.ia_y = (1080 - 30) / 2
+		self.ia_dirY = 0
+		self.ia_dirX = 500
+		self.ia_speed = 500
 		self.speed = 500
 		self.dirY = 0
 		self.dirX = 500
@@ -56,7 +59,7 @@ class Ball:
 	def impact(self, user):
 		impact = (self.y - user.y) - (223 / 2)
 		normal = (impact / (223 / 2))
-		print("normal :", normal)
+		# print("normal :", normal)
 		return normal
 
 	async def field_boundary(self, user, opponent):
@@ -87,5 +90,8 @@ class Ball:
 		return self
 
 	def ia_ball_snapshot(self):
-		self.ia_x = self.x
 		self.ia_y = self.y
+		self.ia_x = self.x
+		self.ia_dirX = self.dirX
+		self.ia_dirY = self.dirY
+		self.ia_speed = self.speed
