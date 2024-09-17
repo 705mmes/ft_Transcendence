@@ -142,3 +142,19 @@ function change_opponent(opponent) {
     else
         match_found(opponent);
 }
+
+function tournament_opponent(players)
+{
+    let class_players = document.getElementsByClassName("player");
+    i = -1;
+    console.log(class_players.length);
+    while (++i < class_players.length)
+    {
+        console.log(players['p' + i.toString()])
+        if (players['p' + i.toString()])
+            class_players[i].innerHTML = players['p' + i.toString()];
+        else
+            class_players[i].innerHTML = "...";
+        console.log(class_players[i].innerHTML);
+    }
+}

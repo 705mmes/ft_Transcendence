@@ -62,6 +62,8 @@ function responsePong() {
                     change_opponent(data.opponent);
                     timeoutID = setTimeout(ready, 3000);
                 }
+                else if (data.action === 'opponent_change')
+                    tournament_opponent(data.players);
                 else if (data.action === 'cancel_lobby')
                     to_unspecified_page('game/');
                 else if (data.action === 'start_game')
