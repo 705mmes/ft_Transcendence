@@ -41,7 +41,7 @@ async function fetch_scripts(url, class_name)
 async function reload_scripts(page)
 {
 	console.log("reloading scripts...", page);
-    if (page !== '/')
+    if (page !== '/' && page !== '/account/redirect/checker')
     {
         await always_on_script();
         if (page.match('/social'))
@@ -49,7 +49,6 @@ async function reload_scripts(page)
         else if (page.match('/profile'))
             await load_script_form_fetch(profile_script_cache);
         else if (page.match('/game')) {
-			console.log("reloading game scripts...");
             await load_script_form_fetch(game_script_cache);
 		}
 		else if (page.match('/account'))
@@ -71,7 +70,6 @@ function reset_script(page)
         if (document.getElementsByClassName(script_list[a]))
             delete_script_by_class_name(script_list[a]);
     }
-    console.log(page);
     if (page === '/')
            delete_script_by_class_name('ws_script');
 }

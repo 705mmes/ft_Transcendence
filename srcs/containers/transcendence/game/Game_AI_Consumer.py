@@ -35,7 +35,7 @@ class GameAIConsumer(AsyncWebsocketConsumer):
             lobby_cache['is_game_loop'] = True
             await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
             caca = asyncio.create_task(self.game_loop(lobby_cache))
-        print(user_cache.get('lobby_name'))
+        # print(user_cache.get('lobby_name'))
         await self.accept()
 
     async def disconnect(self, code):
@@ -58,7 +58,7 @@ class GameAIConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         action = text_data_json['action']
-        print(f"{self.scope['user']} send: {text_data_json}")
+        # print(f"{self.scope['user']} send: {text_data_json}")
         if text_data_json['action'] == 'move':
             await self.update_cache(text_data_json)
 
@@ -110,9 +110,13 @@ class GameAIConsumer(AsyncWebsocketConsumer):
             lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
             opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['ai']}_key")
             if time.time() - ia_time > 1:
-                print('caca')
+                # print('caca')
                 ia_time = time.time()
                 self.ball.ia_ball_snapshot()
+                if self.ball.ia_dirX < 0:
+                    self.ball.ia_y = (1080 / 2) - 111.5
+                else:
+                    await self.tracking_ai()
             await self.ball.move(self.user.get_class(), self.opponent.get_class())
             await self.check_move(user_cache)
             await self.up_down_ai()
@@ -166,9 +170,36 @@ class GameAIConsumer(AsyncWebsocketConsumer):
             self.opponent.down_pressed = True
             self.opponent.up_pressed = False
         else:
-            print("stopped")
+            #print("stopped")
             self.opponent.up_pressed = False
             self.opponent.down_pressed = False
-        print("ai posy = ", self.opponent.y, "ai posy extreme = ", self.opponent.y + 223, "ball snapshot = ", self.ball.ia_y)
+        # print("ai posy = ", self.opponent.y, "ai posy extreme = ", self.opponent.y + 223, "ball snapshot = ", self.ball.ia_y)
 
 
+    async def tracking_ai(self):
+        # if self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * 60) > 2040:
+        #     diff = self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * 60) - 2040
+        #     after_hit = 60 - (diff / self.ball.ia_dirX)
+        #     before_hit = 60 - after_hit
+        #     self.ball.ia_y += self.ball.ia_dirY * before_hit
+        #     print("x axis ai calibrating")
+        if self.ball.ia_y + (self.ball.ia_dirY * 60) > 1080 or self.ball.ia_y + (self.ball.ia_y * 60) < 0:
+            if self.ball.ia_dirY > 0:
+                diff = self.ball.ia_y + (self.ball.ia_dirY * 60) - 1080
+            else:
+                diff = self.ball.ia_y + (self.ball.ia_dirY * 60)
+            after_hit = 60 - (diff / self.ball.ia_dirY)
+            before_hit = 60 - after_hit
+            self.ball.ia_y += self.ball.ia_dirY * before_hit
+            self.ball.ia_dirY *= -1
+            self.ball.ia_y += self.ball.ia_dirY * after_hit
+            print("y axis ai calibrating")
+        else:
+            self.ball.ia_y += self.ball.ia_dirY * 60
+            print("no axis ai calibrating")
+        print("ai goes to = ", self.ball.ia_y)
+
+
+
+        # elif self.ball.ia_x + (self.ball.ia_dirX * 60) > 2040:
+        #     self.ball.ia_y += self.ball.ia_dirY * (60 - ((self.ball.ia_y + (self.ball.ia_dirY * 60) - 2040) / self.ball.ia_dirX))
