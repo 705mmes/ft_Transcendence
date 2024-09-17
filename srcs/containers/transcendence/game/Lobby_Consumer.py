@@ -217,22 +217,26 @@ class LobbyConsumer(WebsocketConsumer):
 
 # Tournament lobby
 
+    def add_to_lobby(self, lobby, user):
+        print(lobby.P1)
+        print(lobby.P2)
+        print(lobby.P3)
+        print(lobby.P4)
+
     def find_3_opponent(self):
         user = User.objects.get(username=self.scope['user'])
-        queryset = User.objects.filter(in_research=True).order_by('id')
-        if len(queryset) >= 4:
-            lobby = TournamentLobby.objects.create()
-            lobby.P1 = queryset.pop()
-            lobby.P2 = queryset.pop()
-            lobby.P3 = queryset.pop()
-            lobby.P4 = queryset.pop()
-            print("Caca")
+        lobby_queryset = TournamentLobby.objects.filter(is_full=False)
+        if not lobby_queryset:
+            lobby = TournamentLobby.objects.create(P1=user)
+        else:
+            lobby = lobby_queryset.first()
+            self.add_to_lobby(lobby, user)
 
     def searching_tournament(self):
         self.change_tournament_research(True, self.scope['user'])
         json_data = json.dumps({'action': 'searching', 'mode': 'match_tournament'})
         self.send(json_data)
-        # opponent_name = self.find_3_opponent()
+        opponent_name = self.find_3_opponent()
         # if opponent_name is not None:
         #     opponent = User.objects.get(username=opponent_name)
         #     json_data = {'action': 'find_opponent', 'mode': 'matchmaking_1v1', 'opponent': opponent_name}

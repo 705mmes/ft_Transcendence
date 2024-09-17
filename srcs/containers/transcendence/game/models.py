@@ -31,6 +31,8 @@ class TournamentLobby(models.Model):
     P3 = models.ForeignKey(User, related_name='P3', on_delete=models.CASCADE,  blank=True, null=True)
     P4 = models.ForeignKey(User, related_name='P4', on_delete=models.CASCADE,  blank=True, null=True)
     Name = models.CharField(blank=True)
+    is_full = models.BooleanField(default=False)
+    player_count = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.P1.Player.username} - {self.P2.Player.username}"
