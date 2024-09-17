@@ -170,6 +170,7 @@ def login_session(request):
                             return JsonResponse({'success': True, 'redirect_url': '/game'})
                         else:
                             print("Redirecting to 2FA checker page")
+                            login(request, user)
                             return JsonResponse({'success': True, 'redirect_url': '/account/redirect/checker'})
                     else:
                         print("Logging in and redirecting to game page")

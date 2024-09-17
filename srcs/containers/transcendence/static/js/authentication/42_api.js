@@ -46,7 +46,7 @@ if (code) {
     })
     .then(data => {
         console.log('Registration successful:', data.message);
-        window.location.href = '/game';
+        to_unspecified_page('/game');
     })
     .catch(error => {
         console.error('Error:', error);

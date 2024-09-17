@@ -65,9 +65,32 @@ def redirect_to_login(request):
     print("redirect_to_2fa_login...")
     return render(request, 'login.html')
 
-
+@login_required
 def redirect_to_checker(request):
     print("redirect_to_checker...")
-    return render(request, 'checker.html')
+    user = User.objects.get(username=request.user)
+    if request.method == 'POST':
+        try:
+            device = TOTPDevice.objects.get(user=request.user, name='default')
+        except MultipleObjectsReturned:
+            device = TOTPDevice.objects.filter(user=request.user, name='default').first()
+            print("Multiple devices found. Using the first one.")
+        except ObjectDoesNotExist:
+            return JsonResponse({'success': False, 'error': 'No Device found.'})
+            
+        form = OTPTokenForm(data=request.POST, user=request.user)
+        if form.is_valid():
+            token = form.cleaned_data['otp_token']
+            if device and device.verify_token(token):
+                return JsonResponse({'success': True, 'redirect_url': '/game'})
+            else:
+                return JsonResponse({'success': False, 'error': 'Invalid OTP token.'})
+        else:
+            print("Form errors:", form.errors)
+            return JsonResponse({'success': False, 'error': 'Invalid form submission.'})
+    else:
+        form = OTPTokenForm(user=request.user)
+        return render(request, 'checker.html', {'form': form})
+
 
 
