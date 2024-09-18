@@ -84,7 +84,7 @@ if (document.getElementById("btn_tournament")) {
             btn.innerHTML = "SEARCH TOURNAMENT";
         }
         let lobby_content = document.getElementById('lobby_content');
-        fetching_html("game/tournament", lobby_content);
+        fetching_html("/game/tournament", lobby_content);
     }
 }
 
@@ -119,7 +119,6 @@ function match_found(opponent)
     document.getElementById('lobby_div').appendChild(loading);
 }
 
-
 function change_opponent(opponent) {
     if (opponent === undefined) {
         if (document.getElementById("opponent_name")) {
@@ -139,16 +138,19 @@ function change_opponent(opponent) {
 
 function tournament_opponent(players)
 {
+    let class_loader = document.getElementsByClassName("loader");
     let class_players = document.getElementsByClassName("player");
+    console.log(class_players);
     let i = -1;
     console.log(class_players.length);
     while (++i < class_players.length)
     {
         console.log(players['p' + i.toString()])
         if (players['p' + i.toString()])
+        {
             class_players[i].innerHTML = players['p' + i.toString()];
-        else
-            class_players[i].innerHTML = "...";
+            class_players[i].className = 'player';
+        }
         console.log(class_players[i].innerHTML);
     }
 }
@@ -159,24 +161,19 @@ function display_loading()
     console.log(class_players.length);
     if (class_players.length === 0)
         return
-    let i = -1;
-    while (++i < class_players.length)
+    let i = 0;
+    while (i < class_players.length)
     {
-        class_players[i].className = 'loader';
-        class_players[i].innerHTML = '';
+        if (class_players[i].innerHTML === '...') {
+            class_players[i].innerHTML = '';
+            class_players[i].className = 'loader';
+            i = 0;
+        }
+        i++;
     }
 }
 
 function stop_loading(){
-    let class_loading = document.getElementsByClassName("loading");
-    console.log(class_loading.length);
-    if (class_loading.length === 0)
-        return
-    let i = -1;
-    while (++i < class_loading.length)
-    {
-        class_loading[i].className = 'players';
-        class_loading[i].innerHTML = '...';
-
-    }
+    let lobby_content = document.getElementById('lobby_content');
+    fetching_html('/game/tournament', lobby_content);
 }
