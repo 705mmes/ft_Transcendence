@@ -12,7 +12,7 @@ function navigate(link, replace = false) {
 
 
 function change_page_name(page) {
-	console.log("change page name");
+	console.log("change page name", page);
     if (page === 'game/canvas/')
         return 'game';
     else if (page === 'logout_btn/')

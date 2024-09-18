@@ -23,10 +23,10 @@ def authentication(request):
         'login_form': LoginForm,
         'registration_form': RegistrationForm,
     }
-    if (request.user.is_authenticated):
-        return render(request, 'game/game.html')
-    else:
-        return render(request, 'authentication/auth_page.html', context)
+    # if (request.user.is_authenticated):
+    #     return render(request, 'game/game.html')
+    # else:
+    return render(request, 'authentication/auth_page.html', context)
 
 
 def get_redirect_uri(request):

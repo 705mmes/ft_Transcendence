@@ -70,6 +70,7 @@ if (document.getElementById('edit_profile'))
 
 if (document.getElementById('setup_2fa')) {
 	document.getElementById('setup_2fa').addEventListener('click', function(event) {
+        console.log("actual link :", window.location.href)
 	    to_unspecified_page('/account/redirect/setup')
     })
 }

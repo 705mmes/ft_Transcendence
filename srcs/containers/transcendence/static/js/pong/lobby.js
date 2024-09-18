@@ -28,10 +28,12 @@ function display_research_btn(content)
         game_socket.send(choose_message('searching'));
     }
     if (!document.getElementById('start_research'))
-        document.getElementById("lobby_div").appendChild(btn_play);
+        if (document.getElementById("lobby_div"))
+            document.getElementById("lobby_div").appendChild(btn_play);
     change_opponent(undefined);
-    if (document.getElementById("option_div").style.display === 'none')
-        document.getElementById("option_div").style.display = 'flex';
+    if (document.getElementById("option_div"))
+        if (document.getElementById("option_div").style.display === 'none')
+            document.getElementById("option_div").style.display = 'flex';
     console.log("display btn research !")
 }
 
@@ -54,59 +56,51 @@ function display_cancel_btn()
     console.log("display cancel btn research !")
 }
 
-document.getElementById("btn_matchmaking_1v1").onclick = () => {
-    let mode_name = document.getElementById("mode_name");
-    mode_name.innerHTML = "MatchMaking 1v1";
-    mode_name.className = "match_1v1";
-    if (!document.getElementById("start_research"))
-        display_research_btn("SEARCH OPPONENT");
-    else
-    {
-        let btn = document.getElementById("start_research");
-        btn.innerHTML = "SEARCH OPPONENT";
-    }
-    let lobby_content = document.getElementById('lobby_content');
-    fetching_html("game/match_1v1", lobby_content);
-}
-
-document.getElementById("btn_tournament").onclick = () => {
-    let mode_name = document.getElementById("mode_name");
-    mode_name.innerHTML = "Tournament";
-    mode_name.className = "match_tournament";
-    if (!document.getElementById("start_research"))
-        display_research_btn("SEARCH TOURNAMENT");
-    else
-    {
-        let btn = document.getElementById("start_research");
-        btn.innerHTML = "SEARCH TOURNAMENT";
-    }
-    let lobby_content = document.getElementById('lobby_content');
-    fetching_html("game/tournament", lobby_content);
-}
-
-document.getElementById("btn_match_ai").onclick = () => {
-    let mode_name = document.getElementById("mode_name");
-    mode_name.innerHTML = "Match vs AI";
-    mode_name.className = "match_ai";
-    if (!document.getElementById("start_research"))
-        display_research_btn("LAUNCH GAME");
-    else
-    {
-        let btn = document.getElementById("start_research");
-        btn.innerHTML = "LAUNCH GAME";
+if (document.getElementById("btn_matchmaking_1v1")) {
+    document.getElementById("btn_matchmaking_1v1").onclick = () => {
+        let mode_name = document.getElementById("mode_name");
+        mode_name.innerHTML = "MatchMaking 1v1";
+        mode_name.className = "match_1v1";
+        if (!document.getElementById("start_research"))
+            display_research_btn("SEARCH OPPONENT");
+        else {
+            let btn = document.getElementById("start_research");
+            btn.innerHTML = "SEARCH OPPONENT";
+        }
+        let lobby_content = document.getElementById('lobby_content');
+        fetching_html("game/match_1v1", lobby_content);
     }
 }
 
-// function change_state(state)
-// {
-//     // change_opponent(undefined);
-//     if (state === 'research') {
-//         display_cancel_btn();
-//     }
-//     else if (state === 'waiting') {
-//         display_research_btn("SEARCH OPPONENT");
-//     }
-// }
+if (document.getElementById("btn_tournament")) {
+    document.getElementById("btn_tournament").onclick = () => {
+        let mode_name = document.getElementById("mode_name");
+        mode_name.innerHTML = "Tournament";
+        mode_name.className = "match_tournament";
+        if (!document.getElementById("start_research"))
+            display_research_btn("SEARCH TOURNAMENT");
+        else {
+            let btn = document.getElementById("start_research");
+            btn.innerHTML = "SEARCH TOURNAMENT";
+        }
+        let lobby_content = document.getElementById('lobby_content');
+        fetching_html("game/tournament", lobby_content);
+    }
+}
+
+if (document.getElementById("btn_match_ai")) {
+    document.getElementById("btn_match_ai").onclick = () => {
+        let mode_name = document.getElementById("mode_name");
+        mode_name.innerHTML = "Match vs AI";
+        mode_name.className = "match_ai";
+        if (!document.getElementById("start_research"))
+            display_research_btn("LAUNCH GAME");
+        else {
+            let btn = document.getElementById("start_research");
+            btn.innerHTML = "LAUNCH GAME";
+        }
+    }
+}
 
 function match_found(opponent)
 {
@@ -146,7 +140,7 @@ function change_opponent(opponent) {
 function tournament_opponent(players)
 {
     let class_players = document.getElementsByClassName("player");
-    i = -1;
+    let i = -1;
     console.log(class_players.length);
     while (++i < class_players.length)
     {
@@ -156,5 +150,33 @@ function tournament_opponent(players)
         else
             class_players[i].innerHTML = "...";
         console.log(class_players[i].innerHTML);
+    }
+}
+
+function display_loading()
+{
+    let class_players = document.getElementsByClassName("player");
+    console.log(class_players.length);
+    if (class_players.length === 0)
+        return
+    let i = -1;
+    while (++i < class_players.length)
+    {
+        class_players[i].className = 'loader';
+        class_players[i].innerHTML = '';
+    }
+}
+
+function stop_loading(){
+    let class_loading = document.getElementsByClassName("loading");
+    console.log(class_loading.length);
+    if (class_loading.length === 0)
+        return
+    let i = -1;
+    while (++i < class_loading.length)
+    {
+        class_loading[i].className = 'players';
+        class_loading[i].innerHTML = '...';
+
     }
 }
