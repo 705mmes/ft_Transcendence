@@ -237,6 +237,7 @@ class LobbyConsumer(WebsocketConsumer):
             lobby.P4 = None
         lobby.player_count -= 1
         lobby.save()
+        async_to_sync(self.channel_layer.group_discard)(lobby.Name, self.channel_name)
         if lobby.player_count == 0:
             lobby.delete()
             print("Lobby delete !")

@@ -129,7 +129,6 @@ async function fetching_html(link, element)
 {
     try
     {
-        console.log(link);
         console.log('actual', window.location.href);
         const response = await fetch(link);
         if (!response.ok)

@@ -76,7 +76,7 @@ async function to_unspecified_page(page) {
 	let div_content = document.getElementById('content');	
 	await fetching_html(page, div_content);
 	page = change_page_name(page);
-	console.log("page=", page);
+	// console.log("page=", page);
 
 
 	reset_script('/' + page);
