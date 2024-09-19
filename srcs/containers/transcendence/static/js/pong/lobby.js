@@ -143,15 +143,25 @@ function tournament_opponent(players)
     console.log(class_players);
     let i = -1;
     console.log(class_players.length);
+    console.log(players);
     while (++i < class_players.length)
     {
         console.log(players['p' + i.toString()])
-        if (players['p' + i.toString()])
-        {
+        if (players['p' + i.toString()]) {
             class_players[i].innerHTML = players['p' + i.toString()];
-            class_players[i].className = 'player';
+            players['p' + i.toString()] = null;
         }
         console.log(class_players[i].innerHTML);
+    }
+    i = 0;
+    while (i < 4)
+    {
+        if (players['p' + i.toString()] !== null) {
+            class_loader[0].innerHTML = players['p' + i.toString()];
+            class_loader[0].className = 'player';
+        }
+        else
+        i++;
     }
 }
 
