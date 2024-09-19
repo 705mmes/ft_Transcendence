@@ -198,8 +198,8 @@ class GameAIConsumer(AsyncWebsocketConsumer):
     async def tracking_ai(self, move_left):
         if self.ball.ia_dirX > 0:
             print("prout")
-            if (self.ball.ia_y + (self.ball.ia_dirY * move_left) > 1080 or self.ball.ia_y + (self.ball.ia_dirY * move_left) < 0
-                 or self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * move_left) > 2040):
+            if self.ball.ia_y + (self.ball.ia_dirY * move_left) > 1080 or self.ball.ia_y + (self.ball.ia_dirY * move_left) < 0:
+                 # or self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * move_left) > 2040):
                 print("pipi")
                 await self.recursive_ai(move_left)
             else:
