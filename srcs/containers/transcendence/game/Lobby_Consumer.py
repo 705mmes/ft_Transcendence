@@ -286,13 +286,20 @@ class LobbyConsumer(WebsocketConsumer):
             lobby = lobby_queryset.first()
             self.add_to_lobby(lobby, user)
             async_to_sync(self.channel_layer.group_add)(lobby.Name, self.channel_name)
-            json_data = {'action': 'opponent_change', 'mode': 'matchmaking_1v1',
+            json_data = {'action': 'opponent_change', 'mode': 'tournament',
+                         'players': self.create_json_player(lobby)}
+            async_to_sync(self.channel_layer.group_send)(lobby.Name, {'type': 'send_info', 'data': json_data})
+            self.status_tournament(lobby, user)
+
+    def status_tournament(self, lobby, user):
+        if lobby.is_full:
+            json_data = {'action': 'lobby_full', 'mode': 'tournament',
                          'players': self.create_json_player(lobby)}
             async_to_sync(self.channel_layer.group_send)(lobby.Name, {'type': 'send_info', 'data': json_data})
 
     def searching_tournament(self):
         self.change_tournament_research(True, self.scope['user'])
-        json_data = json.dumps({'action': 'searching', 'mode': 'match_tournament'})
+        json_data = json.dumps({'action': 'searching', 'mode': 'tournament'})
         self.send(json_data)
         self.find_tounament_opponents()
 
@@ -304,12 +311,12 @@ class LobbyConsumer(WebsocketConsumer):
     def cancel_tournament(self):
         user = User.objects.get(username=self.scope['user'])
         self.change_in_research(False, self.scope['user'])
-        json_data = json.dumps({'action': 'cancel', 'mode': 'match_tournament'})
+        json_data = json.dumps({'action': 'cancel', 'mode': 'tournament'})
         self.send(json_data)
         lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))
         lobby = lobby_queryset.first()
         self.remove_from_lobby(lobby, user)
-        json_data = {'action': 'opponent_change', 'mode': 'matchmaking_1v1',
+        json_data = {'action': 'opponent_change', 'mode': 'tournament',
                      'players': self.create_json_player(lobby)}
         async_to_sync(self.channel_layer.group_send)(lobby.Name, {'type': 'send_info', 'data': json_data})
 

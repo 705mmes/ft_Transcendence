@@ -140,30 +140,51 @@ function tournament_opponent(players)
 {
     let class_loader = document.getElementsByClassName("loader");
     let class_players = document.getElementsByClassName("player");
-    console.log(class_players);
-    let i = -1;
-    console.log(class_players.length);
+    let i = 0;
     console.log(players);
-    while (++i < class_players.length)
+    while (i < class_players.length)
     {
-        console.log(players['p' + i.toString()])
         if (players['p' + i.toString()]) {
             class_players[i].innerHTML = players['p' + i.toString()];
             players['p' + i.toString()] = null;
         }
-        console.log(class_players[i].innerHTML);
+        else {
+            class_players[i].innerHTML = '';
+        }
+        i++;
     }
-    i = 0;
-    while (i < 4)
+    let u = 0;
+    while (u < class_loader.length)
     {
         if (players['p' + i.toString()] !== null) {
-            class_loader[0].innerHTML = players['p' + i.toString()];
-            class_loader[0].className = 'player';
+            class_loader[u].innerHTML = players['p' + i.toString()];
         }
-        else
+        i++;
+        u++;
+    }
+    i = 0;
+    while (i < class_loader.length)
+    {
+        if (class_loader[i].innerHTML !== '')
+        {
+            class_loader[i].className = 'player';
+            i = -1;
+        }
+        i++;
+    }
+    i = 0;
+    while (i < class_players.length)
+    {
+        if (class_players[i].innerHTML === '')
+        {
+            class_players[i].className = 'loader';
+            i = -1;
+        }
         i++;
     }
 }
+
+
 
 function display_loading()
 {
@@ -187,3 +208,8 @@ function stop_loading(){
     let lobby_content = document.getElementById('lobby_content');
     fetching_html('/game/tournament', lobby_content);
 }
+
+// function display_graph()
+// {
+//
+// }

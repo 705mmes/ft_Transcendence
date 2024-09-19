@@ -68,6 +68,8 @@ function responsePong() {
                 }
                 else if (data.action === 'opponent_change')
                     tournament_opponent(data.players);
+                // else if (data.action === 'lobby_full')
+                //     display_graph();
                 else if (data.action === 'cancel_lobby')
                     to_unspecified_page('game/');
                 else if (data.action === 'start_game')
