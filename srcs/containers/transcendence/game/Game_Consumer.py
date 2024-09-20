@@ -118,12 +118,14 @@ class GameConsumer(AsyncWebsocketConsumer):
             user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
             opponent_cache = await sync_to_async(cache.get)(f"{self.who_is_the_enemy(lobby_cache)}_key")
             lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
-            await self.ball.move(self.user.get_class(), self.opponent.get_class())
-            await self.check_move(user_cache, opponent_cache)
+            ball_move = await self.ball.move(self.user.get_class(), self.opponent.get_class())
+            racket_move = await self.check_move(user_cache, opponent_cache)
             self.user.move(user_cache['up_pressed'], user_cache['down_pressed'])
             self.opponent.move(opponent_cache['up_pressed'], opponent_cache['down_pressed'])
-            await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
-            await self.send_data(self.opponent.get_class(), self.user.get_class(), 'game_data')
+            if not racket_move or ball_move:
+                print("Send message to client !")
+                await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
+                await self.send_data(self.opponent.get_class(), self.user.get_class(), 'game_data')
             if await self.check_game(self.user.get_class(), self.opponent.get_class()):
                 break
             await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
@@ -142,7 +144,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                                                             Score1=self.user.score, Score2=self.opponent.score)
             return True
         return False
-    #     if a player disconnect Return true
 
     async def update_cache(self, json_data):
         user_name = self.scope['user'].username
