@@ -113,7 +113,8 @@ class GameAIConsumer(AsyncWebsocketConsumer):
                 # print('caca')
                 ia_time = time.time()
                 self.ball.ia_ball_snapshot()
-                await self.tracking_ai(60)
+                if self.ball.ia_dirX > 0:
+                    await self.tracking_ai(60)
             await self.ball.move(self.user.get_class(), self.opponent.get_class())
             await self.check_move(user_cache)
             await self.up_down_ai()
@@ -160,7 +161,7 @@ class GameAIConsumer(AsyncWebsocketConsumer):
 # AI GAMEPLAY
 
     async def up_down_ai(self):
-        if  self.opponent.y > self.ball.ia_y:
+        if self.opponent.y - 30 > self.ball.ia_y:
             self.opponent.down_pressed = False
             self.opponent.up_pressed = True
         elif self.opponent.y + 193 < self.ball.ia_y:
@@ -170,46 +171,55 @@ class GameAIConsumer(AsyncWebsocketConsumer):
             #print("stopped")
             self.opponent.up_pressed = False
             self.opponent.down_pressed = False
-        print("ai posy = ", self.opponent.y, "ai posy extreme = ", self.opponent.y + 193, "ball snapshot = ", self.ball.ia_y, "ball real pos = ", self.ball.y)
+        print("ai posy = ", self.opponent.y, "ai posy extreme = ", self.opponent.y + 223, "ball snapshot = ", self.ball.ia_y, "ball real pos = ", self.ball.y)
 
 
-    async def recursive_ai(self, move_left):
+    async def recursive_ai(self, move_left, ball_speed):
         print("caca")
-        # if (self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * move_left) > 2040
-        #     and (self.ball.ia_y + (self.ball.ia_dirY * move_left) < 1080 or self.ball.ia_y + (self.ball.ia_dirY * move_left) > 0)):
-        #     diff = self.ball.ia_x - ((self.ball.ia_dirX * 0.01667) * move_left)
-        #     after_hit = move_left - (diff / (self.ball.ia_dirX * 0.01667))
-        #     print("X axis ai calibrating")
-        # else:
-        if self.ball.ia_dirY > 0:
-            diff = self.ball.ia_y - (self.ball.ia_dirY * move_left)
-            print("pos Y axis ai calibrating")
-        else:
-            diff = self.ball.ia_y + (self.ball.ia_dirY * move_left)
-            print("neg Y axis ai calibrating")
-        after_hit = move_left - (diff / self.ball.ia_dirY)
-        before_hit = move_left - after_hit
-        move_left = after_hit
-        print("move_left = ", move_left, "diff = ", diff, "after_hit = ", after_hit, "before_hit = ", before_hit)
-        self.ball.ia_y += self.ball.ia_dirY * before_hit
-        self.ball.ia_dirY *= -1
-        self.ball.ia_y += self.ball.ia_dirY * move_left
+        while move_left > 0:
+            print("jsp ntm condition de merde = ", self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * move_left))
+            if self.ball.ia_y + (self.ball.ia_dirY * move_left) > 1050 or self.ball.ia_y + (self.ball.ia_dirY * move_left) < 0:
+                if self.ball.ia_dirY > 0:
+                    diff = 1050 - self.ball.ia_y
+                    print("pos Y axis ai calibrating")
+                else:
+                    diff = self.ball.ia_y
+                    print("neg Y axis ai calibrating")
+                before_hit = diff / abs(self.ball.ia_dirY)
+                after_hit = move_left - before_hit
+                move_left = after_hit
+                self.ball.ia_y += self.ball.ia_dirY * before_hit
+                self.ball.ia_x += (self.ball.ia_dirX * 0.01667) * before_hit
+                self.ball.ia_dirY *= -1
+                print("ball speed = ", ball_speed, "ball speed * move left = ", ball_speed * move_left)
+                print("move_left = ", move_left, "diff = ", diff, "after_hit = ", after_hit, "before_hit = ",
+                      before_hit, "dirx = ", self.ball.ia_dirX)
+            elif self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * move_left) >= 2040 - 77:
+                    diff = 2040 - self.ball.ia_x
+                    before_hit = diff / abs(self.ball.ia_dirX * 0.01667)
+                    after_hit = move_left - before_hit
+                    self.ball.ia_y += self.ball.ia_dirY * before_hit
+                    print("X axis ai calibrating")
+                    print("ai_x = ", self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * before_hit))
+                    print("move_left = ", move_left, "diff = ", diff, "after_hit = ", after_hit, "before_hit = ", before_hit, "dirx = ", self.ball.ia_dirX)
+                    return
+            else:
+                self.ball.ia_y += self.ball.ia_dirY * move_left
+                print("no axis ai calibrating")
+                return
+            print("ai goes to = ", self.ball.ia_y)
 
     async def tracking_ai(self, move_left):
         if self.ball.ia_dirX > 0:
             print("prout")
-            if self.ball.ia_y + (self.ball.ia_dirY * move_left) > 1080 or self.ball.ia_y + (self.ball.ia_dirY * move_left) < 0:
-                 # or self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * move_left) > 2040):
-                print("pipi")
-                await self.recursive_ai(move_left)
-            else:
-                self.ball.ia_y += self.ball.ia_dirY * move_left
+            ball_speed = math.sqrt((self.ball.ia_dirX * 0.01667) ** 2 + self.ball.ia_dirY ** 2)
+            print("pipi")
+            await self.recursive_ai(move_left, ball_speed)
 
             # before_hit = 60 - after_hit
             # self.ball.ia_y += self.ball.ia_dirY * before_hit
             # print("x axis ai calibrating")
-        print("no axis ai calibrating")
-        print("ai goes to = ", self.ball.ia_y)
+            print("ai goes to = ", self.ball.ia_y)
 
 
 
