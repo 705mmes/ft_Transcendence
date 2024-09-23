@@ -81,6 +81,8 @@ class GameAIConsumer(AsyncWebsocketConsumer):
             self.user.up_pressed = user_cache['up_pressed']
             self.user.down_pressed = user_cache['down_pressed']
             return False
+        if await self.up_down_ai():
+            return False
         return True
 
 
@@ -110,17 +112,16 @@ class GameAIConsumer(AsyncWebsocketConsumer):
             lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
             opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['ai']}_key")
             if time.time() - ia_time > 1:
-                # print('caca')
                 ia_time = time.time()
                 self.ball.ia_ball_snapshot()
                 if self.ball.ia_dirX > 0:
                     await self.tracking_ai(60)
-            await self.ball.move(self.user.get_class(), self.opponent.get_class())
-            await self.check_move(user_cache)
-            await self.up_down_ai()
+            ball_move = await self.ball.move(self.user.get_class(), self.opponent.get_class())
+            racket_move = await self.check_move(user_cache)
             self.user.move(user_cache['up_pressed'], user_cache['down_pressed'])
             self.opponent.move(self.opponent.up_pressed, self.opponent.down_pressed)
-            await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
+            if not racket_move or ball_move:
+                await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
             if await self.check_game(self.user.get_class(), self.opponent.get_class()):
                 break
             await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
@@ -162,66 +163,45 @@ class GameAIConsumer(AsyncWebsocketConsumer):
 
     async def up_down_ai(self):
         if self.opponent.y - 30 > self.ball.ia_y:
-            self.opponent.down_pressed = False
-            self.opponent.up_pressed = True
+            if not self.opponent.up_pressed:
+                self.opponent.up_pressed = True
+                self.opponent.down_pressed = False
+                return True
         elif self.opponent.y + 193 < self.ball.ia_y:
-            self.opponent.down_pressed = True
-            self.opponent.up_pressed = False
+            if not self.opponent.down_pressed:
+                self.opponent.down_pressed = True
+                self.opponent.up_pressed = False
+                return True
         else:
-            #print("stopped")
+            temp_up = self.opponent.up_pressed
+            temp_down = self.opponent.down_pressed
             self.opponent.up_pressed = False
             self.opponent.down_pressed = False
-        print("ai posy = ", self.opponent.y, "ai posy extreme = ", self.opponent.y + 223, "ball snapshot = ", self.ball.ia_y, "ball real pos = ", self.ball.y)
+            if temp_up != self.opponent.up_pressed or temp_down != self.opponent.down_pressed:
+                return True
+        return False
 
-
-    async def recursive_ai(self, move_left, ball_speed):
-        print("caca")
+    async def recursive_ai(self, move_left):
         while move_left > 0:
-            print("jsp ntm condition de merde = ", self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * move_left))
             if self.ball.ia_y + (self.ball.ia_dirY * move_left) > 1050 or self.ball.ia_y + (self.ball.ia_dirY * move_left) < 0:
                 if self.ball.ia_dirY > 0:
                     diff = 1050 - self.ball.ia_y
-                    print("pos Y axis ai calibrating")
                 else:
                     diff = self.ball.ia_y
-                    print("neg Y axis ai calibrating")
                 before_hit = diff / abs(self.ball.ia_dirY)
                 after_hit = move_left - before_hit
                 move_left = after_hit
                 self.ball.ia_y += self.ball.ia_dirY * before_hit
                 self.ball.ia_x += (self.ball.ia_dirX * 0.01667) * before_hit
                 self.ball.ia_dirY *= -1
-                print("ball speed = ", ball_speed, "ball speed * move left = ", ball_speed * move_left)
-                print("move_left = ", move_left, "diff = ", diff, "after_hit = ", after_hit, "before_hit = ",
-                      before_hit, "dirx = ", self.ball.ia_dirX)
             elif self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * move_left) >= 2040 - 77:
-                    diff = 2040 - self.ball.ia_x
-                    before_hit = diff / abs(self.ball.ia_dirX * 0.01667)
-                    after_hit = move_left - before_hit
-                    self.ball.ia_y += self.ball.ia_dirY * before_hit
-                    print("X axis ai calibrating")
-                    print("ai_x = ", self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * before_hit))
-                    print("move_left = ", move_left, "diff = ", diff, "after_hit = ", after_hit, "before_hit = ", before_hit, "dirx = ", self.ball.ia_dirX)
-                    return
+                before_hit = (2040 - self.ball.ia_x) / abs(self.ball.ia_dirX * 0.01667)
+                self.ball.ia_y += self.ball.ia_dirY * before_hit
+                return
             else:
                 self.ball.ia_y += self.ball.ia_dirY * move_left
-                print("no axis ai calibrating")
                 return
-            print("ai goes to = ", self.ball.ia_y)
 
     async def tracking_ai(self, move_left):
         if self.ball.ia_dirX > 0:
-            print("prout")
-            ball_speed = math.sqrt((self.ball.ia_dirX * 0.01667) ** 2 + self.ball.ia_dirY ** 2)
-            print("pipi")
-            await self.recursive_ai(move_left, ball_speed)
-
-            # before_hit = 60 - after_hit
-            # self.ball.ia_y += self.ball.ia_dirY * before_hit
-            # print("x axis ai calibrating")
-            print("ai goes to = ", self.ball.ia_y)
-
-
-
-        # elif self.ball.ia_x + (self.ball.ia_dirX * 60) > 2040:
-        #     self.ball.ia_y += self.ball.ia_dirY * (60 - ((self.ball.ia_y + (self.ball.ia_dirY * 60) - 2040) / self.ball.ia_dirX))
+            await self.recursive_ai(move_left)
