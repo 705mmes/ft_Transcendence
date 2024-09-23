@@ -61,11 +61,18 @@ function display_popup(data)
     }
 }
 
-if (document.getElementById('edit_profile'))
-{
-    document.getElementById('edit_profile').addEventListener('click', () =>{
-        to_unspecified_page('/profile/modify')
-    })
+const username = document.getElementById('player_username').textContent;
+if (username.endsWith('_42_intra')) {
+    const editProfileButton = document.getElementById('edit_profile');
+    if (editProfileButton) {
+        editProfileButton.style.display = 'none';
+    }
+} else {
+    if (document.getElementById('edit_profile')) {
+        document.getElementById('edit_profile').addEventListener('click', () => {
+            to_unspecified_page('/profile/modify');
+        });
+    }
 }
 
 if (document.getElementById('setup_2fa')) {

@@ -63,7 +63,18 @@ def redirect_to_2fa_setup(request):
 
 def redirect_to_login(request):
     print("redirect_to_2fa_login...")
-    return render(request, 'login.html')
+    if request.method == 'POST':
+        redirect('login_session');
+    else:
+    	return render(request, 'login.html')
+
+@login_required
+def check_twofa_status(request):
+    print("check_twofa_status")
+    return JsonResponse({
+        'twofa_verified': request.user.twofa_verified,
+        'twofa_submitted': request.user.twofa_submitted
+    })
 
 @login_required
 def redirect_to_checker(request):
@@ -82,6 +93,8 @@ def redirect_to_checker(request):
         if form.is_valid():
             token = form.cleaned_data['otp_token']
             if device and device.verify_token(token):
+                user.twofa_verified = True
+                user.save()
                 return JsonResponse({'success': True, 'redirect_url': '/game'})
             else:
                 return JsonResponse({'success': False, 'error': 'Invalid OTP token.'})

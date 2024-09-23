@@ -41,7 +41,7 @@ async function fetch_scripts(url, class_name)
 async function reload_scripts(page)
 {
 	console.log("reloading scripts...", page);
-    if (page !== '/' && page !== '/account/redirect/checker')
+    if (page !== '/' && page !== '/account/redirect/checker' && page !== '/account/redirect/login')
     {
         await always_on_script();
         if (page.match('/social'))

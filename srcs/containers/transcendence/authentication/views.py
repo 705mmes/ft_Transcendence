@@ -102,6 +102,7 @@ def oauth_callback(request):
     image_data = user_data.get('image', {})
     main_image_link = image_data.get('link')
 
+    username = username + "_42_intra"
     result = register_api(username, email, request, main_image_link)
     print("Sending response")
     if result['status'] == 'success':
@@ -116,10 +117,8 @@ def oauth_callback(request):
 
 
 def register_api(username, email, request, image):
-
     if User.objects.filter(username=username).exists():
-        print("Username already taken.")
-        return {'status': 'error', 'message': 'Username already taken.(un jour je gererais ca)'}
+        return {'status': 'success', 'message': 'User registered and logged in successfully.'}
     password = generate_password()
 
     print("Creating user...")
@@ -134,6 +133,7 @@ def register_api(username, email, request, image):
 
 
 def register(request):
+    # faut interdir ces fdp de users d'utiliser _42_intra
     if (request.method == 'POST'):
         print('Registration')
         form = RegistrationForm(request.POST)
