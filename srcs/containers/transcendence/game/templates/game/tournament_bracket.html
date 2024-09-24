@@ -1,0 +1,32 @@
+{% load static %}
+<link id='lobby_css' rel="stylesheet" href="{% static 'css/tournament_bracket.css' %}">
+<div class="bracket">
+    <div class="semi-finals">
+        <div class="match semi-final">
+            <p>Semi-final 1</p>
+            <div class="team box">Player 1</div>
+            <div class="team box">Player 2</div>
+        </div>
+        <div class="match semi-final">
+            <p>Semi-final 2</p>
+            <div class="team box">Player 3</div>
+            <div class="team box">Player 4</div>
+        </div>
+    </div>
+    <div class="finals-group">
+        <div class="finals">
+            <div class="match final">
+                <p>Final Match</p>
+                <div class="team box">Winner SF 1</div>
+                <div class="team box">Winner SF 2</div>
+            </div>
+        </div>
+        <div class="second-finals">
+            <div class="match third-place">
+                <p>Third place match</p>
+                <div class="team box">Loser SF 1</div>
+                <div class="team box">Loser SF 2</div>
+            </div>
+        </div>
+    </div>
+</div>

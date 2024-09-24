@@ -37,7 +37,7 @@ function launch_game(data){
         open_match_socket(game_data)
     document.getElementById('lobby_css').remove();
     document.getElementById('lobby_div').remove();
-    console.log(data.my_racket.y, data.my_racket.x);
+    // console.log(data.my_racket.y, data.my_racket.x);
     //console.log(data.opponent.y, data.opponent.x);
     main_game(data);
 }
@@ -68,8 +68,8 @@ function responsePong() {
                 }
                 else if (data.action === 'opponent_change')
                     tournament_opponent(data.players);
-                // else if (data.action === 'lobby_full')
-                //     display_graph();
+                else if (data.action === 'lobby_full')
+                    display_graph();
                 else if (data.action === 'cancel_lobby')
                     to_unspecified_page('game/');
                 else if (data.action === 'start_game')
