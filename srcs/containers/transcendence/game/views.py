@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from authentication.models import User
 from authentication.forms import LoginForm, RegistrationForm
+from .models import TournamentLobby
+from django.db.models import Q
 
 def canvas(request):
     return render(request, 'game/canvas.html')
@@ -23,3 +25,10 @@ def match_1v1(request):
 
 def tournament(request):
     return render(request, "game/tournament.html")
+
+
+def tournament_bracket(request):
+    user = request.user
+    lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))
+    lobby = lobby_queryset.first()
+    return render(request, "game/tournament_bracket.html", {'lobby': lobby})

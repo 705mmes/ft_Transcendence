@@ -55,6 +55,7 @@
 
 
 #lobby_div {
+    display: flex;
     justify-content: center;
     align-items: center;
     width: 60%;
