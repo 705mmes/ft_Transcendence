@@ -106,10 +106,10 @@ function post_game_lobby()
     if (game_data.my_racket.score === 5)
         result = "WINNER"
     else
-        result = "LOOSER"
+        result = "LOSER"
     let text = game_data.my_racket.canvcont.measureText(result);
     let x = game_data.my_racket.canevas.width / 2 - text.width / 2;
-    game_data.my_racket.canvcont.fillText(result, x, 500);
+    game_data.my_racket.canvcont.fillText(result, x, 200);
     document.getElementById('continue').className = 'button';
 }
 

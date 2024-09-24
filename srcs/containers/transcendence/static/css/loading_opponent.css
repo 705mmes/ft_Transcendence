@@ -63,6 +63,14 @@
     opacity: 0;
 }
 
+#continue{
+    position: absolute; /* Allows the button to be positioned */
+    left: 50%;          /* Horizontal center */
+    top: 50%;           /* Vertical center */
+    transform: translate(-50%, -50%); /* Adjust for button's size */
+    z-index: 1000;
+}
+
 .button {
     align-items: center;
     background-color: #FFFFFF;
@@ -73,7 +81,7 @@
     color: rgba(0, 0, 0, 0.85);
     cursor: pointer;
     display: inline-flex;
-    font-family: system-ui,-apple-system,system-ui,"Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-family: system-ui, -apple-system, system-ui, "Helvetica Neue", Helvetica, Arial, sans-serif;
     font-size: 16px;
     font-weight: 600;
     justify-content: center;
