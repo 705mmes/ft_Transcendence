@@ -3,6 +3,8 @@ from authentication.models import User
 from authentication.forms import LoginForm, RegistrationForm
 from django.contrib.auth.decorators import login_required
 from authentication.decorators import custom_login_required
+from .models import TournamentLobby
+from django.db.models import Q
 
 @custom_login_required
 def canvas(request):
@@ -28,3 +30,10 @@ def match_1v1(request):
 @custom_login_required
 def tournament(request):
     return render(request, "game/tournament.html")
+
+
+def tournament_bracket(request):
+    user = request.user
+    lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))
+    lobby = lobby_queryset.first()
+    return render(request, "game/tournament_bracket.html", {'lobby': lobby})
