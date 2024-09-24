@@ -11,6 +11,8 @@ from django.contrib.auth import login, authenticate, logout
 from django_otp.plugins.otp_totp.models import TOTPDevice
 import random
 import string
+from .decorators import custom_login_required
+
 
 def generate_password():
     length = random.randint(8, 32)
@@ -23,9 +25,6 @@ def authentication(request):
         'login_form': LoginForm,
         'registration_form': RegistrationForm,
     }
-    # if (request.user.is_authenticated):
-    #     return render(request, 'game/game.html')
-    # else:
     return render(request, 'authentication/auth_page.html', context)
 
 
@@ -85,7 +84,6 @@ def oauth_callback(request):
         return JsonResponse({'error': 'Failed to fetch access token'}, status=response.status_code)
 
     access_token = response.json().get('access_token')
-    # You can now use this access token to fetch protected resources
 
     api_endpoint = "https://api.intra.42.fr/v2/me"
     headers = {
@@ -123,7 +121,6 @@ def register_api(username, email, request, image):
 
     print("Creating user...")
     user = User.objects.create_user(username=username, email=email, password=password, profile_picture_url=image, is_42=True)
-    # Authenticate and log in the user
     user = authenticate(username=username, password=password)
     if user:
         login(request, user)
@@ -192,11 +189,9 @@ def login_session(request):
 
 
 
-
+@custom_login_required
 def logout_btn(request):
     print("logout view is called")
-    # request.user.is_connected = False
-    # request.user.save()
     logout(request)
     context = {
         'login_form': LoginForm(),
@@ -204,6 +199,7 @@ def logout_btn(request):
     }
     return render(request, 'authentication/btn_page.html', context)
 
-
+@custom_login_required
 def social(request):
     return render(request, 'authentication/social.html')
+``

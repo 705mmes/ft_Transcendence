@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth import get_user_model
 from django_otp.plugins.otp_totp.models import TOTPDevice
 import qrcode, base64
@@ -13,8 +13,9 @@ from django.http import JsonResponse
 from django_otp.forms import OTPTokenForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from authentication.decorators import custom_login_required
 
-@login_required
+@custom_login_required
 def redirect_to_2fa_setup(request):
     print("User:", request.user)
     user = User.objects.get(username=request.user)
@@ -64,11 +65,11 @@ def redirect_to_2fa_setup(request):
 def redirect_to_login(request):
     print("redirect_to_2fa_login...")
     if request.method == 'POST':
-        redirect('login_session');
+        redirect('login_session')
     else:
     	return render(request, 'login.html')
 
-@login_required
+@custom_login_required
 def check_twofa_status(request):
     print("check_twofa_status")
     return JsonResponse({
@@ -76,10 +77,11 @@ def check_twofa_status(request):
         'twofa_submitted': request.user.twofa_submitted
     })
 
-@login_required
+@custom_login_required
 def redirect_to_checker(request):
     print("redirect_to_checker...")
     user = User.objects.get(username=request.user)
+    logout(request)
     if request.method == 'POST':
         try:
             device = TOTPDevice.objects.get(user=request.user, name='default')

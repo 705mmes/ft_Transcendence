@@ -36,29 +36,7 @@ window.onpopstate = (function(event) {
     } else {
         back_to_unspecified_page(window.location.pathname);
     }
-	// checkTwoFAStatus();
 });
-
-
-// function checkTwoFAStatus() {
-// 	console.log("check_twofa_status")
-//     fetch('/check-twofa-status/', {
-//         method: 'GET',
-//         credentials: 'include'
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (!data.twofa_verified && data.twofa_submitted) {
-//         	socket.close();
-// 			to_unspecified_page('/logout_btn');
-//         	window.location.href = "/";
-//         }
-//     })
-//     .catch(error => {
-//         console.error('Error checking two-factor status:', error);
-//     });
-// }
-
 
 function loadPageContent(url) {
     fetch(url)

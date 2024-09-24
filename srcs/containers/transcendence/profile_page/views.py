@@ -8,8 +8,10 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth import update_session_auth_hash
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-  
+from authentication.decorators import custom_login_required
+
 # Create your views here.
+@custom_login_required
 def profile_update(request):
     user = User.objects.get(id=request.user.id)
     if (request.method == 'POST'):
@@ -41,6 +43,7 @@ def profile_update(request):
     }
     return render(request, 'profile/player_form.html', context)
 
+@custom_login_required
 def history(request):
     me = request.user
     test = GameHistory.objects.filter(Q(History1=me) | Q(History2=me))
@@ -71,6 +74,7 @@ def history(request):
     }
     return render(request, 'profile/profile.html', context)
 
+@custom_login_required
 def friend_profile(request):
     target_name = request.GET.get('target_name')
     print(target_name)
