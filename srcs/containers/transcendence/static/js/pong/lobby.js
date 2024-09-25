@@ -209,7 +209,9 @@ function stop_loading(){
     fetching_html('/game/tournament', lobby_content);
 }
 
-// function display_graph()
-// {
-//
-// }
+function display_graph()
+{
+    let lobby_div = document.getElementById('lobby_div');
+
+    fetching_html('/game/tournament/bracket_graph',lobby_div)
+}

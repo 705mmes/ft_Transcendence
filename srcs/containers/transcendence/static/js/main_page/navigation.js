@@ -36,33 +36,23 @@ window.onpopstate = (function(event) {
     } else {
         back_to_unspecified_page(window.location.pathname);
     }
-	// checkTwoFAStatus();
 });
-
-
-// function checkTwoFAStatus() {
-// 	console.log("check_twofa_status")
-//     fetch('/check-twofa-status/', {
-//         method: 'GET',
-//         credentials: 'include'
-//     })
-//     .then(response => response.json())
-//     .then(data => {
-//         if (!data.twofa_verified && data.twofa_submitted) {
-//         	socket.close();
-// 			to_unspecified_page('/logout_btn');
-//         	window.location.href = "/";
-//         }
-//     })
-//     .catch(error => {
-//         console.error('Error checking two-factor status:', error);
-//     });
-// }
-
 
 function loadPageContent(url) {
     fetch(url)
-        .then(response => response.text())
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                return response.json().then(data => {
+                    if (data.redirect_url) {
+                        navigate(data.redirect_url, true);
+                    } else {
+                        throw new Error(`Unexpected response status: ${response.status}`);
+                    }
+                });
+            }
+        })
         .then(html => {
             document.getElementById('content').innerHTML = html;
         })

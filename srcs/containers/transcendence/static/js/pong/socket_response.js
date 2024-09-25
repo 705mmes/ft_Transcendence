@@ -24,9 +24,9 @@ function PongSocketStatus() {
     return true
 }
 
-function ready() {
+function ready(game_mode) {
 
-    const message = JSON.stringify({mode: "match_1v1", action: 'player_ready'});
+    const message = JSON.stringify({mode: game_mode, action: 'player_ready'});
     game_socket.send(message);
 }
 
@@ -64,12 +64,15 @@ function responsePong() {
                 else if (data.action === 'find_opponent')
                 {
                     change_opponent(data.opponent);
-                    timeoutID = setTimeout(ready, 3000);
+                    timeoutID = setTimeout(ready, 3000, 'match_1v1');
                 }
                 else if (data.action === 'opponent_change')
                     tournament_opponent(data.players);
                 else if (data.action === 'lobby_full')
+                {
                     display_graph();
+                    timeoutID = setTimeout(ready, 5000, 'match_tournament');
+                }
                 else if (data.action === 'cancel_lobby')
                     to_unspecified_page('game/');
                 else if (data.action === 'start_game')

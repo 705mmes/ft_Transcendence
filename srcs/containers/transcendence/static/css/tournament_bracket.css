@@ -1,11 +1,12 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    display: flex;
+    /*background-color: #f4f4f4;*/
+    margin: auto;
+    /*display: flex;*/
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
+    /*margin: 0;*/
 }
 
 .bracket {
