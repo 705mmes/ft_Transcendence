@@ -61,8 +61,8 @@ def history(request):
             })
         else:
             game_history.append({
-                'User1': {'score': game.Score2, 'username': game.History2.username},
-                'User2': user2
+                'User1': user2,
+                'User2': {'score': game.Score1, 'username': game.History1.username},
             })
     context  ={
         'target': 'me',
@@ -81,17 +81,20 @@ def friend_profile(request):
     five_last_game = list(test)[-20:]
     game_history = []
     for game in reversed(five_last_game):
-
-        if (game.History1 == target_user):
+        print(game.ffed1)
+        print(game.ffed2)
+        print("ntgm")
+        if game.History1 == target_user:
             game_history.append({
-                'User1': {'score': game.Score1, 'username': game.History1.username},
-                'User2': {'score': game.Score2, 'username': game.History2.username}
+                'User1': {'score': game.Score1, 'username': game.History1.username, "ff": game.ffed1},
+                'User2': {'score': game.Score2, 'username': game.History2.username, "ff": game.ffed2}
             })
         else:
             game_history.append({
-                'User1': {'score': game.Score2, 'username': game.History2.username},
-                'User2': {'score': game.Score1, 'username': game.History1.username}
+                'User1': {'score': game.Score2, 'username': game.History2.username, "ff": game.ffed2},
+                'User2': {'score': game.Score1, 'username': game.History1.username, "ff": game.ffed1}
             })
+    print("user 1 ff = ",game_history.User1,"user 2 ff = ",game_history.User2)
     context = {
         'target': 'friend',
         'player': target_user,

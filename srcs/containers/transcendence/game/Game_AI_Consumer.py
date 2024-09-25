@@ -51,6 +51,8 @@ class GameAIConsumer(AsyncWebsocketConsumer):
             if lobby_cache:
                 lobby_cache['is_game_loop'] = False
                 await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
+            await self.check_game(self.user.get_class(), self.opponent.get_class(), True)
+
 
 
 #utils
@@ -122,7 +124,7 @@ class GameAIConsumer(AsyncWebsocketConsumer):
             self.opponent.move(self.opponent.up_pressed, self.opponent.down_pressed)
             if not racket_move or ball_move:
                 await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
-            if await self.check_game(self.user.get_class(), self.opponent.get_class()):
+            if await self.check_game(self.user.get_class(), self.opponent.get_class(), False):
                 break
             await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
         await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_end')
@@ -130,14 +132,21 @@ class GameAIConsumer(AsyncWebsocketConsumer):
         await sync_to_async(cache.delete)(f"{user_cache['lobby_name']}_key")
         await sync_to_async(cache.delete)(f"{user_name}_key")
 
-    async def check_game(self, user, opponent):
+    async def check_game(self, user, opponent, ff):
         if user.score >= 5 or opponent.score >= 5:
             user = await sync_to_async(User.objects.get)(username=user.name)
             await sync_to_async(GameHistory.objects.create)(History1=user, History2=None,
-                                                            Score1=self.user.score, Score2=self.opponent.score)
+                                                            Score1=self.user.score, Score2=self.opponent.score,
+                                                            ffed1=False, ffed2=False)
             return True
-        return False
-    #     if a player disconnect Return true
+        else:
+            if ff:
+                print("ici")
+                user = await sync_to_async(User.objects.get)(username=user.name)
+                await sync_to_async(GameHistory.objects.create)(History1=user, History2=None,
+                                                                Score1=self.user.score, Score2=self.opponent.score,
+                                                                ffed1=True, ffed2=False)
+            return False
 
     async def update_cache(self, json_data):
         user_name = self.scope['user'].username
@@ -162,23 +171,21 @@ class GameAIConsumer(AsyncWebsocketConsumer):
 # AI GAMEPLAY
 
     async def up_down_ai(self):
-        if self.opponent.y - 30 > self.ball.ia_y:
-            if not self.opponent.up_pressed:
-                self.opponent.up_pressed = True
-                self.opponent.down_pressed = False
-                return True
+        temp_up = self.opponent.up_pressed
+        temp_down = self.opponent.down_pressed
+        if self.opponent.y + 30 > self.ball.ia_y:
+            self.opponent.up_pressed = True
+            self.opponent.down_pressed = False
+            return True
         elif self.opponent.y + 193 < self.ball.ia_y:
-            if not self.opponent.down_pressed:
-                self.opponent.down_pressed = True
-                self.opponent.up_pressed = False
-                return True
+            self.opponent.down_pressed = True
+            self.opponent.up_pressed = False
+            return True
         else:
-            temp_up = self.opponent.up_pressed
-            temp_down = self.opponent.down_pressed
             self.opponent.up_pressed = False
             self.opponent.down_pressed = False
-            if temp_up != self.opponent.up_pressed or temp_down != self.opponent.down_pressed:
-                return True
+        if temp_up != self.opponent.up_pressed or temp_down != self.opponent.down_pressed:
+            return True
         return False
 
     async def recursive_ai(self, move_left):

@@ -55,6 +55,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
             opponent = await sync_to_async(User.objects.get)(username=opponent_name)
             if opponent.is_playing:
+                await self.check_game(self.user.get_class(), self.opponent.get_class(), True)
                 json_data = {'action': 'game_end', 'mode': 'matchmaking_1v1'}
                 await self.channel_layer.group_send("match_" + opponent_name, {'type': 'send_match_info', 'data': json_data})
 
@@ -126,7 +127,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 print("Send message to client !")
                 await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
                 await self.send_data(self.opponent.get_class(), self.user.get_class(), 'game_data')
-            if await self.check_game(self.user.get_class(), self.opponent.get_class()):
+            if await self.check_game(self.user.get_class(), self.opponent.get_class(), False):
                 break
             await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
         print(f"Consumer of {user_name}, in {user_cache['lobby_name']} Game STOPED !")
@@ -136,14 +137,23 @@ class GameConsumer(AsyncWebsocketConsumer):
         await sync_to_async(cache.delete)(f"{user_cache['lobby_name']}_key")
         await sync_to_async(cache.delete)(f"{user_name}_key")
 
-    async def check_game(self, user, opponent):
+    async def check_game(self, user, opponent, ff):
         if user.score >= 5 or opponent.score >= 5:
-            user = await sync_to_async(User.objects.get)(username=user.name)
-            opponent = await sync_to_async(User.objects.get)(username=opponent.name)
-            await sync_to_async(GameHistory.objects.create)(History1=user, History2=opponent,
-                                                            Score1=self.user.score, Score2=self.opponent.score)
+            user_user = await sync_to_async(User.objects.get)(username=user.name)
+            opponent_user = await sync_to_async(User.objects.get)(username=opponent.name)
+            await sync_to_async(GameHistory.objects.create)(History1=user_user, History2=opponent_user,
+                                                            Score1=self.user.score, Score2=self.opponent.score,
+                                                            ffed1=False, ffed2=False)
             return True
-        return False
+        else:
+            if ff:
+                print("la")
+                user_user = await sync_to_async(User.objects.get)(username=user.name)
+                opponent_user = await sync_to_async(User.objects.get)(username=opponent.name)
+                await sync_to_async(GameHistory.objects.create)(History1=user_user, History2=opponent_user,
+                                                                Score1=self.user.score, Score2=self.opponent.score,
+                                                                ffed1=True, ffed2=False)
+            return False
 
     async def update_cache(self, json_data):
         user_name = self.scope['user'].username
