@@ -3,7 +3,7 @@ if (document.getElementById("logout"))
         event.preventDefault();
         socket.close();
         await to_unspecified_page('/logout_btn');
-        window.location.href = "/";
+        to_unspecified_page('/');
     })
 
 if (document.getElementById('game'))
