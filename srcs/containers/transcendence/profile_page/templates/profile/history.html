@@ -9,6 +9,7 @@
         {% if history.User1.ff or history.User2.ff %}
             {% include "profile/victory_ff_block.html" with history=history %}
         {% else %}
+            <span>{{ history.User1.ff }} {{ history.User2.ff }}</span>
             {% include "profile/victory_block.html" with history=history %}
         {% endif %}
     {% endfor %}

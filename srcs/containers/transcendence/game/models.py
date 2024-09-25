@@ -1,4 +1,6 @@
 from datetime import datetime
+from email.policy import default
+
 from math import trunc
 
 from django.db import models
@@ -12,8 +14,8 @@ class GameHistory(models.Model):
     History2 = models.ForeignKey(User, related_name='History2', on_delete=models.CASCADE,  blank=True, null=True)
     Score1 = models.IntegerField()
     Score2 = models.IntegerField()
-    ffed1 = models.BooleanField()
-    ffed2 = models.BooleanField()
+    ffed1 = models.BooleanField(default=False)
+    ffed2 = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.History1} - {self.History2}"
