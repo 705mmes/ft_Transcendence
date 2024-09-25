@@ -111,3 +111,7 @@ body {
 .p.vs {
 	margin: 2px;
 }
+
+#lobby_div {
+    display: flex;
+}

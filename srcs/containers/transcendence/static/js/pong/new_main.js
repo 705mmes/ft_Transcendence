@@ -179,5 +179,5 @@ function choose_player_img()
 if (document.getElementById('continue'))
     document.getElementById('continue').addEventListener('click', function(event){
         event.preventDefault();
-        to_unspecified_page('game/canvas/');
+        to_unspecified_page('/game');
     })

@@ -39,5 +39,5 @@ class TournamentLobby(models.Model):
     player_count = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.P1.Player.username} - {self.P2.Player.username}"
+        return f"{self.P1.username} - {self.P2.username}"
 
