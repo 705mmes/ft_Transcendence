@@ -40,7 +40,19 @@ window.onpopstate = (function(event) {
 
 function loadPageContent(url) {
     fetch(url)
-        .then(response => response.text())
+        .then(response => {
+            if (response.ok) {
+                return response.text();
+            } else {
+                return response.json().then(data => {
+                    if (data.redirect_url) {
+                        navigate(data.redirect_url, true);
+                    } else {
+                        throw new Error(`Unexpected response status: ${response.status}`);
+                    }
+                });
+            }
+        })
         .then(html => {
             document.getElementById('content').innerHTML = html;
         })
