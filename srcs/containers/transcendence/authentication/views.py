@@ -202,4 +202,3 @@ def logout_btn(request):
 @custom_login_required
 def social(request):
     return render(request, 'authentication/social.html')
-``
