@@ -18,9 +18,9 @@
         <span id="user_lose">ff</span>
     {% endif %}
     <div class="vs">
-        <span class="date">ntm</span>
+        <span class="date">{{ history.User1.date }}</span>
         <span>VS</span>
-        <span class="duration">1min</span>
+        <span class="duration">{{ history.User1.time }}</span>
     </div>
     {% if not history.User1.ff %}
         <span id="user_lose">ff</span>

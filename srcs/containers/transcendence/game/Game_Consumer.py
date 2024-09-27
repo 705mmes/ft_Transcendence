@@ -114,6 +114,7 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def game_loop(self, lobby_cache):
         user_name = self.scope['user'].username
+        self.start_time = time.time()
         while lobby_cache['is_game_loop']:
             t1 = time.perf_counter()
             user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
@@ -139,20 +140,26 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def check_game(self, user, opponent, ff):
         if user.score >= 5 or opponent.score >= 5:
+            self.endtime = time.time() - self.start_time
             user_user = await sync_to_async(User.objects.get)(username=user.name)
             opponent_user = await sync_to_async(User.objects.get)(username=opponent.name)
             await sync_to_async(GameHistory.objects.create)(History1=user_user, History2=opponent_user,
                                                             Score1=self.user.score, Score2=self.opponent.score,
-                                                            ffed1=False, ffed2=False)
+                                                            ffed1=False, ffed2=False,
+                                                            date=datetime.now().strftime("%Y-%m-%d"),
+                                                            minutes=self.endtime / 60, seconds=self.endtime % 60)
             return True
         else:
             if ff:
                 print("la")
+                self.endtime = time.time() - self.start_time
                 user_user = await sync_to_async(User.objects.get)(username=user.name)
                 opponent_user = await sync_to_async(User.objects.get)(username=opponent.name)
                 await sync_to_async(GameHistory.objects.create)(History1=user_user, History2=opponent_user,
                                                                 Score1=self.user.score, Score2=self.opponent.score,
-                                                                ffed1=True, ffed2=False)
+                                                                ffed1=True, ffed2=False,
+                                                                date=datetime.now().strftime("%Y-%m-%d"),
+                                                                minutes=self.endtime / 60, seconds=self.endtime % 60)
             return False
 
     async def update_cache(self, json_data):

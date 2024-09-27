@@ -16,6 +16,9 @@ class GameHistory(models.Model):
     Score2 = models.IntegerField()
     ffed1 = models.BooleanField(default=False)
     ffed2 = models.BooleanField(default=False)
+    date = models.DateField()
+    minutes =  models.IntegerField()
+    seconds = models.IntegerField()
 
     def __str__(self):
         return f"{self.History1} - {self.History2}"

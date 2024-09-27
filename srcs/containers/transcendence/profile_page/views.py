@@ -10,6 +10,7 @@ from django.contrib.auth import update_session_auth_hash
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from authentication.decorators import custom_login_required
 
+
 # Create your views here.
 @custom_login_required
 def profile_update(request):
@@ -43,6 +44,7 @@ def profile_update(request):
     }
     return render(request, 'profile/player_form.html', context)
 
+
 @custom_login_required
 def history(request):
     me = request.user
@@ -54,25 +56,29 @@ def history(request):
     for game in reversed(five_last_game):
 
         if game.History2:
-            user2 =  {'score': game.Score2, 'username': game.History2.username, 'ff': game.ffed2}
+            user2 = {'score': game.Score2, 'username': game.History2.username, 'ff': game.ffed2, 'date': game.date,
+                     'time': f"{game.minutes:02}:{game.seconds:02}"},
         else:
             user2 = {'score': game.Score2, 'username': 'IA', 'ff': game.ffed2}
         if game.History1 == me:
             game_history.append({
-                'User1': {'score': game.Score1, 'username': game.History1.username, 'ff': game.ffed1},
+                'User1': {'score': game.Score1, 'username': game.History1.username, 'ff': game.ffed1, 'date': game.date,
+                          'time': f"{game.minutes:02}:{game.seconds:02}"},
                 'User2': user2
             })
         else:
             game_history.append({
                 'User1': user2,
-                'User2': {'score': game.Score1, 'username': game.History1.username, 'ff':game.ffed1},
+                'User2': {'score': game.Score1, 'username': game.History1.username, 'ff': game.ffed1, 'date': game.date,
+                          'time': f"{game.minutes:02}:{game.seconds:02}"},
             })
-    context  ={
+    context = {
         'target': 'me',
         'player': me,
         'game': game_history
     }
     return render(request, 'profile/profile.html', context)
+
 
 @custom_login_required
 def friend_profile(request):
@@ -86,18 +92,21 @@ def friend_profile(request):
     game_history = []
     for game in reversed(five_last_game):
         if game.History2:
-            user2 =  {'score': game.Score2, 'username': game.History2.username, 'ff': game.ffed2}
+            user2 = {'score': game.Score2, 'username': game.History2.username, 'ff': game.ffed2, 'date': game.date,
+                     'time': f"{game.minutes:02}:{game.seconds:02}"},
         else:
             user2 = {'score': game.Score2, 'username': 'IA', 'ff': game.ffed2}
         if game.History1 == target_user:
             game_history.append({
-                'User1': {'score': game.Score1, 'username': game.History1.username, "ff": game.ffed1},
+                'User1': {'score': game.Score1, 'username': game.History1.username, "ff": game.ffed1, 'date': game.date,
+                          'time': f"{game.minutes:02}:{game.seconds:02}"},
                 'User2': user2
             })
         else:
             game_history.append({
                 'User1': user2,
-                'User2': {'score': game.Score1, 'username': game.History1.username, "ff": game.ffed1}
+                'User2': {'score': game.Score1, 'username': game.History1.username, "ff": game.ffed1, 'date': game.date,
+                          'time': f"{game.minutes:02}:{game.seconds:02}"},
             })
     context = {
         'target': 'friend',
