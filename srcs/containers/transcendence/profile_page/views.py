@@ -8,10 +8,11 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from django.contrib.auth import update_session_auth_hash
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from authentication.decorators import custom_login_required
+from authentication.decorators import custom_login_required, profile_modify
 
 
 # Create your views here.
+@profile_modify
 @custom_login_required
 def profile_update(request):
     user = User.objects.get(id=request.user.id)
