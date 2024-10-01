@@ -17,6 +17,7 @@ import redis
 from django.core import serializers
 from django.core.cache import cache
 from time import process_time
+from game.models import GameLobby, TournamentLobby
 from game.PlayerClass import Player
 from game.BallClass import Ball
 
@@ -32,6 +33,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.opponent = Player(opponent_cache['id'], opponent_cache['name'])
         self.ball = Ball()
         print(f"Consumer of {self.scope['user']} state game loop : {lobby_cache['is_game_loop']}")
+        self.start_time = time.time()
         if user_cache['game_loop'] and not lobby_cache['is_game_loop']:
             lobby_cache['is_game_loop'] = True
             await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
@@ -114,7 +116,6 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     async def game_loop(self, lobby_cache):
         user_name = self.scope['user'].username
-        self.start_time = time.time()
         while lobby_cache['is_game_loop']:
             t1 = time.perf_counter()
             user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
@@ -139,7 +140,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         await sync_to_async(cache.delete)(f"{user_name}_key")
 
     async def check_game(self, user, opponent, ff):
-        if user.score >= 5 or opponent.score >= 5:
+        if user.score >= 1 or opponent.score >= 1:
             self.endtime = time.time() - self.start_time
             user_user = await sync_to_async(User.objects.get)(username=user.name)
             opponent_user = await sync_to_async(User.objects.get)(username=opponent.name)
@@ -148,10 +149,10 @@ class GameConsumer(AsyncWebsocketConsumer):
                                                             ffed1=False, ffed2=False,
                                                             date=datetime.now().strftime("%Y-%m-%d"),
                                                             minutes=self.endtime / 60, seconds=self.endtime % 60)
+            await self.who_win(user, opponent)
             return True
         else:
             if ff:
-                print("la")
                 self.endtime = time.time() - self.start_time
                 user_user = await sync_to_async(User.objects.get)(username=user.name)
                 opponent_user = await sync_to_async(User.objects.get)(username=opponent.name)
@@ -160,7 +161,35 @@ class GameConsumer(AsyncWebsocketConsumer):
                                                                 ffed1=True, ffed2=False,
                                                                 date=datetime.now().strftime("%Y-%m-%d"),
                                                                 minutes=self.endtime / 60, seconds=self.endtime % 60)
+                await sync_to_async(self.who_win)(user, opponent)
             return False
+
+    async def who_win(self, user, opponent):
+        if user.score > opponent.score:
+            winner = user.name
+            loser = opponent.name
+        else:
+            winner = opponent.name
+            loser = user.name
+        usr = await sync_to_async(User.objects.get)(username=user.name)
+
+        user_cache = await sync_to_async(cache.get)(f"{self.scope['user'].username}_key")
+        lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
+
+        lobby_queryset = await sync_to_async(TournamentLobby.objects.filter)(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr))
+        lobby = await sync_to_async(lobby_queryset.first)()
+
+        if lobby_cache['is_tournament'] == 1:
+            lobby.Winner_SF1 = await sync_to_async(User.objects.get)(username=winner)
+            lobby.Loser_SF1 = await sync_to_async(User.objects.get)(username=loser)
+        elif lobby_cache['is_tournament'] == 2:
+            lobby.Winner_SF2 = await sync_to_async(User.objects.get)(username=winner)
+            lobby.Loser_SF2 = await sync_to_async(User.objects.get)(username=loser)
+        await sync_to_async(lobby.save)()
+        lobby_queryset = await sync_to_async(TournamentLobby.objects.filter)(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr))
+        lobby = await sync_to_async(lobby_queryset.first)()
+        print("Winner is", lobby.Winner_SF1.username, lobby.Winner_SF2.username)
+        print("Loser is", lobby.Loser_SF1.username, lobby.Loser_SF2.username)
 
     async def update_cache(self, json_data):
         user_name = self.scope['user'].username

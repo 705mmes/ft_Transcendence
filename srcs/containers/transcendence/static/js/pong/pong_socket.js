@@ -21,6 +21,4 @@ function open_match_ai_socket(game_data) {
     }
 }
 
-
-
 pong_websocket(game_data, '/ws/game/game/');
