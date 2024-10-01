@@ -115,3 +115,25 @@
     color: rgba(0, 0, 0, 0.65);
     transform: translateY(0);
 }
+
+.game {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center elements horizontally */
+}
+
+
+#players_container {
+    display: flex;
+    justify-content: space-between; /* Distributes players evenly */
+    width: 100%; /* Full width */
+    margin: 20px 0; /* Space between navbar and players */
+}
+
+#player1, #player2 {
+    width: 45%; /* Or any percentage that fits your design */
+    height: 100px; /* Set a height for the player spans */
+    text-align: center; /* Center the text */
+    font-size: 55px;
+    line-height: 100px; /* Vertically center the text */
+}
