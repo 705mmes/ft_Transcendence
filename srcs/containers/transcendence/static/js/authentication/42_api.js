@@ -21,9 +21,8 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// Extract the authorization code from the URL
-const urlParams = new URLSearchParams(window.location.search);
 const code = urlParams.get('code');
+const urlParams = new URLSearchParams(window.location.search);
 
 if (code) {
     // If there's an authorization code, exchange it for an access token

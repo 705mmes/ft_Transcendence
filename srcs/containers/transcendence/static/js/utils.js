@@ -114,10 +114,14 @@ async function fetching_html_add(link, element)
     try
     {
         // console.log(link);
-        const response = await fetch(link);
+        const response = await fetch(link)
         if (!response.ok)
             throw new TypeError("HTML fetch failed");
-        element.innerHTML += await response.text();
+        let bidule = await response.text();
+        if (bidule != 'nope')
+            element.innerHTML += bidule;
+        else
+            to_unspecified_page('/');
     }
     catch (error)
     {
@@ -140,6 +144,7 @@ async function fetching_html(link, element)
         console.log(error);
     }
 }
+
 
 function delete_script_by_class_name(name)
 {
