@@ -50,7 +50,7 @@ class LobbyConsumer(WebsocketConsumer):
         #     json_data = {'action': 'opponent_change', 'mode': 'matchmaking_1v1',
         #                  'players': self.create_json_player(lobby)}
         #     async_to_sync(self.channel_layer.group_send)(lobby.Name, {'type': 'send_info', 'data': json_data})
-        print(f"Disconnecting : {self.scope['user']}")
+        print(f"Disconnecting from lobby : {self.scope['user']}")
 
     def receive(self, text_data):
         text_data_json = json.loads(text_data)
@@ -240,7 +240,7 @@ class LobbyConsumer(WebsocketConsumer):
         if lobby.player_count == 0:
             lobby.delete()
             print("Lobby delete !")
-        print(lobby.P1, lobby.P2, lobby.P3, lobby.P4)
+        print("Remove from lobby",lobby.P1, lobby.P2, lobby.P3, lobby.P4)
 
     def add_to_lobby(self, lobby, user):
         if not lobby.P1:

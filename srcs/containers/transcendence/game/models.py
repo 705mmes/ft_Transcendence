@@ -31,7 +31,7 @@ class GameLobby(models.Model):
     is_tournament = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.Player1.Player.username} - {self.Player2.Player.username}"
+        return f"{self.Player1.username} - {self.Player2.username}"
 
 class TournamentLobby(models.Model):
     P1 = models.ForeignKey(User, related_name='P1', on_delete=models.CASCADE,  blank=True, null=True)
