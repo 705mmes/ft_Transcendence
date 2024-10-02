@@ -115,8 +115,14 @@ def oauth_callback(request):
 
 
 def register_api(username, email, request, image):
+    print("register_api:", username)
     if User.objects.filter(username=username).exists():
-        return {'status': 'success', 'message': 'User registered and logged in successfully.'}
+        user = User.objects.get(username=username)
+        if user:
+            login(request, user)
+            return {'status': 'success', 'message': 'User logged in successfully.'}
+        else:
+            return {'status': 'error', 'message': 'Authentication failed.'}
     password = generate_password()
 
     print("Creating user...")

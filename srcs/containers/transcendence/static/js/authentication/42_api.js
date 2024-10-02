@@ -1,58 +1,59 @@
-// The then() method is a key feature of JavaScript's Promise API, 
-// 	designed specifically to handle asynchronous tasks like API calls.
+(function() {
+    function startOAuth2Flow() {
+        window.location.href = '/oauth/start/';
+    }
 
-function startOAuth2Flow() {
-    // Redirect to the start-oauth2-flow Django view
-    window.location.href = '/oauth/start/';
-}
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
             }
         }
+        return cookieValue;
     }
-    return cookieValue;
-}
 
-const code = urlParams.get('code');
-const urlParams = new URLSearchParams(window.location.search);
+    function handleOAuthCallback() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
 
-if (code) {
-    // If there's an authorization code, exchange it for an access token
-    fetch('/oauth/callback/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
-        },
-        body: JSON.stringify({ code: code })
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(data => {
-                console.log('Error response data:', data); // Log the full response data
-                throw new Error(`Failed to register: ${data.error || 'Unknown error'}`);
+        if (code) {
+            fetch('/oauth/callback/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify({ code: code })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        console.log('Error response data:', data);
+                        throw new Error(`Failed to register: ${data.error || 'Unknown error'}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Registration successful:', data.message);
+                to_unspecified_page('/game');
+            })
+            .catch(error => {
+                console.error('Error:', error);
             });
         }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Registration successful:', data.message);
-        to_unspecified_page('/game');
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        // Optionally display an error message to the user
-    });
-} else {
-    if (document.getElementById("42_auth_button"))
-        document.getElementById("42_auth_button").addEventListener('click', startOAuth2Flow);
-}
+    }
 
+    const authButton = document.getElementById("42_auth_button");
+    if (authButton) {
+        authButton.addEventListener('click', startOAuth2Flow);
+    }
+
+    handleOAuthCallback();
+})();
