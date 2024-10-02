@@ -203,7 +203,7 @@ def logout_btn(request):
         'login_form': LoginForm(),
         'registration_form': RegistrationForm(),
     }
-    return render(request, 'authentication/btn_page.html', context)
+    return render(request, 'authentication/auth_page.html', context)
 
 @custom_login_required
 def social(request):
