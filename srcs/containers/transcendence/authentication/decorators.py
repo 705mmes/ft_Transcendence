@@ -10,8 +10,6 @@ def custom_login_required(view_func):
                 return HttpResponseRedirect(settings.LOGIN_URL)
         else:
             return view_func(request, *args, **kwargs)
-        else:
-            return HttpResponseRedirect(settings.LOGIN_URL)
     return _wrapped_view
 
 def profile_modify(view_func):
@@ -21,6 +19,4 @@ def profile_modify(view_func):
                 return HttpResponseRedirect('/profile')
             else:
                 return view_func(request, *args, **kwargs)
-        else:
-            return HttpResponseRedirect(settings.LOGIN_URL)
     return _wrapped_view
