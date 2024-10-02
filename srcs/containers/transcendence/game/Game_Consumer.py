@@ -129,7 +129,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                 print("Send message to client !")
                 await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
                 await self.send_data(self.opponent.get_class(), self.user.get_class(), 'game_data')
-            if await self.check_game(self.user.get_class(), self.opponent.get_class(), False):
+            if await self.check_game(self.user.get_class(), self.opponent.get_class(), False, lobby_cache):
+                print("Game checked !", user_cache['lobby_name'], "lobby cache",lobby_cache['is_tournament'])
                 break
             await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
         print(f"Consumer of {user_name}, in {user_cache['lobby_name']} Game STOPED !")
@@ -139,29 +140,31 @@ class GameConsumer(AsyncWebsocketConsumer):
         await sync_to_async(cache.delete)(f"{user_cache['lobby_name']}_key")
         await sync_to_async(cache.delete)(f"{user_name}_key")
 
-    async def check_game(self, user, opponent, ff):
+    async def check_game(self, user, opponent, ff, lobby_cache):
         if user.score >= 1 or opponent.score >= 1:
-            self.endtime = time.time() - self.start_time
-            user_user = await sync_to_async(User.objects.get)(username=user.name)
-            opponent_user = await sync_to_async(User.objects.get)(username=opponent.name)
-            await sync_to_async(GameHistory.objects.create)(History1=user_user, History2=opponent_user,
-                                                            Score1=self.user.score, Score2=self.opponent.score,
-                                                            ffed1=False, ffed2=False,
-                                                            date=datetime.now().strftime("%Y-%m-%d"),
-                                                            minutes=self.endtime / 60, seconds=self.endtime % 60)
-            await self.who_win(user, opponent)
-            return True
-        else:
-            if ff:
+            if lobby_cache['is_tournament'] == 1 or lobby_cache['is_tournament'] == 2:
                 self.endtime = time.time() - self.start_time
                 user_user = await sync_to_async(User.objects.get)(username=user.name)
                 opponent_user = await sync_to_async(User.objects.get)(username=opponent.name)
                 await sync_to_async(GameHistory.objects.create)(History1=user_user, History2=opponent_user,
                                                                 Score1=self.user.score, Score2=self.opponent.score,
-                                                                ffed1=True, ffed2=False,
+                                                                ffed1=False, ffed2=False,
                                                                 date=datetime.now().strftime("%Y-%m-%d"),
                                                                 minutes=self.endtime / 60, seconds=self.endtime % 60)
-                await sync_to_async(self.who_win)(user, opponent)
+            await self.who_win(user, opponent)
+            return True
+        else:
+            if ff:
+                if lobby_cache['is_tournament'] == 1 or lobby_cache['is_tournament'] == 2:
+                    self.endtime = time.time() - self.start_time
+                    user_user = await sync_to_async(User.objects.get)(username=user.name)
+                    opponent_user = await sync_to_async(User.objects.get)(username=opponent.name)
+                    await sync_to_async(GameHistory.objects.create)(History1=user_user, History2=opponent_user,
+                                                                    Score1=self.user.score, Score2=self.opponent.score,
+                                                                    ffed1=True, ffed2=False,
+                                                                    date=datetime.now().strftime("%Y-%m-%d"),
+                                                                    minutes=self.endtime / 60, seconds=self.endtime % 60)
+                await self.who_win(user, opponent)
             return False
 
     async def who_win(self, user, opponent):
@@ -186,10 +189,8 @@ class GameConsumer(AsyncWebsocketConsumer):
             lobby.Winner_SF2 = await sync_to_async(User.objects.get)(username=winner)
             lobby.Loser_SF2 = await sync_to_async(User.objects.get)(username=loser)
         await sync_to_async(lobby.save)()
-        lobby_queryset = await sync_to_async(TournamentLobby.objects.filter)(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr))
-        lobby = await sync_to_async(lobby_queryset.first)()
-        print("Winner is", lobby.Winner_SF1.username, lobby.Winner_SF2.username)
-        print("Loser is", lobby.Loser_SF1.username, lobby.Loser_SF2.username)
+        # print("Winner is", lobby.Winner_SF1.username, lobby.Winner_SF2.username)
+        # print("Loser is", lobby.Loser_SF1.username, lobby.Loser_SF2.username)
 
     async def update_cache(self, json_data):
         user_name = self.scope['user'].username

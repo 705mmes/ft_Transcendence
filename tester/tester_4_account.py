@@ -41,6 +41,7 @@ def se_connecter(navigateur, username, password):
     bouton_login = navigateur.find_element(By.NAME, 'login')  # Adapté selon ta page
     bouton_login.click()
 
+    time.sleep(0.5)
     navigateur.get(game_url)
 
     time.sleep(0.5)
