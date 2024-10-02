@@ -319,13 +319,14 @@ class LobbyConsumer(WebsocketConsumer):
                      'players': self.create_json_player(lobby)}
         async_to_sync(self.channel_layer.group_send)(lobby.Name, {'type': 'send_info', 'data': json_data})
 
-    def init_pos_tournament(self, lobby, player1, player2):
+    def init_pos_tournament(self, lobby, player1, player2, game_number):
         self.set_player(player1, player2, lobby.Name)
         self.set_player(player2, player1, lobby.Name)
         print(lobby.Name)
         cache.set(f"{lobby.Name}_key", {
             'is_game_loop': False,
             'test': False,
+            'is_tournament': game_number,
             'user_key': f"{player1.username}",
             'opponent_key': f"{player2.username}",
             'posX': (2040 - 30) / 2,
@@ -335,15 +336,15 @@ class LobbyConsumer(WebsocketConsumer):
             'dirY': 0
         })
 
-    def create_game_tournament(self, player1, player2):
+    def create_game_tournament(self, player1, player2, game_number):
         if not self.check_lobby_existance(player1, player2):
             self.change_in_research(False, player1.username)
             self.change_in_research(False, player2.username)
             self.change_is_playing(True, player1.username)
             self.change_is_playing(True, player2.username)
             lobby = GameLobby.objects.create(Player1=player1, Player2=player2,
-                                             Name=f"{player1.username}_{player2.username}")
-            self.init_pos_tournament(lobby, player1, player2)
+                                             Name=f"{player1.username}_{player2.username}", is_tournament=game_number)
+            self.init_pos_tournament(lobby, player1, player2, game_number)
             async_to_sync(self.channel_layer.group_add)(lobby.Name, player1.channel_name)
             async_to_sync(self.channel_layer.group_add)(lobby.Name, player2.channel_name)
             return lobby
@@ -354,8 +355,8 @@ class LobbyConsumer(WebsocketConsumer):
         lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))
         lobby_t = lobby_queryset.first()
         if lobby_t:
-            lobby1 = self.create_game_tournament(lobby_t.P1, lobby_t.P2)
-            lobby2 = self.create_game_tournament(lobby_t.P3, lobby_t.P4)
+            lobby1 = self.create_game_tournament(lobby_t.P1, lobby_t.P2, 1)
+            lobby2 = self.create_game_tournament(lobby_t.P3, lobby_t.P4, 2)
             if not lobby1 and not lobby2:
                 return
             lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))
@@ -385,6 +386,15 @@ class LobbyConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_send)("game_" + lobby.Player2.username,
                                                      {'type': 'send_info', 'data': json_data_2})
 
+    def check_second_game(self):
+        user = User.objects.get(username=self.scope['user'])
+        lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))
+        lobby_t = lobby_queryset.first()
+        if lobby_t:
+            json_data = {'action': 'second_match', 'mode': 'matchmaking_1v1'}
+            async_to_sync(self.channel_layer.group_send)("game_" + user.username,
+                                                         {'type': 'send_info', 'data': json_data})
+
     def tournament(self, json_data):
         if json_data['action'] == 'searching':
             self.searching_tournament()
@@ -392,6 +402,8 @@ class LobbyConsumer(WebsocketConsumer):
             self.cancel_tournament()
         elif json_data['action'] == 'player_ready':
             self.check_player_tournament()
+        elif json_data['action'] == 'is_tournament':
+            self.check_second_game()
 
 
 # AI LOBBY
