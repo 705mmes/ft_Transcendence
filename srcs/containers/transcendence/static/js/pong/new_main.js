@@ -111,6 +111,7 @@ function post_game_lobby()
     let x = game_data.my_racket.canevas.width / 2 - text.width / 2;
     game_data.my_racket.canvcont.fillText(result, x, 200);
     document.getElementById('continue').className = 'button';
+    timeoutID = setTimeout(to_unspecified_page, 15000,'/game');
 }
 
 function game_ended(data){
@@ -179,5 +180,6 @@ function choose_player_img()
 if (document.getElementById('continue'))
     document.getElementById('continue').addEventListener('click', function(event){
         event.preventDefault();
+        clearTimeout(timeoutID);
         to_unspecified_page('/game');
     })

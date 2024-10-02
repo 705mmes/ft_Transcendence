@@ -185,12 +185,18 @@ class GameConsumer(AsyncWebsocketConsumer):
         if lobby_cache['is_tournament'] == 1:
             lobby.Winner_SF1 = await sync_to_async(User.objects.get)(username=winner)
             lobby.Loser_SF1 = await sync_to_async(User.objects.get)(username=loser)
+            lobby.game_played += 1
+            print("Winner SF1 is", lobby.Winner_SF1)
+            print("Loser SF1 is", lobby.Loser_SF1)
         elif lobby_cache['is_tournament'] == 2:
             lobby.Winner_SF2 = await sync_to_async(User.objects.get)(username=winner)
             lobby.Loser_SF2 = await sync_to_async(User.objects.get)(username=loser)
+            lobby.game_played += 1
+            print("Winner SF2 is", lobby.Winner_SF2)
+            print("Loser SF2 is", lobby.Loser_SF2)
+        if lobby.game_played >= 4:
+            lobby.is_finished = True
         await sync_to_async(lobby.save)()
-        # print("Winner is", lobby.Winner_SF1.username, lobby.Winner_SF2.username)
-        # print("Loser is", lobby.Loser_SF1.username, lobby.Loser_SF2.username)
 
     async def update_cache(self, json_data):
         user_name = self.scope['user'].username

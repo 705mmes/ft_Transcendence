@@ -46,6 +46,7 @@ class TournamentLobby(models.Model):
     is_full = models.BooleanField(default=False)
     player_count = models.IntegerField(default=0)
     game_played = models.IntegerField(default=0)
+    is_finished = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.P1.username} - {self.P2.username}"

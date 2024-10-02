@@ -350,25 +350,49 @@ class LobbyConsumer(WebsocketConsumer):
             return lobby
         return None
 
+    def first_game(self, lobby_t, user):
+        lobby1 = self.create_game_tournament(lobby_t.P1, lobby_t.P2, 1)
+        lobby2 = self.create_game_tournament(lobby_t.P3, lobby_t.P4, 2)
+        if not lobby1 and not lobby2:
+            return
+        lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))
+        lobby_t = lobby_queryset.first()
+        print(lobby_t.P1.is_playing, lobby_t.P2.is_playing, lobby_t.P3.is_playing, lobby_t.P4.is_playing)
+        if lobby_t.P1.is_playing and lobby_t.P2.is_playing and lobby_t.P3.is_playing and lobby_t.P4.is_playing:
+            if lobby1:
+                self.send_data_game(lobby_t.P1, lobby_t.P2, lobby1)
+            if lobby2:
+                self.send_data_game(lobby_t.P3, lobby_t.P4, lobby2)
+            return
+        return
+
+    def second_game(self, lobby_t, user):
+        lobby1 = self.create_game_tournament(lobby_t.Winner_SF1, lobby_t.Winner_SF2, 3)
+        lobby2 = self.create_game_tournament(lobby_t.Loser_SF1, lobby_t.Loser_SF2, 4)
+        if not lobby1 and not lobby2:
+            return
+        lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))
+        lobby_t = lobby_queryset.first()
+        print(lobby_t.P1.is_playing, lobby_t.P2.is_playing, lobby_t.P3.is_playing, lobby_t.P4.is_playing)
+        if lobby_t.P1.is_playing and lobby_t.P2.is_playing and lobby_t.P3.is_playing and lobby_t.P4.is_playing:
+            if lobby1:
+                self.send_data_game(lobby_t.Winner_SF1, lobby_t.Winner_SF2, lobby1)
+            if lobby2:
+                self.send_data_game(lobby_t.Loser_SF1, lobby_t.Loser_SF2, lobby2)
+            return
+        return
+
     def check_player_tournament(self):
         user = User.objects.get(username=self.scope['user'])
         lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))
         lobby_t = lobby_queryset.first()
         if lobby_t:
-            lobby1 = self.create_game_tournament(lobby_t.P1, lobby_t.P2, 1)
-            lobby2 = self.create_game_tournament(lobby_t.P3, lobby_t.P4, 2)
-            if not lobby1 and not lobby2:
-                return
-            lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))
-            lobby_t = lobby_queryset.first()
-            print(lobby_t.P1.is_playing, lobby_t.P2.is_playing, lobby_t.P3.is_playing, lobby_t.P4.is_playing)
-            if lobby_t.P1.is_playing and lobby_t.P2.is_playing and lobby_t.P3.is_playing and lobby_t.P4.is_playing:
-                if lobby1:
-                    self.send_data_game(lobby_t.P1, lobby_t.P2, lobby1)
-                if lobby2:
-                    self.send_data_game(lobby_t.P3, lobby_t.P4, lobby2)
-                return
-            return
+            if lobby_t.is_finished:
+                self.remove_from_lobby(lobby_t, user)
+            elif lobby_t.game_played == 0:
+                self.first_game(lobby_t, user)
+            elif lobby_t.game_played == 2:
+                self.second_game(lobby_t, user)
         print("Le lobbby_t : ",lobby_t)
         json_data = {'action': 'cancel_lobby', 'mode': 'match_tournament'}
         async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
