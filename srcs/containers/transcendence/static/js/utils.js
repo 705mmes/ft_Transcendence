@@ -118,7 +118,7 @@ async function fetching_html_add(link, element)
         if (!response.ok)
             throw new TypeError("HTML fetch failed");
         let bidule = await response.text();
-        if (bidule != 'nope')
+        if (bidule !== 'nope')
             element.innerHTML += bidule;
         else
             to_unspecified_page('/');
@@ -144,6 +144,35 @@ async function fetching_html(link, element)
         console.log(error);
     }
 }
+
+async function fetching_html_post(link, element)
+{
+    try
+    {
+        console.log('actual', window.location.href);
+        const response = await fetch(link,{
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+            },
+            body: JSON.stringify({navigation: 'backward_forward'})
+        });
+        if (!response.ok)
+        {
+            if (response.status === 401)
+                return 401;
+            else if (response.status === 403)
+                return 403
+            throw new TypeError("HTML fetch failed");
+        }
+        element.innerHTML = await response.text();
+    }
+    catch (error)
+    {
+        console.log(error);
+    }
+}
+
 
 
 function delete_script_by_class_name(name)
