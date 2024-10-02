@@ -24,13 +24,17 @@ function change_page_name(page) {
 
 async function back_to_unspecified_page(page) {
     let div_content = document.getElementById('content');
-    await fetching_html(page, div_content);
+
+    if (!await fetching_html(page, div_content))
+        history.replaceState(page, null, '/');
+        page = '/'
     reset_script(page);
     await reload_scripts(page, 0);
 }
 
 
 window.onpopstate = (function(event) {
+
     if (event.state && event.state.page) {
         back_to_unspecified_page(event.state.page);
     } else {
