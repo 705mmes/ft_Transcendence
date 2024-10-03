@@ -208,3 +208,9 @@ def logout_btn(request):
 @custom_login_required
 def social(request):
     return render(request, 'authentication/social.html')
+
+def register_session(request):
+    context = {
+        'registration_form': RegistrationForm,
+    }
+    return render(request, 'authentication/registration.html', context)

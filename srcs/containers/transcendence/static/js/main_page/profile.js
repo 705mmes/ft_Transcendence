@@ -18,7 +18,6 @@ async function update_profile(value)
 {
     try
     {
-        console.log("je jure jai pas cliquer sur save");
         navigate('/')
         const formdata = new FormData(value);
         let response = await fetch('profile/modify/',{

@@ -46,7 +46,6 @@ def redirect_to_2fa_setup(request):
         else:
             print("Form errors:", form.errors)
             return JsonResponse({'success': False, 'error': 'Invalid form submission.'})
-    
     else:
         form = OTPTokenForm(user=request.user)
     if device:
@@ -67,7 +66,7 @@ def redirect_to_login(request):
     if request.method == 'POST':
         redirect('login_session')
     else:
-    	return render(request, 'login.html')
+    	return render(request, 'accounts/login.html')
 
 @custom_login_required
 def check_twofa_status(request):
