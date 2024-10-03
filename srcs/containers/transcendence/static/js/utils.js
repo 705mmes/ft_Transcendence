@@ -2,8 +2,6 @@
 let game_socket;
 let socket;
 let timeoutID;
-let page_number = 0;
-let current_page;
 let moveback = window.location.pathname
 
 if (window.location.pathname !== '/')
@@ -118,10 +116,7 @@ async function fetching_html_add(link, element)
         if (!response.ok)
             throw new TypeError("HTML fetch failed");
         let bidule = await response.text();
-        if (bidule !== 'nope')
-            element.innerHTML += bidule;
-        else
-            to_unspecified_page('/');
+        element.innerHTML += bidule;
     }
     catch (error)
     {
