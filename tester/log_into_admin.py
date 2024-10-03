@@ -15,14 +15,11 @@ firefox_binary_path = '/opt/firefox/stable/firefox/firefox'
 
 # Créer une liste des comptes
 comptes = [
-    {'username': 'leon', 'password': 'caca'},
-    {'username': 'ludo', 'password': 'fefe'},
-    {'username': 'abel', 'password': 'caca'},
-    {'username': 'dcandan', 'password': 'caca'}
+    {'username': 'neo', 'password': 'fefe'},
 ]
 
 # URL de la page de connexion de ton application
-login_url = 'http://127.0.0.1:8000/'
+login_url = 'http://127.0.0.1:8000/admin/'
 game_url = 'http://127.0.0.1:8000/game'
 
 # Liste pour stocker les instances des navigateurs
@@ -37,21 +34,7 @@ def se_connecter(navigateur, username, password):
 
     champ_username.send_keys(username)
     champ_password.send_keys(password)
-    
-    bouton_login = navigateur.find_element(By.NAME, 'login')  # Adapté selon ta page
-    bouton_login.click()
-
-    time.sleep(0.5)
-    navigateur.get(game_url)
-
-    time.sleep(0.5)
-    button_tournament = navigateur.find_element(By.ID, 'btn_tournament')
-    button_tournament.click()
-
-    time.sleep(0.5)
-    button_tournament = navigateur.find_element(By.ID, 'start_research')
-    button_tournament.click()
-
+    champ_password.send_keys(Keys.ENTER)
 
 firefox_options = Options()
 firefox_options.binary_location = firefox_binary_path

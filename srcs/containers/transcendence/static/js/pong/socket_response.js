@@ -37,8 +37,6 @@ function launch_game(data){
         open_match_socket(game_data)
     document.getElementById('lobby_css').remove();
     document.getElementById('lobby_div').remove();
-    // console.log(data.my_racket.y, data.my_racket.x);
-    //console.log(data.opponent.y, data.opponent.x);
     main_game(data);
 }
 
