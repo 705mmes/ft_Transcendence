@@ -17,12 +17,24 @@ django-redis
 channels==4.1.0                 # Asynchronous support for Django
 channels-redis==4.2.0           # Redis-backed channel layers
 daphne==4.1.2                   # HTTP, HTTP2, and WebSocket protocol server for ASGI and ASGI-HTTP
+uvicorn==0.31.0                 
+h11==0.14.0
+click==8.1.7
 
 # WebSocket and asynchronous support
 asgiref==3.8.1                  # ASGI (Asynchronous Server Gateway Interface) reference implementation
 autobahn==23.6.2                # WebSocket and WAMP library
 txaio==23.1.1                   # Compatibility layer for Twisted/Trollius for Autobahn
 async-timeout==4.0.3            # Timeout context manager for asyncio
+uvloop==0.20.0
+watchfiles==0.24.0
+websockets==13.1
+python-dotenv==1.0.1
+PyYAML==6.0.2
+sniffio==1.3.1
+httptools==0.6.1
+exceptiongroup==1.2.2
+anyio==4.6.0
 
 # Twisted-related packages
 Twisted==24.3.0                 # Event-driven networking engine
