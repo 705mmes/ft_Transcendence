@@ -151,7 +151,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                                                                 ffed1=False, ffed2=False,
                                                                 date=datetime.now().strftime("%Y-%m-%d"),
                                                                 minutes=self.endtime / 60, seconds=self.endtime % 60)
-            await self.who_win(user, opponent)
+            if lobby_cache['is_tournament'] != 0:
+                await self.who_win(user, opponent)
             return True
         else:
             if ff:
@@ -164,7 +165,8 @@ class GameConsumer(AsyncWebsocketConsumer):
                                                                     ffed1=True, ffed2=False,
                                                                     date=datetime.now().strftime("%Y-%m-%d"),
                                                                     minutes=self.endtime / 60, seconds=self.endtime % 60)
-                await self.who_win(user, opponent)
+                if lobby_cache['is_tournament'] != 0:
+                    await self.who_win(user, opponent)
             return False
 
     async def who_win(self, user, opponent):
