@@ -23,7 +23,7 @@ async function update_profile(value)
         let response = await fetch('profile/modify/',{
             method: 'POST',
             body: formdata,
-            headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,},
+            headers: {'X-CSRFToken': getCookie('csrftoken')},
             credentials: 'same-origin',
         });
         if (!response.ok)

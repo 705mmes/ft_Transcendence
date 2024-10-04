@@ -18,6 +18,7 @@
         </div>
         <div class="form-container">
             <form id="social-form">
+                {% csrf_token %}
                 <input type="search" id="searchbar" name="username" placeholder="Search friend...">
                 <button type="submit" id="friend_invite" class="button">Invite</button>
             </form>
