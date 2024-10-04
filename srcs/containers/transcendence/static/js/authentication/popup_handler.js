@@ -11,3 +11,36 @@ if (document.getElementById("login_button"))
 		await fetching_html_add("account/redirect/login", document.getElementById('content'));
 		await reload_scripts('/');
 })
+
+if (document.getElementById("registration"))
+	document.getElementById("registration").addEventListener("submit", async (e) => {
+		e.preventDefault();
+		await send_login_form(e.target, 'register_session/');
+})
+
+async function send_login_form(value, url)
+{
+    try
+    {
+        const formdata = new FormData(value);
+        let response = await fetch(url, {
+            method: 'POST',
+            body: formdata,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+        })
+        if (!response.ok)
+                throw new TypeError("Login fail");
+        //solution pas viable
+        let test = await response.text()
+        if (test === "Error")
+            throw new TypeError("Wrong identifiant");
+        await DisplayCanvas();
+    }
+    catch (error)
+    {
+        console.log(error);
+    }
+
+}
