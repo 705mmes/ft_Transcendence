@@ -4,18 +4,19 @@ from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
 from channels.security.websocket import AllowedHostsOriginValidator
 
+# Set the default settings module for the Django application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'transcendence.settings')
 
-# Initialize Django ASGI application
+# Initialize the Django ASGI application
 application = get_asgi_application()
 
-# Now that Django is initialized, import routing and consumers
+# Import WebSocket routing patterns
 from authentication.routing import websocket_urlpatterns as authentication_websocket_urlpatterns
 from game.routing import websocket_urlpatterns as game_websocket_urlpatterns
 
 # Combine all routing into a single application
 application = ProtocolTypeRouter({
-    "http": application,  # Already initialized application
+    "http": application,
     "websocket": AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter(
@@ -24,3 +25,4 @@ application = ProtocolTypeRouter({
         )
     )
 })
+

@@ -23,9 +23,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = bool(os.environ.get("DEBUG", default=0))
+DEBUG = bool(os.environ.get("DEBUG", default=False))
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://10.13.3.9:8000', 'http://0.0.0.0:8000', 'http://192.168.1.17:8000', 'https://localhost:4443', 'https://10.13.3.9:4443', 'https://0.0.0.0:4443', 'https://192.168.1.17:4443']
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'http://10.13.3.9:8000',
+    'http://0.0.0.0:8000',
+    'http://192.168.1.17:8000',
+    'https://localhost:4443',
+    'https://10.13.3.9:4443',
+    'https://0.0.0.0:4443',
+    'https://192.168.1.17:4443',
+]
 
 # OAuth2 credentials
 OAUTH_CLIENT_ID = os.getenv('VITE_UID')
@@ -34,6 +43,12 @@ OAUTH_CLIENT_SECRET = os.getenv('VITE_SECRET')
 # ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 ALLOWED_HOSTS = ['*']
 
+# SESSION_COOKIE_SECURE = bool(os.environ.get("SESSION_COOKIE", default=True))
+# CSRF_COOKIE_SECURE = bool(os.environ.get("CSRF_COOKIE", default=True))
+SESSION_COOKIE_SECURE = os.environ.get("SESSION_COOKIE", "False") == "True"
+CSRF_COOKIE_SECURE = os.environ.get("CSRF_COOKIE", "False") == "True"
+
+SECURE_PROXY_SSL_HEADER = ('X-Forwarded-Proto', 'https')
 
 # Application definition
 
@@ -113,6 +128,7 @@ DATABASES = {
         "PASSWORD": os.environ.get("SQL_PASSWORD", "dansmatrix"),
         "HOST": os.environ.get("SQL_HOST", "postgres"),
         "PORT": os.environ.get("SQL_PORT", "5432"),
+        "CONN_MAX_AGE": 600  # Enable persistent connections
     }
 }
 
@@ -139,7 +155,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'authentication.models.CustomMinimumLengthValidator',
     },
-    {
+    { 
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
