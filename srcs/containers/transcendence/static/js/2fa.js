@@ -13,7 +13,7 @@ if (document.getElementById('otp-form')) {
             body: formData,
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                'X-CSRFToken': getCookie('csrftoken')
             }
         })
         .then(response => response.json())
@@ -43,7 +43,7 @@ if (document.getElementById('checker')) {
             body: formData,
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
-                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                'X-CSRFToken': getCookie('csrftoken')
             }
         })
         .then(response => response.json())
@@ -76,14 +76,13 @@ if (document.getElementById('login-form')) {
                 method: 'POST',
                 body: formData,
                 headers: {
-                    'X-CSRFToken': formData.get('csrfmiddlewaretoken')
+                    'X-CSRFToken': getCookie('csrftoken')
                 }
             });
 
             const result = await response.json();
 
             if (result.success) {
-                // window.location.href = result.redirect_url;
                 to_unspecified_page(result.redirect_url);
             } else {
                 errorMessageDiv.textContent = result.error || 'Login failed. Please try again.';

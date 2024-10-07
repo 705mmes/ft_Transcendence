@@ -49,5 +49,5 @@ class TournamentLobby(models.Model):
     is_finished = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.P1.username} - {self.P2.username}"
+        return f"{self.Name}"
 
