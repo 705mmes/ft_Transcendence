@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from authentication.forms import ModifiedProfileForm
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from game.models import GameHistory
 from django.db.models import Q
 from authentication.models import User
 from django.contrib.auth.password_validation import validate_password
+from authentication.models import username_validator
 from django.core.exceptions import ValidationError
 from django.contrib.auth import update_session_auth_hash
 from django.views.decorators.csrf import csrf_exempt, csrf_protect
@@ -16,27 +17,28 @@ from authentication.decorators import custom_login_required, profile_modify
 @custom_login_required
 def profile_update(request):
     user = User.objects.get(id=request.user.id)
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         form = ModifiedProfileForm(request.POST, request.FILES, instance=user)
-        print('Profile picture:', request.FILES.get('profile_picture'))
-        if (form.is_valid()):
-            if (user.profile_picture_url):
-                user.profile_picture_url = ''
-                user.save()
-            if (form.cleaned_data['new_password']):
-                try:
+        if form.is_valid():
+            try:
+                if user.profile_picture_url:
+                    user.profile_picture_url = ''
+                    user.save()
+                if form.cleaned_data['username']:
+                    username_validator(form.cleaned_data['username'])
+                if form.cleaned_data['new_password']:
                     validate_password(form.cleaned_data['new_password'], form.cleaned_data['new_password_repeat'])
                     user.set_password(form.cleaned_data['new_password'])
                     user.save()
                     update_session_auth_hash(request, user)
                     form.save()
-                    return HttpResponse('Password updated successfully')
-                except ValidationError as e:
-                    for error in e.error_list:
-                        return HttpResponse(error.message)
-            form.save()
-            return HttpResponse('Success')
-        return HttpResponse('Error')
+                    return JsonResponse({'success':'success', 'username': form.cleaned_data['username'], 'password':'yes'})
+                form.save()
+                return JsonResponse({'success':'success', 'username': form.cleaned_data['username'], 'password':'no'})
+            except ValidationError as e:
+                for error in e.error_list:
+                    return JsonResponse({'success':'failed', 'error': error.message})
+        return JsonResponse({'success':'error'})
     else:
         form = ModifiedProfileForm(instance=user)
     context = {
