@@ -12,7 +12,9 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 import random
 import string
 from .decorators import custom_login_required
+import logging
 
+logger = logging.getLogger(__name__)
 
 def generate_password():
     length = random.randint(8, 32)
@@ -30,6 +32,7 @@ def authentication(request):
 
 def get_redirect_uri(request):
     hostname = request.get_host()
+    logger.info("Hostname: %s", hostname)
     redirect_uris = {
         'localhost:8000': 'http://localhost:8000/',
         'k2r3p9:8000': 'http://k2r3p9:8000/',
@@ -38,14 +41,15 @@ def get_redirect_uri(request):
         '127.0.0.1:8000': 'http://127.0.0.1:8000/',
         '0.0.0.0:8000': 'http://0.0.0.0:8000/',
         '192.168.1.17:8000': 'http://192.168.1.17:8000/',
-        'localhost:4443': 'https://localhost:4443/',
-        'k2r3p9:4443': 'https://k2r3p9:4443/',
-        'k2r3p10:4443': 'https://k2r3p10:4443/',
-        'k2r3p8:4443': 'https://k2r3p8:4443/',
-        '127.0.0.1:4443': 'https://127.0.0.1:4443/',
-        '0.0.0.0:4443': 'https://0.0.0.0:4443/',
-        '192.168.1.17:4443': 'https://192.168.1.17:4443/'
+        'localhost': 'https://localhost:4443/',
+        'k2r3p9': 'https://k2r3p9:4443/',
+        'k2r3p10': 'https://k2r3p10:4443/',
+        'k2r3p8': 'https://k2r3p8:4443/',
+        '127.0.0.1': 'https://127.0.0.1:4443/',
+        '0.0.0.0': 'https://0.0.0.0:4443/',
+        '192.168.1.17': 'https://192.168.1.17:4443/'
     }
+    logger.info("Redirect URI: %s", redirect_uris.get(hostname))
     return redirect_uris.get(hostname)
 
 
