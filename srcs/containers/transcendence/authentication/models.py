@@ -1,3 +1,6 @@
+from distutils.command.check import check
+from wsgiref.validate import validator
+
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -49,11 +52,34 @@ class FriendList(models.Model):
 
 
 
+def username_validator(user_name):
+    try:
+        CheckIntra_validate(user_name)
+        UsernameMaxLength_validate(user_name)
+        AllNumUsername_validate(user_name)
+    except ValidationError as e:
+        raise ValidationError(e.message)
+
+def CheckIntra_validate(username):
+    if username.find('_intra_42') != -1:
+        raise ValidationError('Illegal name', code='illegal name')
+
+def UsernameMaxLength_validate(username):
+    if len(username) > 16:
+        raise ValidationError('Username too long', code='username length')
+
+def  AllNumUsername_validate(username):
+    if username.isnumeric():
+        raise ValidationError('Username cannot be all num', code='all num')
+    elif not username.isalnum():
+        raise ValidationError('Illegal character in Username', code='illegal char')
+
+
 class RepeatPasswordValidator():
     def validate(self, password, repeat_password,user=None):
         if password != repeat_password:
             raise ValidationError(
-                ("Passwords do not match. try again."),
+                "Passwords do not match. try again.",
                 code='password missmatch',
             )
 

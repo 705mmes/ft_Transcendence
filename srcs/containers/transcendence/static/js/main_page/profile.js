@@ -28,19 +28,22 @@ async function update_profile(value)
         });
         if (!response.ok)
             throw new TypeError(`Server error: ${errorText}`);
-        let success_error = await response.text();
+        let success_error = await response.json();
         console.log(success_error);
-        if(success_error === 'Error')
+        if(success_error.success === 'Error')
             throw new TypeError('something went wrong');
-        if (success_error === 'Password updated successfully')
+        if (success_error.success === 'success' && success_error.password === 'yes')
         {
             socket.close();
-           await to_unspecified_page('logout_btn/');
+            await to_unspecified_page('logout_btn/');
         }
-        else if (success_error === 'Success')
-           await to_unspecified_page('profile/');
+        else if (success_error.success === 'success' && success_error.password === 'no')
+        {
+            socket.send(JSON.stringify({'action': 'update_name', 'username': success_error.username}));
+            await to_unspecified_page('profile/');
+        }
         else
-            display_popup(success_error)
+            display_popup(success_error.error)
     }
     catch (error)
     {

@@ -9,6 +9,7 @@ from django.core import serializers
 class ActiveConsumer(WebsocketConsumer):
     def connect(self):
         print(f"Connecting to social : {self.scope['user']}")
+        self.user = self.scope['user']
         user = User.objects.get(username=self.scope['user'])
         user.is_connected = True
         user.save()
@@ -17,7 +18,7 @@ class ActiveConsumer(WebsocketConsumer):
         self.accept()
 
     def disconnect(self, close_code):
-        user = User.objects.get(username=self.scope['user'])
+        user = User.objects.get(username=self.user)
         user.is_connected = False
         user.save()
         print(f"Disconnecting to social : {self.scope['user']}")
@@ -42,6 +43,9 @@ class ActiveConsumer(WebsocketConsumer):
             self.cancel_deny_request(text_data_json['target'])
         elif action == 'view_profile':
             self.show_profile(text_data_json['target'])
+        elif action == 'update_name':
+            print("here")
+            self.user = text_data_json['username']
         # print(text_data_json)
 
     def send_friend_list(self):
