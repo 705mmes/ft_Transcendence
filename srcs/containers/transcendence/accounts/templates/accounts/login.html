@@ -6,7 +6,6 @@
     <form method="POST" id="login-form" action="{% url 'login_session' %}">
         {% csrf_token %}
 
-        <!-- Login 13 - Bootstrap Brain Component -->
         {% include 'accounts/sign_in.html' %}
 
     </form>

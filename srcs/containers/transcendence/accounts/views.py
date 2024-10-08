@@ -39,6 +39,7 @@ def redirect_to_2fa_setup(request):
     
             if device and device.verify_token(token):
                 user.twofa_submitted = True
+                user.twofa_verified = True
                 user.save()
                 return JsonResponse({'success': True, 'redirect_url': '/game'})
             else:
@@ -59,7 +60,7 @@ def redirect_to_2fa_setup(request):
         qr_code_data = None
         print("Error: No device")       
     
-    return render(request, 'setup.html', {'form': form, 'qr_url': qr_code_data})
+    return render(request, 'accounts/setup.html', {'form': form, 'qr_url': qr_code_data})
 
 def redirect_to_login(request):
     print("redirect_to_2fa_login...")
@@ -76,21 +77,18 @@ def check_twofa_status(request):
         'twofa_submitted': request.user.twofa_submitted
     })
 
-@custom_login_required
 def redirect_to_checker(request):
     print("redirect_to_checker...")
     user = User.objects.get(username=request.user)
-    logout(request)
-    if request.method == 'POST':
+    if request.method == 'POST':    
+        print("need to get device from", user)
         try:
-            device = TOTPDevice.objects.get(user=request.user, name='default')
+            device = TOTPDevice.objects.get(user=user, name='default')
         except MultipleObjectsReturned:
-            device = TOTPDevice.objects.filter(user=request.user, name='default').first()
-            print("Multiple devices found. Using the first one.")
+            device = TOTPDevice.objects.filter(user=user, name='default').first()
         except ObjectDoesNotExist:
             return JsonResponse({'success': False, 'error': 'No Device found.'})
-            
-        form = OTPTokenForm(data=request.POST, user=request.user)
+        form = OTPTokenForm(data=request.POST, user=user)
         if form.is_valid():
             token = form.cleaned_data['otp_token']
             if device and device.verify_token(token):
@@ -103,8 +101,5 @@ def redirect_to_checker(request):
             print("Form errors:", form.errors)
             return JsonResponse({'success': False, 'error': 'Invalid form submission.'})
     else:
-        form = OTPTokenForm(user=request.user)
-        return render(request, 'checker.html', {'form': form})
-
-
-
+        form = OTPTokenForm(user=user)
+        return render(request, 'accounts/checker.html', {'form': form})

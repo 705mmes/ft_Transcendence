@@ -202,6 +202,9 @@ def login_session(request):
 @custom_login_required
 def logout_btn(request):
     print("logout view is called")
+    user = User.objects.get(username=request.user)
+    user.twofa_verified = False
+    user.save()
     logout(request)
     context = {
         'login_form': LoginForm(),

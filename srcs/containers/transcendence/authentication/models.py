@@ -19,6 +19,7 @@ class User(AbstractUser):
     tournament_research = models.BooleanField(default=False)
     channel_name = models.CharField(blank=True)
     twofa_submitted = models.BooleanField(default=False)
+    twofa_verified = models.BooleanField(default=False)
 
     def __str__(self):
         return self.username
