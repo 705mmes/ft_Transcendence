@@ -1,32 +1,3 @@
 {% load static %}
 
-<div id="register_div">
-    <h1>SIGN IN</h1>
-    <form id="registration">
-        {% csrf_token %}
-        <label>
-            {{ registration_form.username }}
-            <span>Username</span>
-            <br><br>
-        </label>
-        <label>
-            {{ registration_form.email }}
-            <span>Email</span>
-            <br><br>
-            </label>
-        <label>
-            {{ registration_form.password1 }}
-            <span>Password</span>
-            <br><br>
-        </label>
-        <label>
-            {{ registration_form.password2 }}
-            <span>Confirm Password</span>
-            <br><br>
-        </label>
-        <label>
-            <button class="submit" type="submit" id="registersubmit">Register me</button>
-        </label>
-    </form>
-    <button class="popupboutton" id="login_button">Login</button>
-</div>
+{% include 'accounts/sign_up.html' %}

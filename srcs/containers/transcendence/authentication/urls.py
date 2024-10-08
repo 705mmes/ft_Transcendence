@@ -12,8 +12,7 @@ from two_factor.urls import urlpatterns as tf_urls
 urlpatterns = [
     path('', views.authentication),
     path('login_session/', views.login_session, name='login_session'),
-    path('register_session/', views.register),
-    path('register_tentative/', views.register_session),
+    path('register_session/', views.register, name='register_session'),
     path('oauth/start/', views.start_oauth2_flow, name='start_oauth2_flow'),
     path('oauth/callback/', views.oauth_callback, name='oauth_callback'),
 	# path('fetch_protected_data/',views.fetch_protected_data),

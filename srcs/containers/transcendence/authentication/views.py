@@ -141,6 +141,7 @@ def register(request):
         print('Registration')
         form = RegistrationForm(request.POST)
         if (form.is_valid()):
+            print('Registration form valid')
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
             email = form.cleaned_data['email']
@@ -152,6 +153,12 @@ def register(request):
                 return (render(request, 'game/game.html'))
             else:
                 return (HttpResponse('Error'))
+    else:
+        print('Registration sdas')
+        context = {
+            'registration_form': RegistrationForm,
+        }
+        return render(request, 'authentication/registration.html', context)
 
 def login_session(request):
     print("login session")
@@ -208,9 +215,3 @@ def logout_btn(request):
 @custom_login_required
 def social(request):
     return render(request, 'authentication/social.html')
-
-def register_session(request):
-    context = {
-        'registration_form': RegistrationForm,
-    }
-    return render(request, 'authentication/registration.html', context)

@@ -3,13 +3,9 @@
 
 {% block page_content %}
 <div id="login_div">
-    <form method="POST" id="login-form" action="{% url 'login_session' %}">
-        {% csrf_token %}
 
-        <!-- Login 13 - Bootstrap Brain Component -->
         {% include 'accounts/sign_in.html' %}
 
-    </form>
     <div id="error-message" style="color: red;"></div>
 </div>
 {% endblock %}
