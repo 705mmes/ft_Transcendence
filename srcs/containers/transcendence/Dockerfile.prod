@@ -67,7 +67,6 @@ RUN chmod +x  $APP_HOME/entrypoint.prod.sh
 
 # copy project
 COPY . $APP_HOME
-RUN python manage.py collectstatic --noinput
 # donne les fichiers au nouveau user "app" et lance le script en tant que "app" par securite
 RUN chown -R app:app $APP_HOME
 USER app
