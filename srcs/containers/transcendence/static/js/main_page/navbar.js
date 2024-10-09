@@ -24,7 +24,9 @@ if (document.getElementById('profile'))
     })
 
 if (document.getElementById('social'))
-    document.getElementById('social').addEventListener('click', function(event){
+    document.getElementById('social').addEventListener('click', async function(event){
     event.preventDefault();
-    to_unspecified_page('/social');
+    await to_unspecified_page('/social');
+    const message = JSON.stringify({action: "friend_list"});
+    socket.send(message);
     })

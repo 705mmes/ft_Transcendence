@@ -47,6 +47,24 @@ if not User.objects.filter(username='abel').exists():
     abel = User.objects.create_user(username='abel', email='abel@maildeludo.com', password='caca')
 if not User.objects.filter(username='dcandan').exists():
     dcandan = User.objects.create_user(username='dcandan', email='dcandan@maildeludo.com', password='caca')
+if not User.objects.filter(username='leon1').exists():
+    leon1 = User.objects.create_user(username='leon1', email='leon@maildeludo.com', password='caca')
+if not User.objects.filter(username='leon2').exists():
+  leon2 = User.objects.create_user(username='leon2', email='leon@maildeludo.com', password='caca')
+if not User.objects.filter(username='leon3').exists():
+    leon3 = User.objects.create_user(username='leon3', email='leon@maildeludo.com', password='caca')
+if not User.objects.filter(username='leon4').exists():
+    leon4 = User.objects.create_user(username='leon4', email='leon@maildeludo.com', password='caca')
+if not User.objects.filter(username='leon5').exists():
+    leon5 = User.objects.create_user(username='leon5', email='leon@maildeludo.com', password='caca')
+if not User.objects.filter(username='leon6').exists():
+    leon6 = User.objects.create_user(username='leon6', email='leon@maildeludo.com', password='caca')
+if not User.objects.filter(username='leon7').exists():
+    leon7 = User.objects.create_user(username='leon7', email='leon@maildeludo.com', password='caca')
+if not User.objects.filter(username='leon8').exists():
+    leon8 = User.objects.create_user(username='leon8', email='leon@maildeludo.com', password='caca')
+
+
 if not FriendRequest.objects.filter(requester=leon, recipient=ludo):
     FriendRequest.objects.create(requester=leon, recipient=ludo)
 if not FriendRequest.objects.filter(requester=leon, recipient=dcandan):

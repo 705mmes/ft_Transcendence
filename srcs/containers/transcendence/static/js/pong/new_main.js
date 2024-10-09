@@ -144,9 +144,9 @@ function infinite_game_loop(game_data, utils, canvas)
     let new_time = Date.now();
     utils.ms = (new_time - utils.oldtime) / 1000;
     utils.oldtime = new_time;
-    //game_data.my_racket.moving(utils.ms);
-    //game_data.opponent_racket.moving(utils.ms);
-    //game_data.ball.move(utils.ms);
+    game_data.my_racket.moving(utils.ms);
+    game_data.opponent_racket.moving(utils.ms);
+    game_data.ball.move(utils.ms);
     utils.canvcont.clearRect(0, 0, canvas.width, canvas.height);
     game_data.my_racket.drawing(utils.canvcont);
     game_data.opponent_racket.drawing(utils.canvcont);
