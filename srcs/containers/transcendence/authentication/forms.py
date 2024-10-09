@@ -16,14 +16,14 @@ class ModifiedProfileForm(forms.ModelForm):
         self.fields['email'].widget.attrs.update({'class': 'input', 'placeholder': ''})
 
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length=64, label='Username', widget=forms.TextInput(attrs={'id':'Lusername', 'class':'popuptext', 'placeholder':""}))
-    password = forms.CharField(max_length=64, label='Password', widget=forms.TextInput(attrs={'id':'Password2', 'class':'popuptext', 'placeholder':"", 'type':'password'}))
+    username = forms.CharField(max_length=64, label='username', widget=forms.TextInput(attrs={'id':'Lusername'}))
+    password = forms.CharField(max_length=64, label='password', widget=forms.TextInput(attrs={'id':'Password2', 'type':'password'}))
 
 class RegistrationForm(forms.Form):
-    username = forms.CharField(max_length=64, label='Username', widget=forms.TextInput(attrs={'id': 'username', 'class': 'popuptext', 'placeholder': ""}))
-    email = forms.CharField(max_length=300, label='mail', widget=forms.TextInput(attrs={'id': 'mail', 'class': 'popuptext', 'placeholder': ""}))
-    password1 = forms.CharField(max_length=64, label='Password', widget=forms.TextInput(attrs={'id': 'Password', 'class': 'popuptext', 'placeholder': "", 'type': 'password'}))
-    password2 = forms.CharField(max_length=64, label='Password2', widget=forms.TextInput(attrs={'id': 'RPassword', 'class': 'popuptext', 'placeholder': "", 'type': 'password'}))
+    username = forms.CharField(max_length=64, label='username', widget=forms.TextInput(attrs={'id': 'username'}))
+    email = forms.CharField(max_length=300, label='mail', widget=forms.TextInput(attrs={'id': 'mail'}))
+    password1 = forms.CharField(max_length=64, label='password', widget=forms.TextInput(attrs={'id': 'password', 'type': 'password'}))
+    password2 = forms.CharField(max_length=64, label='password2', widget=forms.TextInput(attrs={'id': 'rpassword', 'type': 'password'}))
 
 class UserSearchForm(forms.Form):
     query = forms.CharField(label='Search Users', max_length=100)

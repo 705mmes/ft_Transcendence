@@ -141,38 +141,34 @@ def register_api(username, email, request, image):
 
 def register(request):
     # faut interdir ces fdp de users d'utiliser _42_intra
-    if (request.method == 'POST'):
-        print('Registration')
+    if request.method == 'POST':
         form = RegistrationForm(request.POST)
-        if (form.is_valid()):
-            print('Registration form valid')
+        print(request.POST)
+        if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password1']
             email = form.cleaned_data['email']
             User.objects.create_user(username=username, password=password, email=email)
             user = authenticate(username=username, password=password)
             if user is not None:
-                print("User is OK")
                 login(request, user)
-                return (render(request, 'game/game.html'))
+                return JsonResponse({'success': True, 'redirect_url': '/game'})
             else:
-                return (HttpResponse('Error'))
+                return JsonResponse({'success': False, 'error': 'user already exist'})
+        else:
+            return JsonResponse({'success': False, 'error': 'invalid form'})
     else:
-        print('Registration sdas')
-        context = {
-            'registration_form': RegistrationForm,
-        }
-        return render(request, 'authentication/registration.html', context)
+        return render(request, 'authentication/registration.html')
 
 def login_session(request):
     print("login session")
     if request.method == 'POST':
         form = LoginForm(request.POST)
+        print(form)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             user = authenticate(username=username, password=password)
-
             if user is not None:
                 if user.is_authenticated:
                     if user_has_device(user):
@@ -201,8 +197,7 @@ def login_session(request):
             return JsonResponse({'success': False, 'error': 'Form is invalid'}, status=400)
     else:
         print("render auth_page")
-        form = LoginForm()
-        return render(request, 'authentication/auth_page.html', {'login_form': form})
+        return render(request, 'authentication/auth_page.html')
 
 
 
@@ -213,11 +208,7 @@ def logout_btn(request):
     user.twofa_verified = False
     user.save()
     logout(request)
-    context = {
-        'login_form': LoginForm(),
-        'registration_form': RegistrationForm(),
-    }
-    return render(request, 'authentication/auth_page.html', context)
+    return render(request, 'authentication/auth_page.html')
 
 @custom_login_required
 def social(request):

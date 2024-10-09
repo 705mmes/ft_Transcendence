@@ -75,6 +75,8 @@ function responsePong() {
                     display_graph();
                 else if (data.action === 'launch_second_match')
                     timeoutID = setTimeout(ready, 5000, 'match_tournament');
+                else if (data.action === 'no_tournament')
+                    return ;
                 else if (data.action === 'cancel_lobby')
                     to_unspecified_page('game/');
                 else if (data.action === 'start_game')
