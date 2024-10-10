@@ -228,9 +228,11 @@ class GameConsumer(AsyncWebsocketConsumer):
         await sync_to_async(cache.set)(f"{user_name}_key", user_cache)
 
     async def send_data(self, player1, player2, action):
-        user_json = await self.json_creator_racket(player1)
-        opponent_json = await self.json_creator_racket(player2)
-        ball_json = await self.json_creator_ball()
+        user_json, opponent_json, ball_json = await asyncio.gather(
+            self.json_creator_racket(player1),
+            self.json_creator_racket(player2),
+            self.json_creator_ball()
+        )
         json_data = {'action': action, 'mode': 'matchmaking_1v1', 'my_racket': user_json,
                      'opponent': opponent_json, 'ball': ball_json}
         await self.channel_layer.group_send("match_" + player1.name, {'type': 'send_match_info', 'data': json_data})
