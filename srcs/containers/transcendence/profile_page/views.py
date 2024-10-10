@@ -57,7 +57,6 @@ def history(request):
     five_last_game = list(test)[-20:]
     game_history = []
     for game in reversed(five_last_game):
-
         if game.History2:
             user2 = {'score': game.Score2, 'username': game.History2.username, 'ff': game.ffed2, 'date': game.date,
                      'time': f"{game.minutes:02}:{game.seconds:02}"},

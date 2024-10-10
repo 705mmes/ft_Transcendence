@@ -38,8 +38,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         if user_cache['game_loop'] and not lobby_cache['is_game_loop']:
             lobby_cache['is_game_loop'] = True
             await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
-            self.thread = threading.Thread(target=self.game_loop, args=(lobby_cache,))
-            self.thread.start()
+            self.task = asyncio.create_task(self.game_loop(lobby_cache))
         print(user_cache.get('lobby_name'))
         await self.accept()
 
@@ -57,7 +56,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             if lobby_cache:
                 lobby_cache['is_game_loop'] = False
                 await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
-                self.thread.join()
             opponent = await sync_to_async(User.objects.get)(username=opponent_name)
             if opponent.is_playing:
                 await self.check_game(self.user.get_class(), self.opponent.get_class(), True, lobby_cache)
@@ -117,31 +115,39 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     # GAME LOGIQUE HERE
 
-    def game_loop(self, lobby_cache):
+    async def game_loop(self, lobby_cache):
         user_name = self.scope['user'].username
+        user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
         while lobby_cache['is_game_loop']:
             t1 = time.perf_counter()
-            user_cache = cache.get(f"{user_name}_key")
-            opponent_cache = cache.get(f"{self.who_is_the_enemy(lobby_cache)}_key")
-            lobby_cache = cache.get(f"{user_cache['lobby_name']}_key")
-            ball_move =  async_to_sync(self.ball.move)(self.user.get_class(), self.opponent.get_class())
-            racket_move = async_to_sync(self.check_move)(user_cache, opponent_cache)
+
+            lobby_cache, user_cache, opponent_cache, ball_move = await asyncio.gather(
+                sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key"),
+                sync_to_async(cache.get)(f"{user_name}_key"),
+                sync_to_async(cache.get)(f"{self.who_is_the_enemy(lobby_cache)}_key"),
+                self.ball.move(self.user.get_class(), self.opponent.get_class()),
+            )
+            await self.check_move(user_cache, opponent_cache)
+
             self.user.move(user_cache['up_pressed'], user_cache['down_pressed'])
             self.opponent.move(opponent_cache['up_pressed'], opponent_cache['down_pressed'])
-            # if not racket_move or ball_move:
-            #     print("Send message to client !")
-            async_to_sync(self.send_data)(self.user.get_class(), self.opponent.get_class(), 'game_data')
-            async_to_sync( self.send_data)(self.opponent.get_class(), self.user.get_class(), 'game_data')
-            if async_to_sync( self.check_game)(self.user.get_class(), self.opponent.get_class(), False, lobby_cache):
-                print("Game checked !", user_cache['lobby_name'], "lobby cache",lobby_cache['is_tournament'])
-                break
-            async_to_sync(self.ft_sleep)(max(0.0, 0.01667 - (time.perf_counter() - t1)))
-        print(f"Consumer of {user_name}, in {user_cache['lobby_name']} Game STOPED !")
-        async_to_sync(self.send_data)(self.opponent.get_class(), self.user.get_class(), 'game_end')
-        async_to_sync(self.send_data)(self.user.get_class(), self.opponent.get_class(), 'game_end')
-        cache.delete(f"{lobby_cache['opponent_key']}_key")
-        cache.delete(f"{user_cache['lobby_name']}_key")
-        cache.delete(f"{user_name}_key")
+
+            await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
+            await self.send_data(self.opponent.get_class(), self.user.get_class(), 'game_data')
+
+            if ball_move == 2:
+                if await self.check_game(self.user.get_class(), self.opponent.get_class(), False, lobby_cache):
+                    break
+            print("exec time: ", time.perf_counter() - t1)
+            await asyncio.sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
+        await self.endgame(lobby_cache, user_cache, user_name)
+
+    async def endgame(self, lobby_cache, user_cache, user_name):
+        await self.send_data(self.opponent.get_class(), self.user.get_class(), 'game_end')
+        await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_end')
+        await sync_to_async(cache.delete)(f"{lobby_cache['opponent_key']}_key")
+        await sync_to_async(cache.delete)(f"{user_cache['lobby_name']}_key")
+        await sync_to_async(cache.delete)(f"{user_name}_key")
 
     async def check_game(self, user, opponent, ff, lobby_cache):
         if user.score >= 5 or opponent.score >= 5:
