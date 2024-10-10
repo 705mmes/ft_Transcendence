@@ -32,10 +32,10 @@ class Ball:
 		self.x += self.dirX * 0.01667
 		self.y += self.dirY
 		if await self.hit(user) or await self.hit(opponent):
-			return True
+			return 1
 		if await self.field_boundary(user, opponent):
-			return True
-		return False
+			return 2
+		return 0
 
 	async def hit(self, player):
 		if player.x == 0:
