@@ -127,13 +127,14 @@ class GameConsumer(AsyncWebsocketConsumer):
                 sync_to_async(cache.get)(f"{self.who_is_the_enemy(lobby_cache)}_key"),
                 self.ball.move(self.user.get_class(), self.opponent.get_class()),
             )
-            await self.check_move(user_cache, opponent_cache)
+            racket_move = await self.check_move(user_cache, opponent_cache)
 
             self.user.move(user_cache['up_pressed'], user_cache['down_pressed'])
             self.opponent.move(opponent_cache['up_pressed'], opponent_cache['down_pressed'])
 
-            await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
-            await self.send_data(self.opponent.get_class(), self.user.get_class(), 'game_data')
+            if ball_move > 0 and racket_move:
+                await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
+                await self.send_data(self.opponent.get_class(), self.user.get_class(), 'game_data')
 
             if ball_move == 2:
                 if await self.check_game(self.user.get_class(), self.opponent.get_class(), False, lobby_cache):
