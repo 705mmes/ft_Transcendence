@@ -68,7 +68,7 @@ if (document.getElementById("btn_matchmaking_1v1")) {
             btn.innerHTML = "SEARCH OPPONENT";
         }
         let lobby_content = document.getElementById('lobby_content');
-        fetching_html("game/match_1v1", lobby_content);
+        fetching_html("/game/match_1v1", lobby_content);
     }
 }
 
@@ -99,6 +99,8 @@ if (document.getElementById("btn_match_ai")) {
             let btn = document.getElementById("start_research");
             btn.innerHTML = "LAUNCH GAME";
         }
+        let lobby_content = document.getElementById('lobby_content');
+        fetching_html("/game/match_1v1", lobby_content);
     }
 }
 
