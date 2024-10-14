@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
+from transcendence.utils import generate_csrf_trusted_origins
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,18 +26,9 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.environ.get("DEBUG", default=False))
 
-CSRF_TRUSTED_ORIGINS = [
-    'http://localhost:8000',
-    'http://10.13.3.9:8000',
-    'http://0.0.0.0:8000',
-    'http://192.168.1.17:8000',
-    'https://localhost:4443',
-    'https://10.13.3.9:4443',
-    'https://0.0.0.0:4443',
-    'https://192.168.1.17:4443',
-]
+CSRF_TRUSTED_ORIGINS = generate_csrf_trusted_origins()
 
-# OAuth2 credentials
+# OAuth2 credentials    
 OAUTH_CLIENT_ID = os.getenv('VITE_UID')
 OAUTH_CLIENT_SECRET = os.getenv('VITE_SECRET')
 
