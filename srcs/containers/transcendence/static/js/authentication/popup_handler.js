@@ -35,49 +35,10 @@ async function load_sign_in()
 
     await fetching_html('login_session/', fetch_div);
 }
-//
-// if (document.getElementById('register-form')) {
-//
-//     let errorMessageDiv;
-//     const form = document.getElementById('register-form');
-//     if (document.getElementById('error-message'))
-//         errorMessageDiv = document.getElementById('error-message');
-//     else {
-//         errorMessageDiv = document.createElement("div");
-//         errorMessageDiv.id = 'error-message';
-//     }
-//
-//     form.addEventListener('submit', async function (event) {
-//         event.preventDefault();
-//
-//         errorMessageDiv.textContent = '';
-//         const formData = new FormData(form);
-//
-//         try {
-//             const response = await fetch(form.action, {
-//                 method: 'POST',
-//                 body: formData,
-//                 headers: {
-//                     'X-CSRFToken': getCookie('csrftoken')
-//                 }
-//             });
-//
-//             const result = await response.json();
-//
-//             if (result.success) {
-//                 to_unspecified_page(result.redirect_url);
-//             } else {
-//                 errorMessageDiv.textContent = result.error || 'Login failed. Please try again.';
-//             }
-//         } catch (error) {
-//             console.error('Error:', error);
-//             errorMessageDiv.textContent = 'An unexpected error occurred. Please try again.';
-//         }
-//     });
-// }
 
 async function send_login_form(value, url)
 {
+    const errorMessageDiv = document.getElementById('error-message');
     try
     {
         const formdata = new FormData(value);
@@ -90,15 +51,11 @@ async function send_login_form(value, url)
         })
         if (!response.ok)
                 throw new TypeError("Login fail");
-        //solution pas viable
         let test = await response.json()
-        console.log("test")
-        if (test.success === false) {
-            throw new TypeError("Wrong identifiant");
-            console.log("test3")
-        }
-        console.log("test2")
-        await to_unspecified_page(test.redirect_url)
+        if (!test.success)
+              errorMessageDiv.textContent = test.error || 'Login failed. Please try again.';
+        else
+            await to_unspecified_page(test.redirect_url)
     }
     catch (error)
     {

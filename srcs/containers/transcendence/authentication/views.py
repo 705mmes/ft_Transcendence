@@ -12,6 +12,9 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 import random
 import string
 from .decorators import custom_login_required
+from django.core.exceptions import ValidationError
+from django.contrib.auth.password_validation import validate_password
+from authentication.models import username_validator
 import logging
 
 logger = logging.getLogger(__name__)
@@ -142,21 +145,25 @@ def register_api(username, email, request, image):
 def register(request):
     # faut interdir ces fdp de users d'utiliser _42_intra
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
-        print(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password1']
-            email = form.cleaned_data['email']
-            User.objects.create_user(username=username, password=password, email=email)
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return JsonResponse({'success': True, 'redirect_url': '/game'})
+        try:
+            form = RegistrationForm(request.POST)
+            print(request.POST)
+            if form.is_valid():
+                username = form.cleaned_data['username']
+                password = form.cleaned_data['password1']
+                email = form.cleaned_data['email']
+                User.objects.create_user(username=username, password=password, email=email)
+                user = authenticate(username=username, password=password)
+                if user is not None:
+                    login(request, user)
+                    return JsonResponse({'success': True, 'redirect_url': '/game'})
+                else:
+                    return JsonResponse({'success': False, 'error': 'user already exist'})
             else:
-                return JsonResponse({'success': False, 'error': 'user already exist'})
-        else:
-            return JsonResponse({'success': False, 'error': 'invalid form'})
+                return JsonResponse({'success': False, 'error': 'invalid form'})
+        except ValidationError as e:
+            for error in e.error_list:
+                return JsonResponse({'success': False, 'error': error.message})
     else:
         return render(request, 'authentication/registration.html')
 
