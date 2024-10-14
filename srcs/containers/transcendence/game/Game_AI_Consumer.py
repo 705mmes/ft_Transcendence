@@ -107,27 +107,38 @@ class GameAIConsumer(AsyncWebsocketConsumer):
 
     async def game_loop(self, lobby_cache):
         user_name = self.scope['user'].username
+        user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
         ia_time = time.time()
         self.start_time = time.time()
         while lobby_cache['is_game_loop']:
+
             t1 = time.perf_counter()
-            user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
-            lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
-            opponent_cache = await sync_to_async(cache.get)(f"{lobby_cache['ai']}_key")
+            lobby_cache, user_cache, opponent_cache, ball_move = await asyncio.gather(
+                sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key"),
+                sync_to_async(cache.get)(f"{user_name}_key"),
+                sync_to_async(cache.get)(f"{self.who_is_the_enemy(lobby_cache)}_key"),
+                self.ball.move(self.user.get_class(), self.opponent.get_class()),
+            )
+
             if time.time() - ia_time > 1:
                 ia_time = time.time()
                 self.ball.ia_ball_snapshot()
                 if self.ball.ia_dirX > 0:
                     await self.tracking_ai(60)
-            ball_move = await self.ball.move(self.user.get_class(), self.opponent.get_class())
-            racket_move = await self.check_move(user_cache)
+
+            await self.check_move(user_cache)
+
             self.user.move(user_cache['up_pressed'], user_cache['down_pressed'])
             self.opponent.move(self.opponent.up_pressed, self.opponent.down_pressed)
-            if not racket_move or ball_move:
-                await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
-            if await self.check_game(self.user.get_class(), self.opponent.get_class(), False):
-                break
+
+            await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
+            if ball_move == 2:
+                if await self.check_game(self.user.get_class(), self.opponent.get_class(), False):
+                    break
             await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
+        await self.endgame(lobby_cache, user_cache, user_name)
+
+    async def endgame(self, lobby_cache, user_cache, user_name):
         await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_end')
         await sync_to_async(cache.delete)(f"{lobby_cache['ai']}_key")
         await sync_to_async(cache.delete)(f"{user_cache['lobby_name']}_key")
@@ -163,14 +174,11 @@ class GameAIConsumer(AsyncWebsocketConsumer):
         await sync_to_async(cache.set)(f"{user_name}_key", user_cache)
 
     async def send_data(self, player1, player2, action):
-        user_json = await self.json_creator_racket(player1)
+        user_json, ball_json = await asyncio.gather(self.json_creator_racket(player1), self.json_creator_ball())
         opponent_json = {'up_pressed': self.opponent.up_pressed,
                          'down_pressed': self.opponent.down_pressed,
-                         'x': self.opponent.x,
-                         'y': self.opponent.y,
-                         'score': self.opponent.score,
-                         'name': 'ai'}
-        ball_json = await self.json_creator_ball()
+                         'x': self.opponent.x, 'y': self.opponent.y,
+                         'score': self.opponent.score, 'name': 'ai'}
         json_data = {'action': action, 'mode': 'match_ai', 'my_racket': user_json,
                      'opponent': opponent_json, 'ball': ball_json}
         await self.channel_layer.group_send("match_" + player1.name, {'type': 'send_match_info', 'data': json_data})
@@ -203,11 +211,14 @@ class GameAIConsumer(AsyncWebsocketConsumer):
                 else:
                     diff = self.ball.ia_y
                 before_hit = diff / abs(self.ball.ia_dirY)
-                after_hit = move_left - before_hit
-                move_left = after_hit
-                self.ball.ia_y += self.ball.ia_dirY * before_hit
-                self.ball.ia_x += (self.ball.ia_dirX * 0.01667) * before_hit
-                self.ball.ia_dirY *= -1
+                move_left = move_left - before_hit
+
+                self.ball.ia_y, self.ball.ia_x, self.ball.ia_dirY = await asyncio.gather(
+                    self.ball.ia_y + (self.ball.ia_dirY * before_hit),
+                    self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * before_hit),
+                    self.ball.ia_dirY * -1
+                    )
+
             elif self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * move_left) >= 2040 - 77:
                 before_hit = (2040 - self.ball.ia_x) / abs(self.ball.ia_dirX * 0.01667)
                 self.ball.ia_y += self.ball.ia_dirY * before_hit

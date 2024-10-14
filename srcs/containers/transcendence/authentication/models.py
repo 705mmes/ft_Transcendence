@@ -77,7 +77,7 @@ def  AllNumUsername_validate(username):
         raise ValidationError('Illegal character in Username', code='illegal char')
 
 
-class RepeatPasswordValidator():
+class RepeatPasswordValidator:
     def validate(self, password, repeat_password,user=None):
         if password != repeat_password:
             raise ValidationError(
@@ -85,6 +85,12 @@ class RepeatPasswordValidator():
                 code='password missmatch',
             )
 
+
+class PasswordNumberValidator:
+    def validate(self, password, user=None):
+        if password.isalpha():
+            raise ValidationError("Password must contain at least one number",
+                                  code='password no number')
 class CustomMinimumLengthValidator:
     def __init__(self, min_length=8):
         self.min_length = min_length

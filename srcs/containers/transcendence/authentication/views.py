@@ -149,6 +149,8 @@ def register(request):
             form = RegistrationForm(request.POST)
             print(request.POST)
             if form.is_valid():
+                username_validator(form.cleaned_data['username'])
+                validate_password(form.cleaned_data['password1'], form.cleaned_data['password2'])
                 username = form.cleaned_data['username']
                 password = form.cleaned_data['password1']
                 email = form.cleaned_data['email']

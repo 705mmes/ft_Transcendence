@@ -139,6 +139,9 @@ CACHES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
+        'NAME': 'authentication.models.PasswordNumberValidator',
+    },
+    {
         'NAME': 'authentication.models.RepeatPasswordValidator',
     },
     {
