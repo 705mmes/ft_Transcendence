@@ -53,8 +53,6 @@ class GameAIConsumer(AsyncWebsocketConsumer):
                 await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
             await self.check_game(self.user.get_class(), self.opponent.get_class(), True)
 
-
-
 #utils
 
     async def receive(self, text_data):

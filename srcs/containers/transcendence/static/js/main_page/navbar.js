@@ -27,6 +27,4 @@ if (document.getElementById('social'))
     document.getElementById('social').addEventListener('click', async function(event){
     event.preventDefault();
     await to_unspecified_page('/social');
-    const message = JSON.stringify({action: "friend_list"});
-    socket.send(message);
     })

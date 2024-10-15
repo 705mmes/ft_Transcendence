@@ -465,6 +465,7 @@ class LobbyConsumer(WebsocketConsumer):
     def start_game_ia(self):
         user = User.objects.get(username=self.scope['user'])
         self.change_in_research(False, self.scope['user'])
+        self.change_is_playing(True, self.scope['user'])
         self.init_ai(user)
         my_racket = self.json_creator_racket(user)
         ai_cache = cache.get(f"{user.username}_ai_key")

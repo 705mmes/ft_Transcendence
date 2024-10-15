@@ -11,7 +11,7 @@ function clearAndCheckContainer(containerId) {
     return container;
 }
 
-function createListItem(name, isConnected) {
+function createListItem(name, isConnected, isPlaying) {
     let listItem = document.createElement('li');
     listItem.className = 'item';
 
@@ -21,11 +21,16 @@ function createListItem(name, isConnected) {
 
     let connectionStatus = document.createElement('span');
     connectionStatus.className = 'connection-status';
-    connectionStatus.classList.add(isConnected ? 'connected' : 'disconnected');
-
+    if (isConnected && !isPlaying)
+        connectionStatus.classList.add('connected');
+    else {
+        if (isPlaying)
+            connectionStatus.classList.add('is_playing');
+        else
+            connectionStatus.classList.add('disconnected');
+    }
     listItem.appendChild(connectionStatus);
     listItem.appendChild(nameElement);
-
     return listItem;
 }
 
@@ -37,7 +42,7 @@ function addButtons(listItem, name, listType) {
         inviteButton.addEventListener('click', function() {
             const message = JSON.stringify({ action: "invite_to_game", "target": name });
     		socket.send(message);
-            // console.log(`Sent request to invite ${name} to a game`);
+            display_popup_green('Friend invite to your game ! No jk it does not work');
         });
 
         let removeButton = document.createElement('button');
@@ -46,7 +51,7 @@ function addButtons(listItem, name, listType) {
         removeButton.addEventListener('click', function() {
             const message = JSON.stringify({ action: "remove_friend", "target": name });
     		socket.send(message);
-            // console.log(`$Sent request to remove friend: ${name}`);
+            display_popup_green('Friend removed from your list !');
         });
 
         let view_profile_button = document.createElement('button');
@@ -55,7 +60,6 @@ function addButtons(listItem, name, listType) {
         view_profile_button.addEventListener('click', function() {
             const message = JSON.stringify({ action: "view_profile", "target": name });
     		socket.send(message);
-            // console.log(`$Sent request to view friend profile: ${name}`);
         });
 
         listItem.appendChild(inviteButton);
@@ -68,7 +72,7 @@ function addButtons(listItem, name, listType) {
         acceptButton.addEventListener('click', function() {
             const message = JSON.stringify({ action: "accept_friend_request", "target": name });
     		socket.send(message);
-            // console.log(`Sent request to accept friend request: ${name}`);
+            display_popup_green('Friend request accepted !');
         });
 
         let denyButton = document.createElement('button');
@@ -77,7 +81,7 @@ function addButtons(listItem, name, listType) {
         denyButton.addEventListener('click', function() {
 			const message = JSON.stringify({ action: "cancel_deny_request", "target": name });
     		socket.send(message);
-            // console.log(`Sent request to deny friend request: ${name}`);
+            display_popup_green('Friend request denied !');
         });
 
         listItem.appendChild(acceptButton);
@@ -89,7 +93,7 @@ function addButtons(listItem, name, listType) {
         cancelButton.addEventListener('click', function() {
             const message = JSON.stringify({ action: "cancel_deny_request", "target": name });
     		socket.send(message);
-            // console.log(`Sent request to cancel friend request: ${name}`);
+            display_popup_green('Friend request canceled !');
         });
 
         listItem.appendChild(cancelButton);
@@ -111,7 +115,7 @@ function parseList(data, listType, containerId) {
 
     for (let item in items) {
         if (items.hasOwnProperty(item)) {
-            let listItem = createListItem(item, items[item].is_connected);
+            let listItem = createListItem(item, items[item].is_connected, items[item].is_playing);
             listItem.id = item;
             addButtons(listItem, item, listType);
             container.appendChild(listItem);

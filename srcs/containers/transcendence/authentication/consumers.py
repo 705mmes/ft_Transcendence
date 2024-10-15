@@ -54,8 +54,7 @@ class ActiveConsumer(WebsocketConsumer):
         my_friend_list = {'action': 'friend_list', 'friend_list': {'friends': {}}}
         for friend in friends:
             friend_user = friend.user1 if friend.user1 != user else friend.user2
-            my_friend_list['friend_list']['friends'][friend_user.username] = {'is_connected': friend_user.is_connected}
-        # print(my_friend_list)
+            my_friend_list['friend_list']['friends'][friend_user.username] = {'is_connected': friend_user.is_connected, 'is_playing': friend_user.is_playing}
         json_data = json.dumps(my_friend_list)
         self.send(json_data)
 
@@ -87,6 +86,11 @@ class ActiveConsumer(WebsocketConsumer):
             recipient = User.objects.filter(username=target_name).get()
             info = {'action': 'create_request', 'target': target_name, 'is_connected': recipient.is_connected, 'who': 'pending'}
             info_me = {'action': 'create_request', 'target': requester.username, 'is_connected': requester.is_connected, 'who': 'requester'}
+            if requester == recipient:
+                error = {'action': 'error',
+                         'error': "Error: Cannot add yourself as friend !"}
+                self.send(json.dumps(error))
+                return
             if not FriendList.objects.filter((Q(user1=requester) & Q(user2=recipient)) | (Q(user1=recipient) & Q(user2=requester))).exists():
                 if not FriendRequest.objects.filter((Q(requester=requester) & Q(recipient=recipient)) | (Q(requester=recipient) & Q(recipient=requester))).exists():
                     FriendRequest.objects.create(requester=requester, recipient=recipient)
