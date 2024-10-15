@@ -26,5 +26,5 @@ def generate_csrf_trusted_origins(ports=[8000, 4443]):
     for port in ports:
         trusted_origins.append(f'http://{ip_address}:{port}')
         trusted_origins.append(f'https://{ip_address}:{port}')
-    
+    print("Trusted_origins: ", trusted_origins)
     return trusted_origins
