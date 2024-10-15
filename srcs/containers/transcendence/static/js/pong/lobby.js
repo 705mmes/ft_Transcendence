@@ -186,8 +186,6 @@ function tournament_opponent(players)
     }
 }
 
-
-
 function display_loading()
 {
     let class_players = document.getElementsByClassName("player");

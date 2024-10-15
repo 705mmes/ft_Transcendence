@@ -34,5 +34,4 @@ async function AddGameCanvas()
     reset_script();
     await reload_scripts('/game/canvas/');
     navigate('game/');
-
 }
