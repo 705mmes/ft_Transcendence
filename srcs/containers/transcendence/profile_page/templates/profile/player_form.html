@@ -1,15 +1,15 @@
 {% extends "index.html" %}
-
 {% load static %}
 
 {% block content %}
     <h1>Profile</h1>
-{% include "authentication/navbar.html" %}
+    {% include "authentication/navbar.html" %}
 
     <h1>Modify</h1>
 
     <link rel="stylesheet" href="{% static 'css/edit_profile.css' %}">
     <link rel="stylesheet" href="{% static 'css/social.css' %}">
+
     <form id="profile_form" enctype="multipart/form-data">
         {% csrf_token %}
         <br><br>
@@ -32,7 +32,7 @@
                 {{ registration_form.email }}
                 <span>Email</span>
                 <br><br>
-                </label>
+            </label>
             <label>
                 {{ registration_form.new_password }}
                 <span>New password</span>
@@ -46,13 +46,33 @@
         </div>
         <button class="c-button c-button--gooey" type="submit" id="profile_submit"> Save
           <div class="c-button__blobs">
-          <div></div>
-          <div></div>
-          <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
           </div>
         </button>
     </form>
-    <button id="setup_2fa" >Set up Two-Factor Authentication</button>
+
+    {% if has_2fa %}
+        <!-- If user has 2FA enabled, show a delete button -->
+        <button id="delete_2fa" class="c-button c-button--gooey" type="button">Delete Two-Factor Authentication
+          <div class="c-button__blobs">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </button>
+    {% else %}
+        <!-- If user does not have 2FA enabled, show the setup button -->
+        <button id="setup_2fa" class="c-button c-button--gooey" type="button">Set up Two-Factor Authentication
+          <div class="c-button__blobs">
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </button>
+    {% endif %}
+
     <svg xmlns="http://www.w3.org/2000/svg" version="1.1" style="display: block; height: 0; width: 0;">
       <defs>
         <filter id="goo">

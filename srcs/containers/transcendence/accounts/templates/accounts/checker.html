@@ -1,7 +1,9 @@
 {% extends 'two_factor/_base.html' %}
 {% load static %}
+{% load widget_tweaks %}
 
 {% block page_content %}
+<link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -11,7 +13,7 @@
                     <p class="text-center">Please enter your authentication token.</p>
                     <form id="checker" method="post" action="{% url 'redirect_to_2fa_checker' %}">
                         {% csrf_token %}
-                        <div class="form-group mb-3">
+                        <div class="form-group mb-3 d-none">
                             <label for="otp_device">Select OTP Device:</label>
                             {{ form.otp_device|add_class:"form-control" }}
                         </div>

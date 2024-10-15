@@ -103,3 +103,17 @@ def redirect_to_checker(request):
     else:
         form = OTPTokenForm(user=user)
         return render(request, 'accounts/checker.html', {'form': form})
+
+@login_required
+def delete_2fa(request):
+    print("delete_2fa", request.user)
+    if request.method == 'POST':
+        try:
+            totp_device = TOTPDevice.objects.get(user=request.user)
+            totp_device.delete()
+            request.user.twofa_submitted = False  
+            request.user.save()
+            return JsonResponse({'success': True, 'message': 'Two-Factor Authentication has been removed.'})
+        except TOTPDevice.DoesNotExist:
+            return JsonResponse({'success': False, 'message': 'No TOTP device found.'})
+    return JsonResponse({'success': False, 'message': 'Invalid request.'})
