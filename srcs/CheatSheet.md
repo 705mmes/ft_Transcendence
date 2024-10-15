@@ -21,7 +21,7 @@ Makefile cmds:
 
 Connect:
 	http://<IP>:8000 -> dev
-	https://<IP>:443 -> prod
+	https://<IP>:4443 -> prod
 
 Debug dockers:
 

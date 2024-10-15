@@ -133,7 +133,6 @@ def register_api(username, email, request, image):
 
 
 def register(request):
-    # faut interdir ces fdp de users d'utiliser _42_intra
     if request.method == 'POST':
         try:
             form = RegistrationForm(request.POST)
@@ -144,20 +143,26 @@ def register(request):
                 username = form.cleaned_data['username']
                 password = form.cleaned_data['password1']
                 email = form.cleaned_data['email']
+                
+                if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
+                    return JsonResponse({'success': False, 'error': 'User with this username or email already exists'})
+                
                 User.objects.create_user(username=username, password=password, email=email)
+                
                 user = authenticate(username=username, password=password)
                 if user is not None:
                     login(request, user)
                     return JsonResponse({'success': True, 'redirect_url': '/game'})
                 else:
-                    return JsonResponse({'success': False, 'error': 'user already exist'})
+                    return JsonResponse({'success': False, 'error': 'Authentication failed'})
             else:
-                return JsonResponse({'success': False, 'error': 'invalid form'})
+                return JsonResponse({'success': False, 'error': 'Invalid form'})
         except ValidationError as e:
             for error in e.error_list:
                 return JsonResponse({'success': False, 'error': error.message})
     else:
         return render(request, 'authentication/registration.html')
+
 
 def login_session(request):
     print("login session")
