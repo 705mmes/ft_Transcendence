@@ -80,7 +80,10 @@ button {
     background-color: red;
 }
 
-/* From Uiverse.io by Custyyyy */
+.is_playing {
+    background-color: orange;
+}
+
 .button {
     align-items: center;
     background-color: #FFFFFF;

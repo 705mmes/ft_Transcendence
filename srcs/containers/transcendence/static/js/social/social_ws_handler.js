@@ -6,6 +6,7 @@ document.getElementById('social-form').addEventListener('submit', function(event
     const message = JSON.stringify({ action: "friend_request", "username": username });
     socket.send(message);
     console.log(username);
+    display_popup_green('Friend request sent !');
 });
 
 document.getElementById('friends').addEventListener('click', function(event) {
