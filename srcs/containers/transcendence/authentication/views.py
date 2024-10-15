@@ -16,6 +16,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from authentication.models import username_validator
 import logging
+from transcendence.utils import generate_csrf_trusted_origins
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -35,25 +37,13 @@ def authentication(request):
 
 def get_redirect_uri(request):
     hostname = request.get_host()
-    logger.info("Hostname: %s", hostname)
-    redirect_uris = {
-        'localhost:8000': 'http://localhost:8000/',
-        'k2r3p9:8000': 'http://k2r3p9:8000/',
-        'k2r3p10:8000': 'http://k2r3p10:8000/',
-        'k2r3p8:8000': 'http://k2r3p8:8000/',
-        '127.0.0.1:8000': 'http://127.0.0.1:8000/',
-        '0.0.0.0:8000': 'http://0.0.0.0:8000/',
-        '192.168.1.17:8000': 'http://192.168.1.17:8000/',
-        'localhost': 'https://localhost:4443/',
-        'k2r3p9': 'https://k2r3p9:4443/',
-        'k2r3p10': 'https://k2r3p10:4443/',
-        'k2r3p8': 'https://k2r3p8:4443/',
-        '127.0.0.1': 'https://127.0.0.1:4443/',
-        '0.0.0.0': 'https://0.0.0.0:4443/',
-        '192.168.1.17': 'https://192.168.1.17:4443/'
-    }
-    logger.info("Redirect URI: %s", redirect_uris.get(hostname))
-    return redirect_uris.get(hostname)
+    logger.info("Hostname: %s DEBUG: %s", hostname, os.environ.get("DEBUG"))
+    if os.environ.get("DEBUG") == '1':
+        redirect_uri = "http://" + hostname
+    else:
+        redirect_uri = "https://" + hostname + ":4443/"
+    logger.info("Redirect URI: %s", redirect_uri)
+    return redirect_uri
 
 
 def start_oauth2_flow(request):
@@ -149,6 +139,8 @@ def register(request):
             form = RegistrationForm(request.POST)
             print(request.POST)
             if form.is_valid():
+                username_validator(form.cleaned_data['username'])
+                validate_password(form.cleaned_data['password1'], form.cleaned_data['password2'])
                 username = form.cleaned_data['username']
                 password = form.cleaned_data['password1']
                 email = form.cleaned_data['email']
