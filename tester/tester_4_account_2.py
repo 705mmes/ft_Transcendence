@@ -22,8 +22,8 @@ comptes = [
 ]
 
 # URL de la page de connexion de ton application
-login_url = 'http://127.0.0.1:8000/'
-game_url = 'http://127.0.0.1:8000/game'
+login_url = 'https://127.0.0.1:4443/'
+game_url = 'https://127.0.0.1:4443/game'
 
 # Liste pour stocker les instances des navigateurs
 navigateurs = []

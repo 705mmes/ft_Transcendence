@@ -17,14 +17,13 @@ firefox_binary_path = '/opt/firefox/stable/firefox/firefox'
 comptes = [
     {'username': 'leon', 'password': 'caca'},
     {'username': 'ludo', 'password': 'fefe'},
-    {'username': 'abel', 'password': 'caca'},
-    {'username': 'dcandan', 'password': 'caca'}
+    {'username': 'basi', 'password': 'caca'},
+    {'username': 'anto', 'password': 'caca'}
 ]
 
 # URL de la page de connexion de ton application
 login_url = 'http://127.0.0.1:8000/'
 game_url = 'http://127.0.0.1:8000/game'
-
 # Liste pour stocker les instances des navigateurs
 navigateurs = []
 
