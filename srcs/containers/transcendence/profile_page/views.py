@@ -17,6 +17,7 @@ from authentication.decorators import custom_login_required, profile_modify
 @custom_login_required
 def profile_update(request):
     user = User.objects.get(id=request.user.id)
+    has_2fa = user.twofa_submitted
     if request.method == 'POST':
         form = ModifiedProfileForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
@@ -44,6 +45,7 @@ def profile_update(request):
     context = {
         'registration_form': form,
         'player': request.user,
+        'has_2fa': has_2fa,
     }
     return render(request, 'profile/player_form.html', context)
 

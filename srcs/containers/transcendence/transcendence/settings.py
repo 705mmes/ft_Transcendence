@@ -45,6 +45,7 @@ SECURE_PROXY_SSL_HEADER = ('X-Forwarded-Proto', 'https')
 # Application definition
 
 INSTALLED_APPS = [
+    'widget_tweaks',
     'daphne',
     'rest_framework',
 	'django_otp',

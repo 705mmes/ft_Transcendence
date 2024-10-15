@@ -35,6 +35,7 @@ sniffio==1.3.1
 httptools==0.6.1
 exceptiongroup==1.2.2
 anyio==4.6.0
+django-widget-tweaks==1.5.0
 
 # Twisted-related packages
 Twisted==24.3.0                 # Event-driven networking engine

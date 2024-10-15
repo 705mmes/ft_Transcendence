@@ -86,3 +86,34 @@ if (document.getElementById('setup_2fa')) {
 	    to_unspecified_page('/account/redirect/setup')
     })
 }
+
+if (document.getElementById('delete_2fa')) {
+    document.getElementById('delete_2fa').addEventListener('click', function(event) {
+        event.preventDefault();
+
+        if (confirm('Are you sure you want to delete Two-Factor Authentication?')) {
+            fetch('/account/delete_2fa/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken'),
+                },
+                body: JSON.stringify({}),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    location.reload();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Failed to delete Two-Factor Authentication.');
+            });
+        }
+    });
+}
+
