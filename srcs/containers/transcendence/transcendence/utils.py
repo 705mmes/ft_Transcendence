@@ -19,9 +19,17 @@ def generate_csrf_trusted_origins(ports=[8000, 4443]):
     for port in ports:
         trusted_origins.append(f'http://localhost:{port}')
         trusted_origins.append(f'http://0.0.0.0:{port}')
+        trusted_origins.append(f'http://127.0.0.1:{port}')
+        trusted_origins.append(f'http://k2r3p8:{port}')
+        trusted_origins.append(f'http://k2r3p9:{port}')
+        trusted_origins.append(f'http://k2r3p10:{port}')
         trusted_origins.append(f'https://localhost:{port}')
         trusted_origins.append(f'https://0.0.0.0:{port}')
-    
+        trusted_origins.append(f'https://127.0.0.1:{port}')
+        trusted_origins.append(f'https://k2r3p8:{port}')
+        trusted_origins.append(f'https://k2r3p9:{port}')
+        trusted_origins.append(f'https://k2r3p10:{port}')
+
     # Add the dynamically determined IP address
     for port in ports:
         trusted_origins.append(f'http://{ip_address}:{port}')

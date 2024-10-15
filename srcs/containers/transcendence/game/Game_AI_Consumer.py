@@ -114,7 +114,7 @@ class GameAIConsumer(AsyncWebsocketConsumer):
             lobby_cache, user_cache, opponent_cache, ball_move = await asyncio.gather(
                 sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key"),
                 sync_to_async(cache.get)(f"{user_name}_key"),
-                sync_to_async(cache.get)(f"{self.who_is_the_enemy(lobby_cache)}_key"),
+                sync_to_async(cache.get)(f"{lobby_cache['ai']}_key"),
                 self.ball.move(self.user.get_class(), self.opponent.get_class()),
             )
 
@@ -136,11 +136,13 @@ class GameAIConsumer(AsyncWebsocketConsumer):
             await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
         await self.endgame(lobby_cache, user_cache, user_name)
 
+
     async def endgame(self, lobby_cache, user_cache, user_name):
         await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_end')
         await sync_to_async(cache.delete)(f"{lobby_cache['ai']}_key")
         await sync_to_async(cache.delete)(f"{user_cache['lobby_name']}_key")
         await sync_to_async(cache.delete)(f"{user_name}_key")
+
 
     async def check_game(self, user, opponent, ff):
         if user.score >= 5 or opponent.score >= 5:
@@ -211,11 +213,9 @@ class GameAIConsumer(AsyncWebsocketConsumer):
                 before_hit = diff / abs(self.ball.ia_dirY)
                 move_left = move_left - before_hit
 
-                self.ball.ia_y, self.ball.ia_x, self.ball.ia_dirY = await asyncio.gather(
-                    self.ball.ia_y + (self.ball.ia_dirY * before_hit),
-                    self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * before_hit),
-                    self.ball.ia_dirY * -1
-                    )
+                self.ball.ia_y = self.ball.ia_y + (self.ball.ia_dirY * before_hit)
+                self.ball.ia_x = self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * before_hit)
+                self.ball.ia_dirY = self.ball.ia_dirY * -1
 
             elif self.ball.ia_x + ((self.ball.ia_dirX * 0.01667) * move_left) >= 2040 - 77:
                 before_hit = (2040 - self.ball.ia_x) / abs(self.ball.ia_dirX * 0.01667)

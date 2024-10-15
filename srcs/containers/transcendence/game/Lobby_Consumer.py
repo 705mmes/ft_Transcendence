@@ -41,7 +41,7 @@ class LobbyConsumer(WebsocketConsumer):
         user.is_ready = False
         user.save()
         if GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).exists():
-            lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).get()
+            lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user)).first()
             print("Lobby delete :", cache.get((f"{lobby.Name}_key")))
             lobby.delete()
         lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))

@@ -45,7 +45,7 @@ function display_cancel_btn()
     let cancel_btn = document.createElement("button");
     cancel_btn.innerHTML = "CANCEL RESEARCH";
     cancel_btn.id = "cancel_research";
-    cancel_btn.className = 'button'
+    cancel_btn.className = 'button';
     cancel_btn.onclick = () => {
         game_socket.send(choose_message('cancel'));
     }
@@ -208,7 +208,12 @@ function display_loading()
 
 function stop_loading(){
     let lobby_content = document.getElementById('lobby_content');
-    fetching_html('/game/tournament', lobby_content);
+
+    let mode = document.getElementById('mode_name');
+    if (mode.innerHTML === "Tournament")
+        fetching_html('/game/tournament', lobby_content);
+    else
+        fetching_html('/game/match_1v1', lobby_content);
 }
 
 function display_graph()

@@ -136,7 +136,6 @@ def register(request):
     if request.method == 'POST':
         try:
             form = RegistrationForm(request.POST)
-            print(request.POST)
             if form.is_valid():
                 username_validator(form.cleaned_data['username'])
                 validate_password(form.cleaned_data['password1'], form.cleaned_data['password2'])
@@ -168,7 +167,6 @@ def login_session(request):
     print("login session")
     if request.method == 'POST':
         form = LoginForm(request.POST)
-        print(form)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
