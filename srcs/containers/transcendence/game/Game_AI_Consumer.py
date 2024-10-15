@@ -31,14 +31,16 @@ class GameAIConsumer(AsyncWebsocketConsumer):
         self.user = Player(user_cache['id'], user_cache['name'])
         self.opponent = Player(opponent_cache['id'], opponent_cache['name'])
         self.ball = Ball()
-        if user_cache['game_loop'] and not lobby_cache['is_game_loop']:
+        if not lobby_cache['is_game_loop']:
             lobby_cache['is_game_loop'] = True
             await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
-            caca = asyncio.create_task(self.game_loop(lobby_cache))
+            self.task = asyncio.create_task(self.game_loop(lobby_cache))
         # print(user_cache.get('lobby_name'))
+        print("imok")
         await self.accept()
 
     async def disconnect(self, code):
+        self.task.cancel()
         user_name = self.scope['user'].username
         user = await sync_to_async(User.objects.get)(username=user_name)
         user.is_playing = False
@@ -46,19 +48,19 @@ class GameAIConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
         print(f"Disconnected from match : {self.scope['user'].username}")
         if await sync_to_async(cache.get)(f"{user_name}_key"):
+            print("wdawdawodnwaoiwnda")
             user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
             lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
             if lobby_cache:
                 lobby_cache['is_game_loop'] = False
                 await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
+            await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_end')
             await self.check_game(self.user.get_class(), self.opponent.get_class(), True)
 
 #utils
 
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        action = text_data_json['action']
-        # print(f"{self.scope['user']} send: {text_data_json}")
         if text_data_json['action'] == 'move':
             await self.update_cache(text_data_json)
 
@@ -104,37 +106,42 @@ class GameAIConsumer(AsyncWebsocketConsumer):
     # GAME LOGIQUE HERE
 
     async def game_loop(self, lobby_cache):
-        user_name = self.scope['user'].username
-        user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
-        ia_time = time.time()
-        self.start_time = time.time()
-        while lobby_cache['is_game_loop']:
+        try:
+            user_name = self.scope['user'].username
+            user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
+            ia_time = time.time()
+            self.start_time = time.time()
+            while lobby_cache['is_game_loop']:
+                # print(lobby_cache['is_game_loop'])
 
-            t1 = time.perf_counter()
-            lobby_cache, user_cache, opponent_cache, ball_move = await asyncio.gather(
-                sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key"),
-                sync_to_async(cache.get)(f"{user_name}_key"),
-                sync_to_async(cache.get)(f"{lobby_cache['ai']}_key"),
-                self.ball.move(self.user.get_class(), self.opponent.get_class()),
-            )
+                t1 = time.perf_counter()
+                lobby_cache, user_cache, opponent_cache, ball_move = await asyncio.gather(
+                    sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key"),
+                    sync_to_async(cache.get)(f"{user_name}_key"),
+                    sync_to_async(cache.get)(f"{lobby_cache['ai']}_key"),
+                    self.ball.move(self.user.get_class(), self.opponent.get_class()),
+                )
 
-            if time.time() - ia_time > 1:
-                ia_time = time.time()
-                self.ball.ia_ball_snapshot()
-                if self.ball.ia_dirX > 0:
-                    await self.tracking_ai(60)
+                if time.time() - ia_time > 1:
+                    ia_time = time.time()
+                    self.ball.ia_ball_snapshot()
+                    if self.ball.ia_dirX > 0:
+                        await self.tracking_ai(60)
 
-            await self.check_move(user_cache)
+                await self.check_move(user_cache)
 
-            self.user.move(user_cache['up_pressed'], user_cache['down_pressed'])
-            self.opponent.move(self.opponent.up_pressed, self.opponent.down_pressed)
+                self.user.move(user_cache['up_pressed'], user_cache['down_pressed'])
+                self.opponent.move(self.opponent.up_pressed, self.opponent.down_pressed)
 
-            await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
-            if ball_move == 2:
-                if await self.check_game(self.user.get_class(), self.opponent.get_class(), False):
-                    break
-            await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
-        await self.endgame(lobby_cache, user_cache, user_name)
+                await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
+                if ball_move == 2:
+                    if await self.check_game(self.user.get_class(), self.opponent.get_class(), False):
+                        break
+                await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
+        # print(lobby_cache['is_game_loop'])
+            await self.endgame(lobby_cache, user_cache, user_name)
+        except asyncio.CancelledError:
+            print('cancel caught')
 
 
     async def endgame(self, lobby_cache, user_cache, user_name):
@@ -156,7 +163,6 @@ class GameAIConsumer(AsyncWebsocketConsumer):
             return True
         else:
             if ff:
-                print("ici")
                 self.endtime = time.time() - self.start_time
                 user = await sync_to_async(User.objects.get)(username=user.name)
                 await sync_to_async(GameHistory.objects.create)(History1=user, History2=None,

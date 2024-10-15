@@ -45,16 +45,20 @@ window.onpopstate = (function(event) {
 function open_lobby_socket(game_data)
 {
 	console.log("game_data:", game_data);
-    if (game_socket && game_socket.readyState === WebSocket.OPEN) {
-        game_socket.close();
-        console.log("closing match_socket");
-        game_socket.onclose = function (event){
-            if (game_data.interid !== undefined)
-                clearInterval(game_data.interid);
-            console.log("opening lobby_socket")
-            pong_websocket(game_data, '/ws/game/game/');
+    if (game_socket)
+        if (game_socket.readyState === WebSocket.OPEN) {
+            console.log(game_socket.readyState)
+            game_socket.close();
+            console.log("closing match_socket");
+            game_socket.onclose = function (event){
+                if (game_data.interid !== undefined)
+                    clearInterval(game_data.interid);
+                console.log("opening lobby_socket")
+                pong_websocket(game_data, '/ws/game/game/');
+            }
         }
-    }
+        else if (game_socket.readyState === WebSocket.CONNECTING)
+            timeoutID = setTimeout(open_lobby_socket, 100);
     else
     {
         if (game_data.interid !== undefined)

@@ -62,7 +62,7 @@ function responsePong() {
                 else if (data.action === 'find_opponent')
                 {
                     change_opponent(data.opponent);
-                    timeoutID = setTimeout(ready, 3000, 'match_1v1');
+                    timeoutID = setTimeout(ready, 3000, data.mode);
                 }
                 else if (data.action === 'opponent_change')
                     tournament_opponent(data.players);

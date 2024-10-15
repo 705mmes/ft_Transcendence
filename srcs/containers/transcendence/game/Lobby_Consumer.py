@@ -455,11 +455,15 @@ class LobbyConsumer(WebsocketConsumer):
 # AI LOBBY
     def ai_match(self, json_data):
         if json_data['action'] == 'searching':
+            json_data = json.dumps({'action': 'searching', 'mode': 'match_ai'})
+            self.send(json_data)
+            self.searching_ai()
+        elif json_data['action'] == 'player_ready':
             self.start_game_ia()
 
     def searching_ai(self):
         self.change_in_research(False, self.scope['user'])
-        json_data = json.dumps({'action': 'find_opponent', 'mode': 'match_ai'})
+        json_data = json.dumps({'action': 'find_opponent', 'mode': 'match_ai', 'opponent': 'ai'})
         self.send(json_data)
 
     def start_game_ia(self):
