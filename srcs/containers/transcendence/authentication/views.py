@@ -75,7 +75,6 @@ def oauth_callback(request):
         'redirect_uri': REDIRECT_URI,
         'code': code,
     }
-    print(data)
     response = requests.post(token_endpoint, data=data)
     if response.status_code != 200:
         return JsonResponse({'error': 'Failed to fetch access token'}, status=response.status_code)
@@ -99,7 +98,6 @@ def oauth_callback(request):
 
     username = username + "_42_intra"
     result = register_api(username, email, request, main_image_link)
-    print("Sending response")
     if result['status'] == 'success':
         user = User.objects.get(username=username)
         profile_picture_url = user.get_profile_picture()
@@ -112,7 +110,6 @@ def oauth_callback(request):
 
 
 def register_api(username, email, request, image):
-    print("register_api:", username)
     if User.objects.filter(username=username).exists():
         user = User.objects.get(username=username)
         if user:
@@ -122,7 +119,6 @@ def register_api(username, email, request, image):
             return {'status': 'error', 'message': 'Authentication failed.'}
     password = generate_password()
 
-    print("Creating user...")
     user = User.objects.create_user(username=username, email=email, password=password, profile_picture_url=image, is_42=True)
     user = authenticate(username=username, password=password)
     if user:
@@ -164,7 +160,6 @@ def register(request):
 
 
 def login_session(request):
-    print("login session")
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
@@ -175,27 +170,21 @@ def login_session(request):
                 if user.is_authenticated:
                     if user_has_device(user):
                         if user.twofa_submitted == False:
-                            print("Need to delete TOTPDevice")
                             device = TOTPDevice.objects.get(user=user, name='default')
                             device.delete()
                             login(request, user)
                             return JsonResponse({'success': True, 'redirect_url': '/game'})
                         else:
-                            print("Redirecting to 2FA checker page")
                             login(request, user)
                             return JsonResponse({'success': True, 'redirect_url': '/account/redirect/checker'})
                     else:
-                        print("Logging in and redirecting to game page")
                         login(request, user)
                         return JsonResponse({'success': True, 'redirect_url': '/game'})
                 else:
-                    print("Anonymous user detected. Blocking login.")
                     return JsonResponse({'success': False, 'error': 'Anonymous users cannot log in'}, status=400)
             else:
-                print("Invalid login credentials")
                 return JsonResponse({'success': False, 'error': 'Invalid login credentials'}, status=400)
         else:
-            print("Form validation failed")
             return JsonResponse({'success': False, 'error': 'Form is invalid'}, status=400)
     else:
         print("render auth_page")

@@ -11,7 +11,6 @@ def custom_login_required(view_func):
                 return redirect(settings.LOGIN_URL)
         
         if request.user.is_authenticated and request.user.twofa_submitted and not request.user.twofa_verified:
-            print("2FA required but not verified.")
             if request.method == 'POST':
                 return JsonResponse({'error': 'Two-factor authentication not verified'}, status=403)
             else:
