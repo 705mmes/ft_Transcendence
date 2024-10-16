@@ -1,4 +1,5 @@
 import os
+
 from django.core.asgi import get_asgi_application
 from channels.routing import ProtocolTypeRouter, URLRouter
 from channels.auth import AuthMiddlewareStack
@@ -16,7 +17,7 @@ from game.routing import websocket_urlpatterns as game_websocket_urlpatterns
 
 # Combine all routing into a single application
 application = ProtocolTypeRouter({
-    "http": application,
+    "http": get_asgi_application(),
     "websocket": AllowedHostsOriginValidator(
         AuthMiddlewareStack(
             URLRouter(

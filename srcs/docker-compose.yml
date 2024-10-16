@@ -14,7 +14,7 @@ services:
   web:
     container_name: web
     build: ./containers/transcendence
-    command: uvicorn transcendence.asgi:application --host 0.0.0.0 --port 8000
+    command: python manage.py runserver 0.0.0.0:8000
     environment:
       DJANGO_SETTINGS_MODULE: transcendence.settings
       DATABASE_HOST: postgres
