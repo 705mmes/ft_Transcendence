@@ -66,8 +66,6 @@ class GameConsumer(AsyncWebsocketConsumer):
     # UTILS HERE
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        action = text_data_json['action']
-        print(f"{self.scope['user']} send: {text_data_json}")
         if text_data_json['action'] == 'move':
             await self.update_cache(text_data_json)
 
@@ -213,7 +211,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 Loser_SF2=loser_sf2,
                 game_played=nb_game
             )
-            await sync_to_async(lobby.update)(Winner_SF2=winner_sf2, Loser_SF2=loser_sf2, game_played=nb_game)
         elif lobby_cache['is_tournament'] == 3:
             nb_game = lobby.game_played + 1
             await sync_to_async(TournamentLobby.objects.filter(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr)).update)(

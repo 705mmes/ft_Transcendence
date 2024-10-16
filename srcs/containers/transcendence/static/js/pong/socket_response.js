@@ -26,6 +26,8 @@ function PongSocketStatus() {
 
 function ready(game_mode) {
 
+    if (game_mode === 'matchmaking_1v1')
+        game_mode = 'match_1v1'
     const message = JSON.stringify({mode: game_mode, action: 'player_ready'});
     game_socket.send(message);
 }

@@ -48,7 +48,6 @@ class GameAIConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
         print(f"Disconnected from match : {self.scope['user'].username}")
         if await sync_to_async(cache.get)(f"{user_name}_key"):
-            print("wdawdawodnwaoiwnda")
             user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
             lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
             if lobby_cache:
