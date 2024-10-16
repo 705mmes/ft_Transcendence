@@ -17,25 +17,20 @@ from authentication.decorators import custom_login_required
 
 @custom_login_required
 def redirect_to_2fa_setup(request):
-    print("User:", request.user)
     user = User.objects.get(username=request.user)
     try:
         device = TOTPDevice.objects.get(user=request.user, name='default')
     except MultipleObjectsReturned:
         device = TOTPDevice.objects.filter(user=request.user, name='default').first()
-        print("Multiple devices found. Using the first one.")
     except ObjectDoesNotExist:
         device = None
-        print("Device does not exist. Creating a new one.")
         device = TOTPDevice.objects.create(user=request.user, name='default')
     
     if request.method == 'POST':
         form = OTPTokenForm(data=request.POST, user=request.user)
         
         if form.is_valid():
-            print("form_is_valid")
             token = form.cleaned_data['otp_token']
-            print("Device:", device, "Token:", token)
     
             if device and device.verify_token(token):
                 user.twofa_submitted = True
@@ -45,7 +40,6 @@ def redirect_to_2fa_setup(request):
             else:
                 return JsonResponse({'success': False, 'error': 'Invalid OTP token.'})
         else:
-            print("Form errors:", form.errors)
             return JsonResponse({'success': False, 'error': 'Invalid form submission.'})
     else:
         form = OTPTokenForm(user=request.user)
@@ -58,12 +52,10 @@ def redirect_to_2fa_setup(request):
         qr_code_data = f'data:image/png;base64,{encoded_img}'
     else:
         qr_code_data = None
-        print("Error: No device")       
     
     return render(request, 'accounts/setup.html', {'form': form, 'qr_url': qr_code_data})
 
 def redirect_to_login(request):
-    print("redirect_to_2fa_login...")
     if request.method == 'POST':
         redirect('login_session')
     else:
@@ -71,17 +63,14 @@ def redirect_to_login(request):
 
 @custom_login_required
 def check_twofa_status(request):
-    print("check_twofa_status")
     return JsonResponse({
         'twofa_verified': request.user.twofa_verified,
         'twofa_submitted': request.user.twofa_submitted
     })
 
 def redirect_to_checker(request):
-    print("redirect_to_checker...")
     user = User.objects.get(username=request.user)
     if request.method == 'POST':    
-        print("need to get device from", user)
         try:
             device = TOTPDevice.objects.get(user=user, name='default')
         except MultipleObjectsReturned:
@@ -98,7 +87,6 @@ def redirect_to_checker(request):
             else:
                 return JsonResponse({'success': False, 'error': 'Invalid OTP token.'})
         else:
-            print("Form errors:", form.errors)
             return JsonResponse({'success': False, 'error': 'Invalid form submission.'})
     else:
         form = OTPTokenForm(user=user)
@@ -106,7 +94,6 @@ def redirect_to_checker(request):
 
 @login_required
 def delete_2fa(request):
-    print("delete_2fa", request.user)
     if request.method == 'POST':
         try:
             totp_device = TOTPDevice.objects.get(user=request.user)
