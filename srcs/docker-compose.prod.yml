@@ -4,7 +4,7 @@ services:
     build:
       context: ./containers/transcendence
       dockerfile: Dockerfile.prod
-    command: python manage.py runserver 0.0.0.0:8000
+    command: python manage.py -v 0 runserver 0.0.0.0:8000
     volumes:
       - static_volume:/home/app/web/staticfiles
     environment:

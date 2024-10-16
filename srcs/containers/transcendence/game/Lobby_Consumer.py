@@ -426,21 +426,22 @@ class LobbyConsumer(WebsocketConsumer):
             user.is_ready = True
             user.save()
             print(f"{user.username} is {user.is_ready}")
-            if lobby_t.P1.is_ready and lobby_t.P2.is_ready and lobby_t.P3.is_ready and lobby_t.P4.is_ready:
-                print("Everyone is ready")
-                json_data = {'action': 'launch_second_match', 'mode': 'matchmaking_1v1'}
-                async_to_sync(self.channel_layer.group_send)("game_" + lobby_t.P1.username,
-                                                             {'type': 'send_info', 'data': json_data})
-                async_to_sync(self.channel_layer.group_send)("game_" + lobby_t.P2.username,
-                                                             {'type': 'send_info', 'data': json_data})
-                async_to_sync(self.channel_layer.group_send)("game_" + lobby_t.P3.username,
-                                                             {'type': 'send_info', 'data': json_data})
-                async_to_sync(self.channel_layer.group_send)("game_" + lobby_t.P4.username,
-                                                             {'type': 'send_info', 'data': json_data})
-        else:
-            json_data = {'action': 'no_tournament', 'mode': 'matchmaking_1v1'}
-            async_to_sync(self.channel_layer.group_send)("game_" + user.username,
-                                                         {'type': 'send_info', 'data': json_data})
+            if lobby_t.P1 and lobby_t.P2 and lobby_t.P3 and lobby_t.P4:
+                if lobby_t.P1.is_ready and lobby_t.P2.is_ready and lobby_t.P3.is_ready and lobby_t.P4.is_ready:
+                    print("Everyone is ready")
+                    json_data = {'action': 'launch_second_match', 'mode': 'matchmaking_1v1'}
+                    async_to_sync(self.channel_layer.group_send)("game_" + lobby_t.P1.username,
+                                                                 {'type': 'send_info', 'data': json_data})
+                    async_to_sync(self.channel_layer.group_send)("game_" + lobby_t.P2.username,
+                                                                 {'type': 'send_info', 'data': json_data})
+                    async_to_sync(self.channel_layer.group_send)("game_" + lobby_t.P3.username,
+                                                                 {'type': 'send_info', 'data': json_data})
+                    async_to_sync(self.channel_layer.group_send)("game_" + lobby_t.P4.username,
+                                                                 {'type': 'send_info', 'data': json_data})
+                    return
+        json_data = {'action': 'no_tournament', 'mode': 'matchmaking_1v1'}
+        async_to_sync(self.channel_layer.group_send)("game_" + user.username,
+                                                     {'type': 'send_info', 'data': json_data})
 
     def tournament(self, json_data):
         if json_data['action'] == 'searching':

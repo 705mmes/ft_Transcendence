@@ -165,7 +165,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             return True
         else:
             if ff:
-                if lobby_cache['is_tournament'] and lobby_cache['is_tournament'] == 0:
+                if lobby_cache['is_tournament'] == 0:
                     self.endtime = time.time() - self.start_time
                     user_user = await sync_to_async(User.objects.get)(username=user.name)
                     opponent_user = await sync_to_async(User.objects.get)(username=opponent.name)
@@ -213,7 +213,6 @@ class GameConsumer(AsyncWebsocketConsumer):
                 Loser_SF2=loser_sf2,
                 game_played=nb_game
             )
-            await sync_to_async(lobby.update)(Winner_SF2=winner_sf2, Loser_SF2=loser_sf2, game_played=nb_game)
         elif lobby_cache['is_tournament'] == 3:
             nb_game = lobby.game_played + 1
             await sync_to_async(TournamentLobby.objects.filter(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr)).update)(
@@ -226,6 +225,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             )
         print("Nb Gamed :", lobby.game_played)
         if lobby.game_played >= 4:
+            print("Pipipopocaca")
             lobby.is_finished = True
             await sync_to_async(lobby.delete)()
 
