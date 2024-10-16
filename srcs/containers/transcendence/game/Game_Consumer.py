@@ -66,8 +66,6 @@ class GameConsumer(AsyncWebsocketConsumer):
     # UTILS HERE
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
-        action = text_data_json['action']
-        print(f"{self.scope['user']} send: {text_data_json}")
         if text_data_json['action'] == 'move':
             await self.update_cache(text_data_json)
 
