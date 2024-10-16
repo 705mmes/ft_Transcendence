@@ -23,6 +23,13 @@ let game_data = {
 	my_racket: undefined,
 	opponent_racket: undefined,
 }
+
+let tournament_data = {
+	racket_left: undefined,
+	racket_right: undefined,
+	ballon: undefined,
+}
+
 if (moveback !== '/')
 {
     console.log('moveback :', moveback);
@@ -91,7 +98,6 @@ async function always_on_script()
 
 async function load_script_form_fetch(cache)
 {
-
     let list_script = await cache;
     for (let i = 0; i < list_script.length; i++)
     {
@@ -203,8 +209,6 @@ function pong_websocket(game_data, url) {
         // Event handler for when the WebSocket connection opens
         game_socket.onopen = function (e) {
             responsePong();
-            const message = JSON.stringify({mode: "match_tournament", action: 'is_tournament'});
-            game_socket.send(message);
             console.log("[open] Connection established pong");
         };
 

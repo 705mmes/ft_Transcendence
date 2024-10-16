@@ -91,7 +91,8 @@
 }
 
 #cancel_research,
-#start_research {
+#start_research,
+#start_tournament {
     position: absolute;
     bottom: 10px; /* 10px from the bottom */
     left: 50%; /* Start the button from the center */
