@@ -21,7 +21,7 @@
                             <label for="otp_token">OTP token:</label>
                             {{ form.otp_token|add_class:"form-control" }}
                         </div>
-                        <button type="submit" class="btn btn-success w-100">Verify</button>
+                        <button type="submit" class="btn btn-primary w-100">Verify</button>
                         <div id="error-message" class="text-danger mt-3 text-center">
                             {% if form.errors %}
                                 {% for error in form.non_field_errors %}
