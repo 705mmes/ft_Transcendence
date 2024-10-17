@@ -74,7 +74,7 @@ def history(request):
             game_history.append({
                 'User1': user2,
                 'User2': {'score': game.Score1, 'username': game.History1.username, 'ff': game.ffed1, 'date': game.date,
-                          'time': f"{game.minutes:02}:{game.seconds:02}"},
+                          'time': f"{game.minutes:02}:{game.seconds:02}"}
             })
     context = {
         'target': 'me',
