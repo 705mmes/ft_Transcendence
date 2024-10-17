@@ -61,7 +61,7 @@ def history(request):
     for game in reversed(five_last_game):
         if game.History2:
             user2 = {'score': game.Score2, 'username': game.History2.username, 'ff': game.ffed2, 'date': game.date,
-                     'time': f"{game.minutes:02}:{game.seconds:02}"},
+                     'time': f"{game.minutes:02}:{game.seconds:02}"}
         else:
             user2 = {'score': game.Score2, 'username': 'IA', 'ff': game.ffed2}
         if game.History1 == me:
@@ -74,7 +74,7 @@ def history(request):
             game_history.append({
                 'User1': user2,
                 'User2': {'score': game.Score1, 'username': game.History1.username, 'ff': game.ffed1, 'date': game.date,
-                          'time': f"{game.minutes:02}:{game.seconds:02}"},
+                          'time': f"{game.minutes:02}:{game.seconds:02}"}
             })
     context = {
         'target': 'me',
