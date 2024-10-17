@@ -48,6 +48,7 @@ class LobbyConsumer(WebsocketConsumer):
         if lobby_queryset:
             lobby = lobby_queryset.first()
             if not user.is_playing:
+                print("HELLO!!!!")
                 self.remove_from_lobby(lobby, user)
                 json_data = {'action': 'opponent_change', 'mode': 'matchmaking_1v1',
                              'players': self.create_json_player(lobby)}
@@ -317,6 +318,7 @@ class LobbyConsumer(WebsocketConsumer):
         self.send(json_data)
         lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))
         lobby = lobby_queryset.first()
+        print('CANCELED!!!!!')
         self.remove_from_lobby(lobby, user)
         json_data = {'action': 'opponent_change', 'mode': 'tournament',
                      'players': self.create_json_player(lobby)}
@@ -389,17 +391,19 @@ class LobbyConsumer(WebsocketConsumer):
         user = User.objects.get(username=self.scope['user'])
         lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))
         lobby_t = lobby_queryset.first()
+        print("CHECK PLAYER TOURNAMENT ==", lobby_t.game_played)
         if lobby_t:
             if lobby_t.is_finished:
+                print("FINISHED!!!!!!")
                 self.remove_from_lobby(lobby_t, user)
             elif lobby_t.game_played == 0:
                 self.first_game(lobby_t, user)
             elif lobby_t.game_played == 2:
                 self.second_game(lobby_t, user)
-        print("Le lobbby_t : ",lobby_t)
-        json_data = {'action': 'cancel_lobby', 'mode': 'match_tournament'}
-        async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
-        return
+        else:
+            print("Le lobbby_t : ",lobby_t)
+            json_data = {'action': 'cancel_lobby', 'mode': 'match_tournament'}
+            async_to_sync(self.channel_layer.group_send)(self.room_name, {'type': 'send_info', 'data': json_data})
 
     def send_data_game(self, player1, player2, lobby):
         my_racket = self.json_creator_racket(player1)
@@ -439,6 +443,7 @@ class LobbyConsumer(WebsocketConsumer):
                     async_to_sync(self.channel_layer.group_send)("game_" + lobby_t.P4.username,
                                                                  {'type': 'send_info', 'data': json_data})
                     return
+                return
         json_data = {'action': 'no_tournament', 'mode': 'matchmaking_1v1'}
         async_to_sync(self.channel_layer.group_send)("game_" + user.username,
                                                      {'type': 'send_info', 'data': json_data})

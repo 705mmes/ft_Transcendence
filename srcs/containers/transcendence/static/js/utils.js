@@ -209,6 +209,8 @@ function pong_websocket(game_data, url) {
         // Event handler for when the WebSocket connection opens
         game_socket.onopen = function (e) {
             responsePong();
+            const message = JSON.stringify({mode: "match_tournament", action: 'is_tournament'});
+            game_socket.send(message);
             console.log("[open] Connection established pong");
         };
 

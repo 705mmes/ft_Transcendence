@@ -199,15 +199,20 @@ LOGGING = {
     'disable_existing_loggers': False,
     'handlers': {
         'console': {
-            'level': 'DEBUG',  # Set to 'DEBUG' to capture all log messages during development
+            'level': 'WARNING',  # Set to 'DEBUG' to capture all log messages during development
             'class': 'logging.StreamHandler',
         },
     },
     'loggers': {
         '': {
             'handlers': ['console'],
-            'level': 'DEBUG',  # Adjust this to control log levels (DEBUG, INFO, WARNING, ERROR)
+            'level': 'WARNING',  # Adjust this to control log levels (DEBUG, INFO, WARNING, ERROR)
             'propagate': True,
+        },
+        'django.server': {  # This logger handles HTTP requests/responses
+            'handlers': ['console'],
+            'level': 'WARNING',  # Change INFO to WARNING or ERROR
+            'propagate': False,
         },
     },
 }

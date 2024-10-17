@@ -74,14 +74,15 @@
 
 #lobby_content {
     display: flex;
-    flex-direction: : column;
+    flex-direction: column;
 }
 
 @media (min-width: 450px) {
-  #lobby_content {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
+    #lobby_content {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
 
 #lobby_content div
 {
@@ -91,8 +92,7 @@
 }
 
 #cancel_research,
-#start_research,
-#start_tournament {
+#start_research {
     position: absolute;
     bottom: 10px; /* 10px from the bottom */
     left: 50%; /* Start the button from the center */
@@ -116,6 +116,6 @@
    width: 200%;
 }
 
-#loading{
+#loading {
     margin: auto;
 }

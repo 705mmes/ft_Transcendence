@@ -5,7 +5,9 @@ function choose_message(str_action)
 {
     let mode_name = document.getElementById("mode_name");
     let game_mode = undefined;
-    if (mode_name.className === 'match_ai')
+    if (mode_name.className === 'match_tournament')
+        game_mode = "match_tournament";
+    else if (mode_name.className === 'match_ai')
         game_mode = "match_ai";
     else
         game_mode = "match_1v1";
@@ -56,8 +58,6 @@ function display_cancel_btn()
 
 if (document.getElementById("btn_matchmaking_1v1")) {
     document.getElementById("btn_matchmaking_1v1").onclick = () => {
-        if (document.getElementById("start_tournament"))
-            document.getElementById("start_tournament").remove()
         let mode_name = document.getElementById("mode_name");
         mode_name.innerHTML = "MatchMaking 1v1";
         mode_name.className = "match_1v1";
@@ -72,48 +72,17 @@ if (document.getElementById("btn_matchmaking_1v1")) {
     }
 }
 
-function getPlayerNames() {
-    const all_Players = document.getElementsByClassName('player_name');
-
-    let i = -1;
-    let list = [];
-    while (++i < all_Players.length) {
-        if (all_Players[i].value)
-            list[i] = all_Players[i].value;
-    }
-    return list;
-}
-
-function display_start_tournament()
-{
-    let start_tournament_btn = document.createElement("button");
-    start_tournament_btn.innerHTML = "START TOURNAMENT";
-    start_tournament_btn.id = "start_tournament";
-    start_tournament_btn.className = 'button';
-    start_tournament_btn.onclick = () => {
-        let name_list = getPlayerNames()
-        if (name_list.length === 4)
-        {
-            clearInterval(timeoutID);
-            main_tournament(name_list);
-        }
-        else {
-            console.log('not enough player to start a tournament !');
-        }
-    }
-    if (!document.getElementById('cancel_research'))
-        document.getElementById("lobby_div").appendChild(start_tournament_btn);
-}
-
 if (document.getElementById("btn_tournament")) {
     document.getElementById("btn_tournament").onclick = () => {
         let mode_name = document.getElementById("mode_name");
         mode_name.innerHTML = "Tournament";
         mode_name.className = "match_tournament";
-        if (document.getElementById('start_research'))
-            document.getElementById('start_research').remove()
-        if (!document.getElementById("start_tournament"))
-            display_start_tournament();
+        if (!document.getElementById("start_research"))
+            display_research_btn("SEARCH TOURNAMENT");
+        else {
+            let btn = document.getElementById("start_research");
+            btn.innerHTML = "SEARCH TOURNAMENT";
+        }
         let lobby_content = document.getElementById('lobby_content');
         fetching_html("/game/tournament", lobby_content);
     }
@@ -121,8 +90,6 @@ if (document.getElementById("btn_tournament")) {
 
 if (document.getElementById("btn_match_ai")) {
     document.getElementById("btn_match_ai").onclick = () => {
-        if (document.getElementById("start_tournament"))
-            document.getElementById("start_tournament").remove()
         let mode_name = document.getElementById("mode_name");
         mode_name.innerHTML = "Match vs AI";
         mode_name.className = "match_ai";

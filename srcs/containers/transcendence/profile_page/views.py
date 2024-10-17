@@ -61,7 +61,7 @@ def history(request):
     for game in reversed(five_last_game):
         if game.History2:
             user2 = {'score': game.Score2, 'username': game.History2.username, 'ff': game.ffed2, 'date': game.date,
-                     'time': f"{game.minutes:02}:{game.seconds:02}"},
+                     'time': f"{game.minutes:02}:{game.seconds:02}"}
         else:
             user2 = {'score': game.Score2, 'username': 'IA', 'ff': game.ffed2}
         if game.History1 == me:
@@ -97,7 +97,7 @@ def friend_profile(request):
     for game in reversed(five_last_game):
         if game.History2:
             user2 = {'score': game.Score2, 'username': game.History2.username, 'ff': game.ffed2, 'date': game.date,
-                     'time': f"{game.minutes:02}:{game.seconds:02}"},
+                     'time': f"{game.minutes:02}:{game.seconds:02}"}
         else:
             user2 = {'score': game.Score2, 'username': 'IA', 'ff': game.ffed2}
         if game.History1 == target_user:

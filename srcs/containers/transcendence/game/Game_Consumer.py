@@ -35,6 +35,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.ball = Ball()
         print(f"Consumer of {self.scope['user']} state game loop : {lobby_cache['is_game_loop']}")
         self.start_time = time.time()
+        self.is_tournament = lobby_cache['is_tournament']
         if user_cache['game_loop'] and not lobby_cache['is_game_loop']:
             lobby_cache['is_game_loop'] = True
             await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
@@ -61,7 +62,10 @@ class GameConsumer(AsyncWebsocketConsumer):
                 await self.check_game(self.user.get_class(), self.opponent.get_class(), True, lobby_cache)
                 json_data = {'action': 'game_end', 'mode': 'matchmaking_1v1'}
                 await self.channel_layer.group_send("match_" + opponent_name, {'type': 'send_match_info', 'data': json_data})
-
+            if user_cache['game_loop']:
+                await sync_to_async(cache.delete)(f"{lobby_cache['opponent_key']}_key")
+                await sync_to_async(cache.delete)(f"{user_cache['lobby_name']}_key")
+                await sync_to_async(cache.delete)(f"{user_name}_key")
 
     # UTILS HERE
     async def receive(self, text_data):
@@ -143,13 +147,10 @@ class GameConsumer(AsyncWebsocketConsumer):
     async def endgame(self, lobby_cache, user_cache, user_name):
         await self.send_data(self.opponent.get_class(), self.user.get_class(), 'game_end')
         await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_end')
-        await sync_to_async(cache.delete)(f"{lobby_cache['opponent_key']}_key")
-        await sync_to_async(cache.delete)(f"{user_cache['lobby_name']}_key")
-        await sync_to_async(cache.delete)(f"{user_name}_key")
 
     async def check_game(self, user, opponent, ff, lobby_cache):
         if user.score >= 5 or opponent.score >= 5:
-            if lobby_cache['is_tournament'] == 0:
+            if self.is_tournament == 0:
                 self.endtime = time.time() - self.start_time
                 user_user = await sync_to_async(User.objects.get)(username=user.name)
                 opponent_user = await sync_to_async(User.objects.get)(username=opponent.name)
@@ -158,12 +159,12 @@ class GameConsumer(AsyncWebsocketConsumer):
                                                                 ffed1=False, ffed2=False,
                                                                 date=datetime.now().strftime("%Y-%m-%d"),
                                                                 minutes=self.endtime / 60, seconds=self.endtime % 60)
-            if lobby_cache['is_tournament'] != 0:
+            else:
                 await self.who_win(user, opponent)
             return True
         else:
             if ff:
-                if lobby_cache['is_tournament'] == 0:
+                if self.is_tournament == 0:
                     self.endtime = time.time() - self.start_time
                     user_user = await sync_to_async(User.objects.get)(username=user.name)
                     opponent_user = await sync_to_async(User.objects.get)(username=opponent.name)
@@ -172,7 +173,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                                                                     ffed1=True, ffed2=False,
                                                                     date=datetime.now().strftime("%Y-%m-%d"),
                                                                     minutes=self.endtime / 60, seconds=self.endtime % 60)
-                if lobby_cache['is_tournament'] != 0:
+                else:
                     await self.who_win(user, opponent)
             return False
 
@@ -193,6 +194,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             winner_sf1 = await sync_to_async(User.objects.get)(username=winner)
             loser_sf1 = await sync_to_async(User.objects.get)(username=loser)
             nb_game = lobby.game_played + 1
+            print("nb game =", nb_game)
             print("Winner SF1 is", winner_sf1)
             print("Loser SF1 is", loser_sf1)
             await sync_to_async(TournamentLobby.objects.filter(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr)).update)(
@@ -204,6 +206,7 @@ class GameConsumer(AsyncWebsocketConsumer):
             winner_sf2 = await sync_to_async(User.objects.get)(username=winner)
             loser_sf2 = await sync_to_async(User.objects.get)(username=loser)
             nb_game = lobby.game_played + 1
+            print("nb game =", nb_game)
             print("Winner SF2 is", winner_sf2)
             print("Loser SF2 is", loser_sf2)
             await sync_to_async(TournamentLobby.objects.filter(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr)).update)(

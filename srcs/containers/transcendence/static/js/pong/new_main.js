@@ -24,6 +24,7 @@ function main_game(data)
     }
     if (game_data.ball === undefined)
         game_data.ball = new balle(canevas);
+    if (data.mode === ' ')
     game_data.game_start = true
     set_racket(data.my_racket, game_data.my_racket)
     set_racket(data.opponent, game_data.opponent_racket)
@@ -110,8 +111,9 @@ function post_game_lobby()
     let text = game_data.my_racket.canvcont.measureText(result);
     let x = game_data.my_racket.canevas.width / 2 - text.width / 2;
     game_data.my_racket.canvcont.fillText(result, x, 200);
+
     document.getElementById('continue').className = 'button';
-    timeoutID = setTimeout(to_unspecified_page, 15000,'/game');
+    timeoutID = setTimeout(to_unspecified_page, 5000,'/game');
 }
 
 function game_ended(data){
