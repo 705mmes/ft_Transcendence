@@ -208,13 +208,10 @@ class LobbyConsumer(WebsocketConsumer):
     def check_player(self):
         user = User.objects.get(username=self.scope['user'])
         lobby = GameLobby.objects.filter(Q(Player1=user) | Q(Player2=user))
-        print("ICI!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         if lobby:
-            print("LA!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             self.init_pos(lobby.first())
             opponent = self.who_is_the_enemy(lobby.get())
             if user.is_playing and opponent.is_playing:
-                print("HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11")
                 my_racket = self.json_creator_racket(user)
                 opponent_racket = self.json_creator_racket(opponent)
                 json_ball = self.json_creator_ball(lobby.first())

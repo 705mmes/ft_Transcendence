@@ -47,7 +47,6 @@ function responsePong() {
     {
         game_socket.onmessage = function(event)
         {
-            console.log("Bite");
             try
             {
                 let data = JSON.parse(event.data);
