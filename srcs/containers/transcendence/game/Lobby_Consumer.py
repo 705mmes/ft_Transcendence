@@ -423,7 +423,9 @@ class LobbyConsumer(WebsocketConsumer):
         # print("Lobby query set",lobby_queryset)
         lobby_t = lobby_queryset.first()
         print("Lobby_t",lobby_t)
-        if lobby_t:
+        if lobby_t and not lobby_t.is_finished:
+            if lobby_t.game_played >= 3:
+                return
             json_data = {'action': 'second_match', 'mode': 'matchmaking_1v1'}
             async_to_sync(self.channel_layer.group_send)("game_" + user.username,
                                                          {'type': 'send_info', 'data': json_data})
@@ -442,6 +444,7 @@ class LobbyConsumer(WebsocketConsumer):
                                                                  {'type': 'send_info', 'data': json_data})
                     async_to_sync(self.channel_layer.group_send)("game_" + lobby_t.P4.username,
                                                                  {'type': 'send_info', 'data': json_data})
+
                     return
                 return
         json_data = {'action': 'no_tournament', 'mode': 'matchmaking_1v1'}
