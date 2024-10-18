@@ -189,14 +189,10 @@ class GameConsumer(AsyncWebsocketConsumer):
         lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
         lobby_queryset = await sync_to_async(TournamentLobby.objects.filter)(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr))
         lobby = await sync_to_async(lobby_queryset.first)()
-        print("is Tournament", lobby_cache['is_tournament'])
         if lobby_cache['is_tournament'] == 1:
             winner_sf1 = await sync_to_async(User.objects.get)(username=winner)
             loser_sf1 = await sync_to_async(User.objects.get)(username=loser)
             nb_game = lobby.game_played + 1
-            print("nb game =", nb_game)
-            print("Winner SF1 is", winner_sf1)
-            print("Loser SF1 is", loser_sf1)
             await sync_to_async(TournamentLobby.objects.filter(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr)).update)(
                 Winner_SF1=winner_sf1,
                 Loser_SF1=loser_sf1,
@@ -206,27 +202,30 @@ class GameConsumer(AsyncWebsocketConsumer):
             winner_sf2 = await sync_to_async(User.objects.get)(username=winner)
             loser_sf2 = await sync_to_async(User.objects.get)(username=loser)
             nb_game = lobby.game_played + 1
-            print("nb game =", nb_game)
-            print("Winner SF2 is", winner_sf2)
-            print("Loser SF2 is", loser_sf2)
             await sync_to_async(TournamentLobby.objects.filter(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr)).update)(
                 Winner_SF2=winner_sf2,
                 Loser_SF2=loser_sf2,
                 game_played=nb_game
             )
         elif lobby_cache['is_tournament'] == 3:
+            winner_f1 = await sync_to_async(User.objects.get)(username=winner)
+            loser_f1 = await sync_to_async(User.objects.get)(username=loser)
             nb_game = lobby.game_played + 1
             await sync_to_async(TournamentLobby.objects.filter(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr)).update)(
+                Winner_F1=winner_f1,
+                Loser_F1=loser_f1,
                 game_played=nb_game
             )
         elif lobby_cache['is_tournament'] == 4:
+            winner_f2 = await sync_to_async(User.objects.get)(username=winner)
+            loser_f2 = await sync_to_async(User.objects.get)(username=loser)
             nb_game = lobby.game_played + 1
             await sync_to_async(TournamentLobby.objects.filter(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr)).update)(
+                Winner_F1=winner_f2,
+                Loser_F1=loser_f2,
                 game_played=nb_game
             )
-        print("Nb Gamed :", lobby.game_played)
         if lobby.game_played >= 4:
-            print("Pipipopocaca")
             lobby.is_finished = True
             await sync_to_async(lobby.delete)()
 

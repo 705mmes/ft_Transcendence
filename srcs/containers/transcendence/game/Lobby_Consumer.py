@@ -1,6 +1,8 @@
 import json
 from linecache import updatecache
 from pdb import line_prefix
+from venv import create
+
 from time import sleep
 from uuid import uuid4
 from xmlrpc.client import DateTime
@@ -9,7 +11,7 @@ from asgiref.sync import async_to_sync, sync_to_async
 from channels.generic.websocket import WebsocketConsumer, AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from authentication.models import User
-from game.models import GameLobby, TournamentLobby
+from game.models import GameLobby, TournamentLobby, TournamentHistory
 from django.db.models import Q
 from datetime import datetime
 import math
@@ -242,6 +244,8 @@ class LobbyConsumer(WebsocketConsumer):
         lobby.save()
         async_to_sync(self.channel_layer.group_discard)(lobby.Name, self.channel_name)
         if lobby.player_count == 0:
+            if lobby.Winner_F1 and lobby.Loser_F1 and lobby.Winner_F2 and lobby.Loser_F2:
+                TournamentHistory.objects.create(First=lobby.Winner_F1, Second=lobby.Loser_F1, Third=lobby.Winner_F2, Fourth=lobby.Loser_F2, date=datetime.now().strftime("%Y-%m-%d"))
             lobby.delete()
             print("Lobby delete !")
         print("Remove from lobby",lobby.P1, lobby.P2, lobby.P3, lobby.P4)
