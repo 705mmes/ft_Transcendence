@@ -59,6 +59,7 @@ class TournamentLobby(models.Model):
     is_full = models.BooleanField(default=False)
     player_count = models.IntegerField(default=0)
     game_played = models.IntegerField(default=0)
+    is_canceled = models.BooleanField(default=False)
     is_finished = models.BooleanField(default=False)
 
     def __str__(self):

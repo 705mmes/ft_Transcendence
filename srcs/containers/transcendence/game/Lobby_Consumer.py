@@ -433,6 +433,7 @@ class LobbyConsumer(WebsocketConsumer):
                 return
             elif not lobby_t.is_finished and lobby_t.game_played >= 3:
                 return
+            # if lobby_t.is_finished:
             json_data = {'action': 'second_match', 'mode': 'matchmaking_1v1'}
             async_to_sync(self.channel_layer.group_send)("game_" + user.username,
                                                          {'type': 'send_info', 'data': json_data})
