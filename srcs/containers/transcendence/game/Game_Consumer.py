@@ -254,7 +254,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         lobby = await sync_to_async(lobby_queryset.first)()
         if lobby.game_played >= 4:
             lobby.is_finished = True
-            await async_to_sync(lobby.save)()
+            await sync_to_async(lobby.save)()
 
     async def update_cache(self, json_data):
         user_name = self.scope['user'].username

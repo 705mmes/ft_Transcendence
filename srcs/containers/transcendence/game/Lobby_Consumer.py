@@ -430,6 +430,7 @@ class LobbyConsumer(WebsocketConsumer):
             if lobby_t.is_finished:
                 print("FINISHED!!!!!!")
                 self.remove_from_lobby(lobby_t, user)
+                return
             elif not lobby_t.is_finished and lobby_t.game_played >= 3:
                 return
             json_data = {'action': 'second_match', 'mode': 'matchmaking_1v1'}
