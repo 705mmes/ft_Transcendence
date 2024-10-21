@@ -30,6 +30,9 @@ class TournamentHistory(models.Model):
     Fourth = models.CharField()
     date = models.DateField()
 
+    def __str__(self):
+        return f"{self.First} - {self.Second} - {self.Third} - {self.Fourth}"
+
 class GameLobby(models.Model):
     Player1 = models.ForeignKey(User, related_name='Player1', on_delete=models.CASCADE,  blank=True, null=True)
     Player2 = models.ForeignKey(User, related_name='Player2', on_delete=models.CASCADE,  blank=True, null=True)

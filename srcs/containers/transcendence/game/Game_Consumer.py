@@ -250,9 +250,9 @@ class GameConsumer(AsyncWebsocketConsumer):
                 Loser_F2=loser,
                 game_played=nb_game
             )
-
+        lobby_queryset = await sync_to_async(TournamentLobby.objects.filter)(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr))
+        lobby = await sync_to_async(lobby_queryset.first)()
         if lobby.game_played >= 4:
-            print("HEREEEEEEEEE")
             lobby.is_finished = True
             await async_to_sync(lobby.save)()
 

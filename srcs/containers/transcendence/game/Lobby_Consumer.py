@@ -399,10 +399,7 @@ class LobbyConsumer(WebsocketConsumer):
         lobby_t = lobby_queryset.first()
         print("CHECK PLAYER TOURNAMENT ==", lobby_t.game_played)
         if lobby_t:
-            if lobby_t.is_finished:
-                print("FINISHED!!!!!!")
-                self.remove_from_lobby(lobby_t, user)
-            elif lobby_t.game_played == 0:
+            if lobby_t.game_played == 0:
                 self.first_game(lobby_t, user)
             elif lobby_t.game_played == 2:
                 self.second_game(lobby_t, user)
@@ -429,8 +426,11 @@ class LobbyConsumer(WebsocketConsumer):
         # print("Lobby query set",lobby_queryset)
         lobby_t = lobby_queryset.first()
         print("Lobby_t",lobby_t)
-        if lobby_t and not lobby_t.is_finished:
-            if lobby_t.game_played >= 3:
+        if lobby_t:
+            if lobby_t.is_finished:
+                print("FINISHED!!!!!!")
+                self.remove_from_lobby(lobby_t, user)
+            elif not lobby_t.is_finished and lobby_t.game_played >= 3:
                 return
             json_data = {'action': 'second_match', 'mode': 'matchmaking_1v1'}
             async_to_sync(self.channel_layer.group_send)("game_" + user.username,
