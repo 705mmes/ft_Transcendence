@@ -14,6 +14,21 @@ if (document.getElementById('profile_form'))
     })
 }
 
+if (document.getElementById('normal_games_btn'))
+{
+    document.getElementById('normal_games_btn').addEventListener('click', () =>{
+        fetching_html('/profile/normal_games/', document.getElementById('full_history'))
+    })
+}
+
+if (document.getElementById('tournament_games_btn'))
+{
+    document.getElementById('tournament_games_btn').addEventListener('click', () =>{
+        fetching_html('/profile/tournament_games/', document.getElementById('full_history'))
+    })
+}
+
+
 async function update_profile(value)
 {
     try

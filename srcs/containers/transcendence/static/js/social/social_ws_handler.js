@@ -79,11 +79,31 @@ async function friend_profile_request(data)
     console.log('here');
     navigate('/');
     let div_content = document.getElementById('profile_popup_content');
-    await fetching_html_add(`profile/friend_profile/?target_name=${encodeURIComponent(data.target)}`, div_content)
+    await fetching_html_add(`profile/?target_name=${encodeURIComponent(data.target)}`, div_content)
     document.getElementById("profile_popup").classList.add('on')
 
-    navigate('social/');
+
+    if (document.getElementById('normal_games_btn'))
+    {
+        document.getElementById('normal_games_btn').addEventListener('click', () =>{
+            navigate('/')
+            fetching_html(`profile/normal_games/?target_name=${encodeURIComponent(data.target)}`, document.getElementById('full_history'))
+            navigate('social/');
+        })
+    }
+
+    if (document.getElementById('tournament_games_btn'))
+    {
+        document.getElementById('tournament_games_btn').addEventListener('click', () =>{
+            navigate('/')
+            fetching_html(`profile/tournament_games/?target_name=${encodeURIComponent(data.target)}`, document.getElementById('full_history'))
+            navigate('social/');
+        })
+    }
+    await navigate('social/');
 }
+
+
 
 document.getElementById('profile_popup').addEventListener('click', function(e){
     if (!document.getElementById('profile_popup_content').contains(e.target)

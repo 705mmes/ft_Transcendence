@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from authentication.forms import ModifiedProfileForm
 from django.http import HttpResponse, JsonResponse
-from game.models import GameHistory
+from game.models import GameHistory, TournamentHistory
 from django.db.models import Q
 from authentication.models import User
 from django.contrib.auth.password_validation import validate_password
@@ -52,9 +52,15 @@ def profile_update(request):
 
 @custom_login_required
 def history(request):
-    me = request.user
-    test = GameHistory.objects.filter(Q(History1=me) | Q(History2=me))
+    if request.GET.get('target_name'):
+        target_name = request.GET.get('target_name')
+        target_user = User.objects.filter(username=target_name).get()
+        target = 'friend'
+    else:
+        target_user = request.user
+        target = 'me'
 
+    test = GameHistory.objects.filter(Q(History1=target_user) | Q(History2=target_user))
     print(test)
     five_last_game = list(test)[-20:]
     game_history = []
@@ -64,7 +70,7 @@ def history(request):
                      'time': f"{game.minutes:02}:{game.seconds:02}"}
         else:
             user2 = {'score': game.Score2, 'username': 'IA', 'ff': game.ffed2}
-        if game.History1 == me:
+        if game.History1 == target_user:
             game_history.append({
                 'User1': {'score': game.Score1, 'username': game.History1.username, 'ff': game.ffed1, 'date': game.date,
                           'time': f"{game.minutes:02}:{game.seconds:02}"},
@@ -77,20 +83,26 @@ def history(request):
                           'time': f"{game.minutes:02}:{game.seconds:02}"}
             })
     context = {
-        'target': 'me',
-        'player': me,
+        'target': target,
+        'player': target_user,
         'game': game_history
     }
-    return render(request, 'profile/profile.html', context)
-
+    if target == 'friend':
+        return render(request, 'profile/profile_page.html', context)
+    else:
+        return render(request, 'profile/profile.html', context)
 
 @custom_login_required
-def friend_profile(request):
-    target_name = request.GET.get('target_name')
-    print(target_name)
-    target_user = User.objects.filter(username=target_name).get()
-    test = GameHistory.objects.filter(Q(History1=target_user) | Q(History2=target_user))
+def normal_games(request):
+    if request.GET.get('target_name'):
+        target_name = request.GET.get('target_name')
+        target_user = User.objects.filter(username=target_name).get()
+        target = 'friend'
+    else:
+        target_user = request.user
+        target = 'me'
 
+    test = GameHistory.objects.filter(Q(History1=target_user) | Q(History2=target_user))
     print(test)
     five_last_game = list(test)[-20:]
     game_history = []
@@ -102,19 +114,50 @@ def friend_profile(request):
             user2 = {'score': game.Score2, 'username': 'IA', 'ff': game.ffed2}
         if game.History1 == target_user:
             game_history.append({
-                'User1': {'score': game.Score1, 'username': game.History1.username, "ff": game.ffed1, 'date': game.date,
+                'User1': {'score': game.Score1, 'username': game.History1.username, 'ff': game.ffed1, 'date': game.date,
                           'time': f"{game.minutes:02}:{game.seconds:02}"},
                 'User2': user2
             })
         else:
             game_history.append({
                 'User1': user2,
-                'User2': {'score': game.Score1, 'username': game.History1.username, "ff": game.ffed1, 'date': game.date,
-                          'time': f"{game.minutes:02}:{game.seconds:02}"},
+                'User2': {'score': game.Score1, 'username': game.History1.username, 'ff': game.ffed1, 'date': game.date,
+                          'time': f"{game.minutes:02}:{game.seconds:02}"}
             })
     context = {
-        'target': 'friend',
+        'target': target,
         'player': target_user,
-        'game': game_history,
+        'game': game_history
     }
-    return render(request, 'profile/profile_page.html', context)
+    return render(request, 'profile/normal_games.html', context)
+
+@custom_login_required
+def tournament_game(request):
+    if request.GET.get('target_name'):
+        target_name = request.GET.get('target_name')
+        target_user = User.objects.filter(username=target_name).get()
+        target = 'friend'
+    else:
+        target_user = request.user
+        target = 'me'
+    test = TournamentHistory.objects.filter(Q(First=target_user.username) | Q(Second=target_user.username) | Q(Third=target_user.username) | Q(Fourth=target_user.username))
+    print(test)
+    five_last_game = list(test)[-20:]
+    game_history = []
+    for game in reversed(five_last_game):
+        game_history.append({
+            'First': game.First,
+            'Second': game.Second,
+            'Third': game.Third,
+            'Fourth': game.Fourth,
+            'date': game.date
+        })
+        print(game)
+    context = {
+        'target': target,
+        'player': target_user,
+        'game': game_history
+    }
+    return render(request, 'profile/tournament.html', context)
+
+

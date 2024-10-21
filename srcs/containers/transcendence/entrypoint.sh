@@ -25,7 +25,7 @@ if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_EMAIL" ] && [ 
 from django.contrib.auth import get_user_model;
 from authentication.models import FriendList
 from authentication.models import FriendRequest
-from game.models import GameHistory
+from game.models import GameHistory, TournamentHistory
 
 User = get_user_model();
 
@@ -77,6 +77,8 @@ if not FriendList.objects.filter(user1=ludo, user2=dcandan).exists():
     FriendList.objects.create(user1=ludo, user2=dcandan)
 if not FriendRequest.objects.filter(requester=leon, recipient=ludo):
     FriendRequest.objects.create(requester=leon, recipient=ludo)
+
+TournamentHistory.objects.create(First='dcandan', Second='leon', Third='leon1', Fourth=leon2, date='2024-10-21')
 "
 fi
 
