@@ -100,3 +100,64 @@
     color: yellowgreen;
     font-size: clamp(16px, 2vw, 28px);
 }
+
+.match {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+}
+
+.tournament_history_block {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.player_block {
+    display: flex;
+    flex-direction: column; /* Stacks ranking on top of name */
+    align-items: center; /* Centers the content */
+    margin: 10px; /* Space around each block */
+}
+
+.winner .ranking,
+.winner .name {
+    font-size: clamp(24px, 2vw, 32px);
+    color: yellowgreen; /* Winner's title and name color */
+}
+
+.loser .ranking,
+.loser .name {
+    color: pink; /* Loser's title and name color */
+}
+
+.ranking {
+    font-size: clamp(18px, 2vw, 28px);
+    font-weight: bold;
+}
+
+.name {
+    font-size: clamp(16px, 2vw, 26px);
+    text-align: center;
+}
+
+.lose_row {
+    display: flex;
+    justify-content: center; /* Center the losers horizontally */
+    gap: 60px; /* Add space between the loser blocks */
+    width: 100%;
+}
+
+#date {
+    position: absolute;
+    top: 10px; /* Top-right corner positioning */
+    right: 20px;
+    font-size: clamp(14px, 1.5vw, 24px);
+    color: gray;
+}
