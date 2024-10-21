@@ -244,10 +244,12 @@ class LobbyConsumer(WebsocketConsumer):
         lobby.save()
         async_to_sync(self.channel_layer.group_discard)(lobby.Name, self.channel_name)
         if lobby.player_count == 0:
+            print("kiki", lobby.Winner_F1, lobby.Loser_F1, lobby.Winner_F2, lobby.Loser_F2)
             if lobby.Winner_F1 and lobby.Loser_F1 and lobby.Winner_F2 and lobby.Loser_F2:
+                print("coucou")
                 TournamentHistory.objects.create(First=lobby.Winner_F1, Second=lobby.Loser_F1, Third=lobby.Winner_F2, Fourth=lobby.Loser_F2, date=datetime.now().strftime("%Y-%m-%d"))
             lobby.delete()
-            print("Lobby delete !")
+            print("Lobby tournament delete !")
         print("Remove from lobby",lobby.P1, lobby.P2, lobby.P3, lobby.P4)
 
     def add_to_lobby(self, lobby, user):

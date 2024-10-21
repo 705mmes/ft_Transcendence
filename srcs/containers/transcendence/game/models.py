@@ -24,10 +24,10 @@ class GameHistory(models.Model):
         return f"{self.History1} - {self.History2}"
 
 class TournamentHistory(models.Model):
-    First = models.ForeignKey(User, related_name='First', on_delete=models.CASCADE,  blank=True, null=False)
-    Second = models.ForeignKey(User, related_name='Second', on_delete=models.CASCADE,  blank=True, null=False)
-    Third = models.ForeignKey(User, related_name='Third', on_delete=models.CASCADE,  blank=True, null=False)
-    Fourth = models.ForeignKey(User, related_name='Fourth', on_delete=models.CASCADE,  blank=True, null=False)
+    First = models.CharField()
+    Second = models.CharField()
+    Third = models.CharField()
+    Fourth = models.CharField()
     date = models.DateField()
 
 class GameLobby(models.Model):
@@ -49,10 +49,10 @@ class TournamentLobby(models.Model):
     Winner_SF2 = models.ForeignKey(User, related_name='Winner_SF2', on_delete=models.CASCADE,  blank=True, null=True)
     Loser_SF1 = models.ForeignKey(User, related_name='Loser_SF1', on_delete=models.CASCADE,  blank=True, null=True)
     Loser_SF2 = models.ForeignKey(User, related_name='Loser_SF2', on_delete=models.CASCADE,  blank=True, null=True)
-    Winner_F1 = models.ForeignKey(User, related_name='Winner_F1', on_delete=models.CASCADE, blank=True, null=True)
-    Winner_F2 = models.ForeignKey(User, related_name='Winner_F2', on_delete=models.CASCADE, blank=True, null=True)
-    Loser_F1 = models.ForeignKey(User, related_name='Loser_F1', on_delete=models.CASCADE, blank=True, null=True)
-    Loser_F2 = models.ForeignKey(User, related_name='Loser_F2', on_delete=models.CASCADE, blank=True, null=True)
+    Winner_F1 = models.CharField()
+    Winner_F2 = models.CharField()
+    Loser_F1 = models.CharField()
+    Loser_F2 = models.CharField()
     is_full = models.BooleanField(default=False)
     player_count = models.IntegerField(default=0)
     game_played = models.IntegerField(default=0)

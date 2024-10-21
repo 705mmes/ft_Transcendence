@@ -216,6 +216,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         if lobby_cache['is_tournament'] == 1:
             winner_sf1 = await sync_to_async(User.objects.get)(username=winner)
             loser_sf1 = await sync_to_async(User.objects.get)(username=loser)
+            nb_game = lobby.game_played
             if lobby.game_played < 2:
                 nb_game = lobby.game_played + 1
             await sync_to_async(TournamentLobby.objects.filter(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr)).update)(
@@ -226,6 +227,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         elif lobby_cache['is_tournament'] == 2:
             winner_sf2 = await sync_to_async(User.objects.get)(username=winner)
             loser_sf2 = await sync_to_async(User.objects.get)(username=loser)
+            nb_game = lobby.game_played
             if lobby.game_played < 2:
                 nb_game = lobby.game_played + 1
             await sync_to_async(TournamentLobby.objects.filter(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr)).update)(
@@ -234,26 +236,25 @@ class GameConsumer(AsyncWebsocketConsumer):
                 game_played=nb_game
             )
         elif lobby_cache['is_tournament'] == 3:
-            winner_f1 = await sync_to_async(User.objects.get)(username=winner)
-            loser_f1 = await sync_to_async(User.objects.get)(username=loser)
             nb_game = lobby.game_played + 1
             await sync_to_async(TournamentLobby.objects.filter(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr)).update)(
-                Winner_F1=winner_f1,
-                Loser_F1=loser_f1,
+                Winner_F1=winner,
+                Loser_F1=loser,
                 game_played=nb_game
             )
         elif lobby_cache['is_tournament'] == 4:
-            winner_f2 = await sync_to_async(User.objects.get)(username=winner)
-            loser_f2 = await sync_to_async(User.objects.get)(username=loser)
+
             nb_game = lobby.game_played + 1
             await sync_to_async(TournamentLobby.objects.filter(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr)).update)(
-                Winner_F1=winner_f2,
-                Loser_F1=loser_f2,
+                Winner_F2=winner,
+                Loser_F2=loser,
                 game_played=nb_game
             )
+
         if lobby.game_played >= 4:
+            print("HEREEEEEEEEE")
             lobby.is_finished = True
-            await sync_to_async(lobby.delete)()
+            await async_to_sync(lobby.save)()
 
     async def update_cache(self, json_data):
         user_name = self.scope['user'].username
