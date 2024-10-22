@@ -202,6 +202,7 @@ class GameAIConsumer(AsyncWebsocketConsumer):
 
     async def recursive_ai(self, move_left):
         while move_left > 0:
+            print("kuku")
             if self.ball.ia_y + (self.ball.ia_dirY * move_left) > 1050 or self.ball.ia_y + (self.ball.ia_dirY * move_left) < 0:
                 if self.ball.ia_dirY > 0:
                     diff = 1050 - self.ball.ia_y

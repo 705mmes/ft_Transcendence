@@ -54,6 +54,7 @@
 }
 
 #lobby_div {
+    border-radius: 25px;
     justify-content: center;
     align-items: center;
     width: 60%;
@@ -88,7 +89,6 @@
 {
     flex: 0 0 calc(33.333% - 10px); /* Chaque div prend un tiers de la largeur */
     margin: 5px;
-    background-color: lightblue;
 }
 
 #cancel_research,

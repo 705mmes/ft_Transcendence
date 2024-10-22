@@ -10,6 +10,8 @@ if (window.location.pathname !== '/')
 }
 
 let game_script_cache = fetch_scripts('game/scripts/', 'game_script');
+let local_game_script_cache = fetch_scripts('game/scripts/', 'local_game_script');
+let local_game_class_script_cache = fetch_scripts('game/scripts/', 'local_game_class_script');
 let game_class_script_cache = fetch_scripts('game/scripts/', 'game_class_script');
 let authentication_script_cache = fetch_scripts('game/scripts/', 'auth_script');
 let navbar_script_cache = fetch_scripts('game/scripts/', 'navbar_script');
@@ -51,9 +53,8 @@ async function reload_scripts(page)
             await load_script_form_fetch(social_script_cache);
         else if (page.match('/profile'))
             await load_script_form_fetch(profile_script_cache);
-        else if (page.match('/game')) {
+        else if (page.match('/game'))
             await load_script_form_fetch(game_script_cache);
-		}
 		else if (page.match('/account'))
 			await load_script_form_fetch(twofa_script_cache);
     }
@@ -66,7 +67,7 @@ async function reload_scripts(page)
 
 function reset_script(page)
 {
-    let script_list = ['game_script', 'social_script', 'navbar_script', 'profile_script', 'auth_script']
+    let script_list = ['game_script', 'social_script', 'navbar_script', 'profile_script', 'auth_script', 'local_game_script']
 
     for(let a = 0; a <= script_list.length; a++)
     {
@@ -80,10 +81,10 @@ function reset_script(page)
 
 async function always_on_script()
 {
-    let script_list = ['navigation_script', 'game_class_script', 'ws_script', '2fa_script']
-    let script_list_cache = [navigation_script_cache, game_class_script_cache, ws_script_cache, twofa_script_cache]
+    let script_list = ['navigation_script', 'game_class_script', 'ws_script', '2fa_script', 'local_game_class_script']
+    let script_list_cache = [navigation_script_cache, game_class_script_cache, ws_script_cache, twofa_script_cache, local_game_class_script_cache]
 
-    for (let a = 0; a <= 3; a++)
+    for (let a = 0; a <= 4; a++)
     {
         if (document.getElementsByClassName(script_list[a]).length === 0)
                 await  load_script_form_fetch(script_list_cache[a]);

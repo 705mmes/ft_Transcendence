@@ -32,6 +32,10 @@ def tournament(request):
     return render(request, "game/tournament.html")
 
 @custom_login_required
+def local_match(request):
+    return render(request, "game/local_match.html")
+
+@custom_login_required
 def tournament_bracket(request):
     user = request.user
     lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))

@@ -86,6 +86,33 @@ if (document.getElementById("btn_tournament")) {
     }
 }
 
+function display_start_local_btn()
+{
+    let start_local_btn = document.createElement("button");
+    start_local_btn.innerHTML = "START MATCH";
+    start_local_btn.id = "start_research";
+    start_local_btn.className = 'button';
+    start_local_btn.onclick = async () => {
+            document.getElementById('lobby_div').remove();
+            document.getElementById('lobby_css').remove();
+            await load_script_form_fetch(local_game_script_cache);
+        }
+    document.getElementById("lobby_div").appendChild(start_local_btn);
+}
+
+if (document.getElementById("btn_match_local")) {
+    document.getElementById("btn_match_local").onclick = () => {
+        let mode_name = document.getElementById("mode_name");
+        mode_name.innerHTML = "Match 1v1 local";
+        mode_name.className = "match_local";
+        if (document.getElementById('start_research'))
+            document.getElementById('start_research').remove()
+        display_start_local_btn("START MATCH");
+        let lobby_content = document.getElementById('lobby_content');
+        fetching_html("/game/local_match", lobby_content);
+    }
+}
+
 if (document.getElementById("btn_match_ai")) {
     document.getElementById("btn_match_ai").onclick = () => {
         let mode_name = document.getElementById("mode_name");
