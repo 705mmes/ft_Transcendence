@@ -59,7 +59,6 @@ def history(request):
     else:
         target_user = request.user
         target = 'me'
-
     test = GameHistory.objects.filter(Q(History1=target_user) | Q(History2=target_user))
     print(test)
     five_last_game = list(test)[-20:]

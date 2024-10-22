@@ -36,6 +36,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         print(f"Consumer of {self.scope['user']} state game loop : {lobby_cache['is_game_loop']}")
         self.start_time = time.time()
         self.is_tournament = lobby_cache['is_tournament']
+        self.is_game_loop = user_cache['game_loop']
         if user_cache['game_loop'] and not lobby_cache['is_game_loop']:
             lobby_cache['is_game_loop'] = True
             await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
@@ -62,7 +63,7 @@ class GameConsumer(AsyncWebsocketConsumer):
                 lobby_cache['is_game_loop'] = False
                 await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
             opponent = await sync_to_async(User.objects.get)(username=opponent_name)
-            if opponent.is_playing:
+            if opponent.is_playing and self.is_game_loop:
                 await self.check_game(self.user.get_class(), self.opponent.get_class(), True, lobby_cache)
                 json_data = {'action': 'game_end', 'mode': 'matchmaking_1v1'}
                 await self.channel_layer.group_send("match_" + opponent_name, {'type': 'send_match_info', 'data': json_data})
@@ -165,6 +166,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_end')
 
     async def check_game(self, user, opponent, ff, lobby_cache):
+        print("User score :", user.score, "opponent score :", opponent.score)
         if user.score >= 5 or opponent.score >= 5:
             if self.is_tournament == 0:
                 self.endtime = time.time() - self.start_time
@@ -207,10 +209,11 @@ class GameConsumer(AsyncWebsocketConsumer):
         lobby = await sync_to_async(lobby_queryset.first)()
         if lobby:
             if ff:
-                print("Je suis passer par le ff quand j ai deco parce que je clique sur continue")
-                if lobby:
-                    lobby.is_canceled = True
-                    await sync_to_async(lobby.save)()
+                print("Fuck shit je suis la est le lobby doit etre cancel")
+                await sync_to_async(
+                    TournamentLobby.objects.filter(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr)).update)(
+                    is_canceled=True,
+                )
             if self.is_tournament == 1:
                 winner_sf1 = await sync_to_async(User.objects.get)(username=winner)
                 loser_sf1 = await sync_to_async(User.objects.get)(username=loser)
