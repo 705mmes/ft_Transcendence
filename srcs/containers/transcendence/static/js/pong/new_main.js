@@ -121,7 +121,6 @@ function game_ended(data){
     game_data.ball.x = -30;
     game_data.ball.y = -30;
     timeoutID = setTimeout(post_game_lobby,100);
-    console.log("Display end Screen !")
 }
 
 function draw_score(utils, canevas)

@@ -1,4 +1,3 @@
-console.log("2fa_script loaded...");
 
 if (document.getElementById('otp-form')) {
 
