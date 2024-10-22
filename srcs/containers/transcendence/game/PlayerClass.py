@@ -2,7 +2,6 @@
 class Player:
 
 	def __init__(self, id, name):
-		print(id)
 		if id == 1:
 			self.set_pos(0, (1080 - 233) / 2)
 		else:

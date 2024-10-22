@@ -190,7 +190,6 @@ def login_session(request):
         else:
             return JsonResponse({'success': False, 'error': 'Form is invalid'}, status=400)
     else:
-        print("render auth_page")
         return render(request, 'authentication/auth_page.html')
 
 @custom_login_required

@@ -399,7 +399,6 @@ class LobbyConsumer(WebsocketConsumer):
     def check_second_game(self):
         user = User.objects.get(username=self.scope['user'])
         lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))
-        # print("Lobby query set",lobby_queryset)
         lobby_t = lobby_queryset.first()
         if lobby_t:
             if lobby_t.is_finished:

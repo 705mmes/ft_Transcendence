@@ -1,6 +1,4 @@
 
-// console.log("create_lists.js loaded");
-
 function clearAndCheckContainer(containerId) {
     let container = document.getElementById(containerId);
     if (!container) {
