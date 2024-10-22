@@ -32,7 +32,6 @@ let tournament_data = {
 
 if (moveback !== '/')
 {
-    console.log('moveback :', moveback);
     navigate_utils(moveback);
 }
 async function fetch_scripts(url, class_name)
@@ -45,7 +44,6 @@ async function fetch_scripts(url, class_name)
 
 async function reload_scripts(page)
 {
-	console.log("reloading scripts: ", page);
     if (page !== '/' && page !== '/account/redirect/checker' && page !== '/account/redirect/login')
     {
         await always_on_script();
@@ -117,7 +115,6 @@ async function fetching_html_add(link, element)
 {
     try
     {
-        // console.log(link);
         const response = await fetch(link)
         if (!response.ok)
             throw new TypeError("HTML fetch failed");
@@ -134,7 +131,6 @@ async function fetching_html(link, element)
 {
     try
     {
-        console.log('actual', window.location.href);
         const response = await fetch(link);
         if (!response.ok)
             throw new TypeError("HTML fetch failed");
@@ -150,7 +146,6 @@ async function fetching_html_post(link, element)
 {
     try
     {
-        console.log('actual', window.location.href);
         const response = await fetch(link,{
             method: 'POST',
             headers: {
@@ -185,7 +180,6 @@ function delete_script_by_class_name(name)
 }
 
 function navigate_utils(link, replace = false) {
-    console.log("navigate_utils", link);
     if (link[0] !== '/') link = '/' + link;
     const pageState = { page: link };
 
@@ -197,32 +191,21 @@ function navigate_utils(link, replace = false) {
 }
 
 function pong_websocket(game_data, url) {
-    console.log("Pong_Socket.js script !")
     if (!game_socket || game_socket.readyState === WebSocket.CLOSED) {
 
-        // Initialize the WebSocket connection
         const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
         const websocketUrl = `${protocol}//${window.location.host}${url}`;
-        console.log(websocketUrl);
         game_socket = new WebSocket(websocketUrl);
 
-        // Event handler for when the WebSocket connection opens
         game_socket.onopen = function (e) {
             responsePong();
             const message = JSON.stringify({mode: "match_tournament", action: 'is_tournament'});
             game_socket.send(message);
-            console.log("[open] Connection established pong");
         };
 
-        // Event handler for when the WebSocket connection closes
         game_socket.onclose = function (event) {
-            if (event.wasClean) {
-                console.log(`[close] Connection pong closed cleanly, code=${event.code} reason=${event.reason}`);
-            } else {
-                console.log('[close] Connection pong died');
-            }
         };
-        // Event handler for when an error occurs
+
         game_socket.onerror = function (error) {
             console.log(`[error] ${error.message}`);
         };

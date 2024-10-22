@@ -34,7 +34,6 @@ function display_research_btn(content)
     if (document.getElementById("option_div"))
         if (document.getElementById("option_div").style.display === 'none')
             document.getElementById("option_div").style.display = 'flex';
-    console.log("display btn research !")
 }
 
 function display_cancel_btn()
@@ -53,7 +52,6 @@ function display_cancel_btn()
         document.getElementById("lobby_div").appendChild(cancel_btn);
     change_opponent(undefined);
     document.getElementById("option_div").style.display = 'none';
-    console.log("display cancel btn research !")
 }
 
 if (document.getElementById("btn_matchmaking_1v1")) {
@@ -143,7 +141,6 @@ function tournament_opponent(players)
     let class_loader = document.getElementsByClassName("loader");
     let class_players = document.getElementsByClassName("player");
     let i = 0;
-    console.log(players);
     while (i < class_players.length)
     {
         if (players['p' + i.toString()]) {
@@ -189,7 +186,6 @@ function tournament_opponent(players)
 function display_loading()
 {
     let class_players = document.getElementsByClassName("player");
-    console.log(class_players.length);
     if (class_players.length === 0)
         return
     let i = 0;

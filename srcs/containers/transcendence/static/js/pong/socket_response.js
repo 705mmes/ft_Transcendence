@@ -6,19 +6,14 @@ function PongSocketStatus() {
 
     switch (game_socket.readyState) {
         case WebSocket.CONNECTING:
-            console.log("WebSocket is connecting...");
             break;
         case WebSocket.OPEN:
-            console.log("WebSocket connection is open.");
             break;
         case WebSocket.CLOSING:
-            console.log("WebSocket is closing...");
             break;
         case WebSocket.CLOSED:
-            console.log("WebSocket connection is closed.");
             break;
         default:
-            console.error("Unknown WebSocket state.");
             break;
     }
     return true
