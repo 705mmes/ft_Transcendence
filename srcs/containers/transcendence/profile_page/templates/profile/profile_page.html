@@ -8,9 +8,7 @@
             <br><br>
         </label>
         <label>
-        {% if player.username == 'dcandan' %}
-            <img class="user_profile_picture" src="/media/images/masterclass.jpg" alt="">
-        {% elif player.profile_picture_url %}
+        {% if player.profile_picture_url %}
             <img class="user_profile_picture" src="{{ player.profile_picture_url }}" alt="">
         {% elif player.profile_picture %}
             <img class="user_profile_picture" src="{{ player.profile_picture.url }}" alt="">
