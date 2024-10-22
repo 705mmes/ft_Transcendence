@@ -6,6 +6,8 @@ body
     width: 100%;
     text-align: center;
     align-items: center;
+    background-image: url("../js/images/background.gif");
+    background-size: cover;
 }
 
 .canvasdivs
