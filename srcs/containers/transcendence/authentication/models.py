@@ -26,7 +26,6 @@ class User(AbstractUser):
         return self.username
 
     def get_profile_picture(self):
-        # Return the external URL if available, else the local image
         if self.profile_picture_url:
             return self.profile_picture_url
         return self.profile_picture.url
@@ -46,9 +45,6 @@ class FriendRequest(models.Model):
 class FriendList(models.Model):
     user1 = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user1', on_delete=models.CASCADE,  blank=True, null=True)
     user2 = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user2', on_delete=models.CASCADE, blank=True, null=True)
-
-    # class Meta:
-    #     unique_together = ('user1', 'user2')
 
     def __str__(self):
         return f"{self.user1.username}"

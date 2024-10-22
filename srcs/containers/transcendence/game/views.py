@@ -31,7 +31,7 @@ def match_1v1(request):
 def tournament(request):
     return render(request, "game/tournament.html")
 
-
+@custom_login_required
 def tournament_bracket(request):
     user = request.user
     lobby_queryset = TournamentLobby.objects.filter(Q(P1=user) | Q(P2=user) | Q(P3=user) | Q(P4=user))

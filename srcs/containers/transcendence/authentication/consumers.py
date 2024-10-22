@@ -8,7 +8,6 @@ from django.core import serializers
 
 class ActiveConsumer(WebsocketConsumer):
     def connect(self):
-        print(f"Connecting to social : {self.scope['user']}")
         self.user = self.scope['user']
         user = User.objects.get(username=self.scope['user'])
         user.is_connected = True
@@ -21,7 +20,6 @@ class ActiveConsumer(WebsocketConsumer):
         user = User.objects.get(username=self.user)
         user.is_connected = False
         user.save()
-        print(f"Disconnecting to social : {self.scope['user']}")
         async_to_sync(self.channel_layer.group_discard)(self.room_name, self.channel_name)
 
     def receive(self, text_data):
@@ -44,9 +42,7 @@ class ActiveConsumer(WebsocketConsumer):
         elif action == 'view_profile':
             self.show_profile(text_data_json['target'])
         elif action == 'update_name':
-            print("here")
             self.user = text_data_json['username']
-        # print(text_data_json)
 
     def send_friend_list(self):
         user = self.scope['user']

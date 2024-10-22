@@ -33,7 +33,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         self.user = Player(user_cache['id'], user_cache['name'])
         self.opponent = Player(opponent_cache['id'], opponent_cache['name'])
         self.ball = Ball()
-        print(f"Consumer of {self.scope['user']} state game loop : {lobby_cache['is_game_loop']}")
         self.start_time = time.time()
         self.is_tournament = lobby_cache['is_tournament']
         self.is_game_loop = user_cache['game_loop']
@@ -41,11 +40,9 @@ class GameConsumer(AsyncWebsocketConsumer):
             lobby_cache['is_game_loop'] = True
             await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
             self.task = asyncio.create_task(self.game_loop(lobby_cache))
-        print(user_cache.get('lobby_name'))
         await self.accept()
 
     async def disconnect(self, code):
-        print("le code est : ", code)
         user_name = self.scope['user'].username
         user = await sync_to_async(User.objects.get)(username=user_name)
         if self.is_tournament != 1 and self.is_tournament != 2:
@@ -54,7 +51,6 @@ class GameConsumer(AsyncWebsocketConsumer):
             user.is_ready = False
         await sync_to_async(user.save)()
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
-        print(f"Disconnected from match : {self.scope['user'].username}")
         if await sync_to_async(cache.get)(f"{user_name}_key"):
             user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
             lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
@@ -86,15 +82,12 @@ class GameConsumer(AsyncWebsocketConsumer):
         async_to_sync(self.channel_layer.group_discard)(lobby.Name, self.channel_name)
         if lobby.player_count == 0:
             lobby.delete()
-            print("Lobby delete !")
-        print("Remove from lobby",lobby.P1, lobby.P2, lobby.P3, lobby.P4)
 
     # UTILS HERE
     async def receive(self, text_data):
         text_data_json = json.loads(text_data)
         if text_data_json['action'] == 'move':
             await self.update_cache(text_data_json)
-
 
     async def send_match_info(self, event):
         data = event['data']
@@ -166,7 +159,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_end')
 
     async def check_game(self, user, opponent, ff, lobby_cache):
-        print("User score :", user.score, "opponent score :", opponent.score)
         if user.score >= 5 or opponent.score >= 5:
             if self.is_tournament == 0:
                 self.endtime = time.time() - self.start_time
@@ -209,7 +201,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         lobby = await sync_to_async(lobby_queryset.first)()
         if lobby:
             if ff:
-                print("Fuck shit je suis la est le lobby doit etre cancel")
                 await sync_to_async(
                     TournamentLobby.objects.filter(Q(P1=usr) | Q(P2=usr) | Q(P3=usr) | Q(P4=usr)).update)(
                     is_canceled=True,
@@ -262,7 +253,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
         user_cache['up_pressed'] = json_data['racket']['up_pressed']
         user_cache['down_pressed'] = json_data['racket']['down_pressed']
-        print(f"move up: {user_cache['up_pressed']}, move down: {user_cache['down_pressed']}")
         await sync_to_async(cache.set)(f"{user_name}_key", user_cache)
 
     async def send_data(self, player1, player2, action):

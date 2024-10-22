@@ -50,8 +50,6 @@ function responsePong() {
             try
             {
                 let data = JSON.parse(event.data);
-                console.log("parsed data pong:", data);
-                console.log(data.action);
                 if (data.action === 'searching') {
                     display_cancel_btn();
                     display_loading();

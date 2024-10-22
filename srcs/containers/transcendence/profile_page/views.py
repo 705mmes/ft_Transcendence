@@ -60,7 +60,6 @@ def history(request):
         target_user = request.user
         target = 'me'
     test = GameHistory.objects.filter(Q(History1=target_user) | Q(History2=target_user))
-    print(test)
     five_last_game = list(test)[-20:]
     game_history = []
     for game in reversed(five_last_game):
@@ -102,7 +101,6 @@ def normal_games(request):
         target = 'me'
 
     test = GameHistory.objects.filter(Q(History1=target_user) | Q(History2=target_user))
-    print(test)
     five_last_game = list(test)[-20:]
     game_history = []
     for game in reversed(five_last_game):
@@ -140,7 +138,6 @@ def tournament_game(request):
         target_user = request.user
         target = 'me'
     test = TournamentHistory.objects.filter(Q(First=target_user.username) | Q(Second=target_user.username) | Q(Third=target_user.username) | Q(Fourth=target_user.username))
-    print(test)
     five_last_game = list(test)[-20:]
     game_history = []
     for game in reversed(five_last_game):
@@ -151,7 +148,6 @@ def tournament_game(request):
             'Fourth': game.Fourth,
             'date': game.date
         })
-        print(game)
     context = {
         'target': target,
         'player': target_user,

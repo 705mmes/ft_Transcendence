@@ -35,8 +35,6 @@ class GameAIConsumer(AsyncWebsocketConsumer):
             lobby_cache['is_game_loop'] = True
             await sync_to_async(cache.set)(f"{user_cache['lobby_name']}_key", lobby_cache)
             self.task = asyncio.create_task(self.game_loop(lobby_cache))
-        # print(user_cache.get('lobby_name'))
-        print("imok")
         await self.accept()
 
     async def disconnect(self, code):
@@ -46,7 +44,6 @@ class GameAIConsumer(AsyncWebsocketConsumer):
         user.is_playing = False
         await sync_to_async(user.save)()
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
-        print(f"Disconnected from match : {self.scope['user'].username}")
         if await sync_to_async(cache.get)(f"{user_name}_key"):
             user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
             lobby_cache = await sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key")
@@ -72,9 +69,6 @@ class GameAIConsumer(AsyncWebsocketConsumer):
         now = time.time()
         while time.time() < (now + delay):
             continue
-
-
-
 # game
 
     async def check_move(self, user_cache):
@@ -111,7 +105,6 @@ class GameAIConsumer(AsyncWebsocketConsumer):
             ia_time = time.time()
             self.start_time = time.time()
             while lobby_cache['is_game_loop']:
-                # print(lobby_cache['is_game_loop'])
 
                 t1 = time.perf_counter()
                 lobby_cache, user_cache, opponent_cache, ball_move = await asyncio.gather(
@@ -140,8 +133,7 @@ class GameAIConsumer(AsyncWebsocketConsumer):
         # print(lobby_cache['is_game_loop'])
             await self.endgame(lobby_cache, user_cache, user_name)
         except asyncio.CancelledError:
-            print('cancel caught')
-
+            pass
 
     async def endgame(self, lobby_cache, user_cache, user_name):
         await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_end')
