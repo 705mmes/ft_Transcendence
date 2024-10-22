@@ -5,6 +5,7 @@ function main_game(data)
     canevas.height = 1080;
     canevas.width = 2040;
     canevas.style = "border: 4px solid black";
+    canevas.style.backgroundColor = 'white';
     document.getElementById("gamecanvas").appendChild(canevas);
 
     let utils = {
