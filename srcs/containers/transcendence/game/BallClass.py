@@ -43,7 +43,6 @@ class Ball:
 				self.dirX *= -1
 				if self.dirX > 0 and self.speed * 4 > self.dirX or self.dirX < 0 and self.speed * 4 > self.dirX * -1:
 					self.dirX *= 1.1
-					# ball_cache['posX'] = 100 + ball_radius
 				self.dirY += self.impact(player) * 7
 				return True
 		else:
@@ -51,7 +50,6 @@ class Ball:
 				self.dirX *= -1
 				if self.dirX > 0 and self.speed * 4 > self.dirX or self.dirX < 0 and self.speed * 4 > self.dirX * -1:
 					self.dirX *= 1.1
-				# ball_cache['posX'] = 2040 - 100 - 30
 				self.dirY += self.impact(player) * 7
 				return True
 		return False
@@ -59,7 +57,6 @@ class Ball:
 	def impact(self, user):
 		impact = (self.y - user.y) - (223 / 2)
 		normal = (impact / (223 / 2))
-		# print("normal :", normal)
 		return normal
 
 	async def field_boundary(self, user, opponent):

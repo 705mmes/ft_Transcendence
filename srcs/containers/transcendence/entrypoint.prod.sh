@@ -26,4 +26,16 @@ if not User.objects.filter(username='ludo').exists():
 "
 fi
 
+# Disconnect all users by setting is_connected to False
+python manage.py shell -c "
+from django.contrib.auth import get_user_model;
+from django.contrib.sessions.models import Session;
+from django.utils import timezone;
+
+User = get_user_model();
+User.objects.all().update(is_connected=False);
+
+# Delete all active sessions to log out users
+Session.objects.filter(expire_date__gte=timezone.now()).delete()
+"
 exec "$@"

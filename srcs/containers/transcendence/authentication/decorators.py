@@ -29,3 +29,11 @@ def profile_modify(view_func):
             else:
                 return view_func(request, *args, **kwargs)
     return _wrapped_view
+
+def logout_protection(view_func):
+    def _wrapped_view(request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect('/game')
+        else:
+            return view_func(request, *args, **kwargs)
+    return _wrapped_view

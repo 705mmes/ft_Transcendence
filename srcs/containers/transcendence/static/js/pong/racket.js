@@ -26,11 +26,9 @@ class racket {
         if (document.getElementById("player1") && document.getElementById("player2")) {
             if (this.side === 'right' && document.getElementById("player1").innerText.length <= 0) {
                 document.getElementById("player1").innerText = this.name;
-                // canvas_ctx.fillText(this.name, this.canevas.width - text.width - 15, 15 + actual_fontsize );
             }
             else if (this.side === 'left' && document.getElementById("player2").innerText.length <= 0) {
             document.getElementById("player2").innerText = this.name;
-            // canvas_ctx.fillText(this.name, 15, 15 + actual_fontsize);
             }
         }
     }

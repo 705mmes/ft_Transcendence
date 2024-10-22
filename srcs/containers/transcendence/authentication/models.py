@@ -16,6 +16,7 @@ class User(AbstractUser):
     is_playing = models.BooleanField(default=False)
     in_research = models.BooleanField(default=False)
     is_ready = models.BooleanField(default=False)
+    is_ff = models.BooleanField(default=False)
     tournament_research = models.BooleanField(default=False)
     channel_name = models.CharField(blank=True)
     twofa_submitted = models.BooleanField(default=False)
@@ -25,7 +26,6 @@ class User(AbstractUser):
         return self.username
 
     def get_profile_picture(self):
-        # Return the external URL if available, else the local image
         if self.profile_picture_url:
             return self.profile_picture_url
         return self.profile_picture.url
@@ -45,9 +45,6 @@ class FriendRequest(models.Model):
 class FriendList(models.Model):
     user1 = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user1', on_delete=models.CASCADE,  blank=True, null=True)
     user2 = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='user2', on_delete=models.CASCADE, blank=True, null=True)
-
-    # class Meta:
-    #     unique_together = ('user1', 'user2')
 
     def __str__(self):
         return f"{self.user1.username}"

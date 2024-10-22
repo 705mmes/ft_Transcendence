@@ -28,7 +28,3 @@ class RegistrationForm(forms.Form):
 class UserSearchForm(forms.Form):
     query = forms.CharField(label='Search Users', max_length=100)
 
-    # def passwords_match(self):
-    #     password2 = self.cleaned_data.get("password2")
-    # if password1 and password2 and password2 != password1:
-    #     raise forms.ValidationError("Passwords don't match")

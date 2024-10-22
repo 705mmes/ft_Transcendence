@@ -218,10 +218,8 @@ function pong_websocket(game_data, url) {
         game_socket.onclose = function (event) {
             if (event.wasClean) {
                 console.log(`[close] Connection pong closed cleanly, code=${event.code} reason=${event.reason}`);
-
             } else {
                 console.log('[close] Connection pong died');
-                // Optionally, implement reconnection logic here
             }
         };
         // Event handler for when an error occurs

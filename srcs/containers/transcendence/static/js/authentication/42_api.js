@@ -26,7 +26,6 @@
                 return response.json();
             })
             .then(data => {
-                console.log('Registration successful:', data.message);
                 to_unspecified_page('/game');
             })
             .catch(error => {

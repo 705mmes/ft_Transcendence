@@ -10,8 +10,7 @@ websocket_urlpatterns = [
 ]
 
 application = ProtocolTypeRouter({
-    # (http->django views is added by default)
-    "http": get_asgi_application(),  # Ensure you have this for regular HTTP requests
+    "http": get_asgi_application(),
     "websocket": AuthMiddlewareStack(
         URLRouter(websocket_urlpatterns)
     ),

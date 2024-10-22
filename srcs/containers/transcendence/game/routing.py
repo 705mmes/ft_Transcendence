@@ -7,5 +7,4 @@ websocket_urlpatterns = [
     re_path(r"ws/game/game/", LobbyConsumer.as_asgi()),
     re_path(r"ws/game/match/", GameConsumer.as_asgi()),
     re_path(r"ws/game/match_ai/", GameAIConsumer.as_asgi()),
-
 ]

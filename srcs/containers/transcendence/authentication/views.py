@@ -11,7 +11,7 @@ from django.contrib.auth import login, authenticate, logout
 from django_otp.plugins.otp_totp.models import TOTPDevice
 import random
 import string
-from .decorators import custom_login_required
+from .decorators import custom_login_required, logout_protection
 from django.core.exceptions import ValidationError
 from django.contrib.auth.password_validation import validate_password
 from authentication.models import username_validator
@@ -27,6 +27,7 @@ def generate_password():
     password = ''.join(random.choice(characters) for i in range(length))
     return password
 
+@logout_protection
 def authentication(request):
     context = {
         'login_form': LoginForm,
@@ -96,7 +97,7 @@ def oauth_callback(request):
     image_data = user_data.get('image', {})
     main_image_link = image_data.get('link')
 
-    username = username + "_42_intra"
+    username = username + "_42"
     result = register_api(username, email, request, main_image_link)
     if result['status'] == 'success':
         user = User.objects.get(username=username)
@@ -168,6 +169,8 @@ def login_session(request):
             user = authenticate(username=username, password=password)
             if user is not None:
                 if user.is_authenticated:
+                    if user.is_connected:
+                        return JsonResponse({'success': False, 'error': 'User is already logged in else where'}, status=400)
                     if user_has_device(user):
                         if user.twofa_submitted == False:
                             device = TOTPDevice.objects.get(user=user, name='default')
@@ -190,13 +193,12 @@ def login_session(request):
         print("render auth_page")
         return render(request, 'authentication/auth_page.html')
 
-
-
 @custom_login_required
 def logout_btn(request):
-    print("logout view is called")
+    logger.info("logout view is called")
     user = User.objects.get(username=request.user)
     user.twofa_verified = False
+    user.is_connected = False
     user.save()
     logout(request)
     return render(request, 'authentication/auth_page.html')

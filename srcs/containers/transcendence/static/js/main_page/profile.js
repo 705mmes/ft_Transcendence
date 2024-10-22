@@ -81,7 +81,7 @@ function display_popup(data)
 if (document.getElementById('player_username'))
 {
     const username = document.getElementById('player_username').textContent;
-    if (username.endsWith('_42_intra')) {
+    if (username.endsWith('_42')) {
         console.log("User logged in with 42_API");
         const editProfileButton = document.getElementById('edit_profile');
         if (editProfileButton) {

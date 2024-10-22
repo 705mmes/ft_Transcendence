@@ -121,7 +121,6 @@ function game_ended(data){
     game_data.ball.y = -30;
     timeoutID = setTimeout(post_game_lobby,100);
     console.log("Display end Screen !")
-    //game_data.opponent_racket.display_end_screen();
 }
 
 function draw_score(utils, canevas)
@@ -148,8 +147,6 @@ function infinite_game_loop(game_data, utils, canvas)
     utils.oldtime = new_time;
     if (!game_data.my_racket)
         return;
-    //game_data.my_racket.moving(utils.ms);
-    //game_data.opponent_racket.moving(utils.ms);
     game_data.ball.move(utils.ms);
     utils.canvcont.clearRect(0, 0, canvas.width, canvas.height);
     game_data.my_racket.drawing(utils.canvcont);
