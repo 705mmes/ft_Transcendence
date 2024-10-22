@@ -54,6 +54,8 @@ services:
       - transcendence
     depends_on:
       - web
+    volumes:
+      - redis_volume:/data
 
 networks:
   transcendence:
