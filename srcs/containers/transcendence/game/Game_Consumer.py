@@ -44,6 +44,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, code):
+        print("le code est : ", code)
         user_name = self.scope['user'].username
         user = await sync_to_async(User.objects.get)(username=user_name)
         if self.is_tournament != 1 and self.is_tournament != 2:
@@ -142,7 +143,6 @@ class GameConsumer(AsyncWebsocketConsumer):
         user_cache = await sync_to_async(cache.get)(f"{user_name}_key")
         while lobby_cache['is_game_loop']:
             t1 = time.perf_counter()
-
             lobby_cache, user_cache, opponent_cache, ball_move = await asyncio.gather(
                 sync_to_async(cache.get)(f"{user_cache['lobby_name']}_key"),
                 sync_to_async(cache.get)(f"{user_name}_key"),
@@ -150,17 +150,13 @@ class GameConsumer(AsyncWebsocketConsumer):
                 self.ball.move(self.user.get_class(), self.opponent.get_class()),
             )
             await self.check_move(user_cache, opponent_cache)
-
             self.user.move(user_cache['up_pressed'], user_cache['down_pressed'])
             self.opponent.move(opponent_cache['up_pressed'], opponent_cache['down_pressed'])
-
             await self.send_data(self.user.get_class(), self.opponent.get_class(), 'game_data')
             await self.send_data(self.opponent.get_class(), self.user.get_class(), 'game_data')
-
             if ball_move == 2:
                 if await self.check_game(self.user.get_class(), self.opponent.get_class(), False, lobby_cache):
                     break
-            # print("exec time: ", time.perf_counter() - t1)
             await asyncio.sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
         await self.endgame(lobby_cache, user_cache, user_name)
 
@@ -211,7 +207,7 @@ class GameConsumer(AsyncWebsocketConsumer):
         lobby = await sync_to_async(lobby_queryset.first)()
         if lobby:
             if ff:
-                print("Je suis passer par le ff quand j ai deco")
+                print("Je suis passer par le ff quand j ai deco parce que je clique sur continue")
                 if lobby:
                     lobby.is_canceled = True
                     await sync_to_async(lobby.save)()

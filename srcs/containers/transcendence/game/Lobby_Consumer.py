@@ -431,9 +431,21 @@ class LobbyConsumer(WebsocketConsumer):
                 print("FINISHED!!!!!!")
                 self.remove_from_lobby(lobby_t, user)
                 return
-            elif not lobby_t.is_finished and lobby_t.game_played >= 3:
+            if not lobby_t.is_finished and lobby_t.game_played >= 3:
                 return
-            # if lobby_t.is_finished:
+            if lobby_t.is_canceled:
+                print("le pipi le caca popo pipi kuku")
+                lobby_t.delete()
+                json_data = {'action': 'cancel_lobby', 'mode': 'matchmaking_1v1'}
+                async_to_sync(self.channel_layer.group_send)("game_" + lobby_t.P1.username,
+                                                             {'type': 'send_info', 'data': json_data})
+                async_to_sync(self.channel_layer.group_send)("game_" + lobby_t.P2.username,
+                                                             {'type': 'send_info', 'data': json_data})
+                async_to_sync(self.channel_layer.group_send)("game_" + lobby_t.P3.username,
+                                                             {'type': 'send_info', 'data': json_data})
+                async_to_sync(self.channel_layer.group_send)("game_" + lobby_t.P4.username,
+                                                             {'type': 'send_info', 'data': json_data})
+                return
             json_data = {'action': 'second_match', 'mode': 'matchmaking_1v1'}
             async_to_sync(self.channel_layer.group_send)("game_" + user.username,
                                                          {'type': 'send_info', 'data': json_data})
@@ -452,7 +464,6 @@ class LobbyConsumer(WebsocketConsumer):
                                                                  {'type': 'send_info', 'data': json_data})
                     async_to_sync(self.channel_layer.group_send)("game_" + lobby_t.P4.username,
                                                                  {'type': 'send_info', 'data': json_data})
-
                     return
                 return
         json_data = {'action': 'no_tournament', 'mode': 'matchmaking_1v1'}
