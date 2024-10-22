@@ -1,7 +1,4 @@
 
-console.log("update_lists.js loaded");
-
-
 function remove_friend_request(data)
 {
     if (document.getElementById(data.target))

@@ -1,11 +1,9 @@
-// console.log("social_ws_handler.js is loaded");
 
 document.getElementById('social-form').addEventListener('submit', function(event) {
     event.preventDefault();
     const username = document.getElementById('searchbar').value;
     const message = JSON.stringify({ action: "friend_request", "username": username });
     socket.send(message);
-    console.log(username);
     display_popup_green('Friend request sent !');
 });
 
@@ -34,12 +32,9 @@ document.getElementById('pending').addEventListener('click', function(event) {
 });
 
 function request_friend_list() {
-    console.log(`Current pathname: ${window.location.pathname}`);
     if (window.location.pathname === '/social/') {
-        console.log("Requesting social list...");
         if (socket.readyState === WebSocket.OPEN) {
             socket.send(JSON.stringify({ 'action': 'friend_list' }));
-            console.log("Request sent.");
         } else {
             console.error("WebSocket is not open. Unable to send request.");
         }
@@ -56,17 +51,13 @@ function checkSocketStatus() {
 
     switch (socket.readyState) {
         case WebSocket.CONNECTING:
-            console.log("WebSocket is connecting...");
             break;
         case WebSocket.OPEN:
-            console.log("WebSocket connection is open.");
             request_friend_list();
             break;
         case WebSocket.CLOSING:
-            console.log("WebSocket is closing...");
             break;
         case WebSocket.CLOSED:
-            console.log("WebSocket connection is closed.");
             break;
         default:
             console.error("Unknown WebSocket state.");
@@ -76,7 +67,6 @@ function checkSocketStatus() {
 
 async function friend_profile_request(data)
 {
-    console.log('here');
     navigate('/');
     let div_content = document.getElementById('profile_popup_content');
     await fetching_html_add(`profile/?target_name=${encodeURIComponent(data.target)}`, div_content)
@@ -149,12 +139,9 @@ function response() {
 
     socket.onmessage = function(event)
     {
-        console.log(`Data received from server social: ${event.data}`);
-
         try
         {
             let data = JSON.parse(event.data);
-            console.log("parsed data:", data);
             response_choice(data);
         }
         catch (e)
@@ -164,5 +151,4 @@ function response() {
     };
 }
 
-// console.log("Calling response function");
 response();

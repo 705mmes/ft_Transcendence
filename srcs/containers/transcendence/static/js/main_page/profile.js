@@ -44,7 +44,6 @@ async function update_profile(value)
         if (!response.ok)
             throw new TypeError(`Server error: ${errorText}`);
         let success_error = await response.json();
-        console.log(success_error);
         if(success_error.success === 'Error')
             throw new TypeError('something went wrong');
         if (success_error.success === 'success' && success_error.password === 'yes')
@@ -82,7 +81,6 @@ if (document.getElementById('player_username'))
 {
     const username = document.getElementById('player_username').textContent;
     if (username.endsWith('_42')) {
-        console.log("User logged in with 42_API");
         const editProfileButton = document.getElementById('edit_profile');
         if (editProfileButton) {
             editProfileButton.style.display = 'none';

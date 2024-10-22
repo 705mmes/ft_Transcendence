@@ -130,7 +130,6 @@ class GameAIConsumer(AsyncWebsocketConsumer):
                     if await self.check_game(self.user.get_class(), self.opponent.get_class(), False):
                         break
                 await self.ft_sleep(max(0.0, 0.01667 - (time.perf_counter() - t1)))
-        # print(lobby_cache['is_game_loop'])
             await self.endgame(lobby_cache, user_cache, user_name)
         except asyncio.CancelledError:
             pass
