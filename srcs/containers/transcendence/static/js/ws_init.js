@@ -30,7 +30,7 @@ function getWebSocket() {
                 console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`);
             } else {
                 console.log('[close] Connection died');
-                reload_scripts(window.location.href);
+                reload_scripts(window.location.pathname);
             }
         };
     
