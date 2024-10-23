@@ -53,14 +53,18 @@ class LobbyConsumer(WebsocketConsumer):
                 async_to_sync(self.channel_layer.group_send)(lobby.Name, {'type': 'send_info', 'data': json_data})
 
     def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        mode = text_data_json['mode']
-        if mode == 'match_1v1':
-            self.match_1v1(text_data_json)
-        elif mode == 'match_tournament':
-            self.tournament(text_data_json)
-        elif mode == 'match_ai':
-            self.ai_match(text_data_json)
+        try:
+            text_data_json = json.loads(text_data)
+            mode = text_data_json['mode']
+            if mode == 'match_1v1':
+                self.match_1v1(text_data_json)
+            elif mode == 'match_tournament':
+                self.tournament(text_data_json)
+            elif mode == 'match_ai':
+                self.ai_match(text_data_json)
+        except json.JSONDecodeError:
+            print("Received invalid JSON data")
+
 
     def find_opponent(self):
         user = User.objects.get(username=self.scope['user'])

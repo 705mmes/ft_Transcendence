@@ -85,9 +85,12 @@ class GameConsumer(AsyncWebsocketConsumer):
 
     # UTILS HERE
     async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        if text_data_json['action'] == 'move':
-            await self.update_cache(text_data_json)
+        try:
+            text_data_json = json.loads(text_data)
+            if text_data_json['action'] == 'move':
+                await self.update_cache(text_data_json)
+        except json.JSONDecodeError:
+            print("Received invalid JSON data")
 
     async def send_match_info(self, event):
         data = event['data']

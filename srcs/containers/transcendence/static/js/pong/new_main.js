@@ -184,3 +184,19 @@ if (document.getElementById('continue'))
         clearTimeout(timeoutID);
         to_unspecified_page('/game');
     })
+
+function down()
+{
+    game_data.my_racket.down_pressed = true;
+    send_data("move" ,game_data.my_racket);
+    game_data.my_racket.down_pressed = false;
+    setTimeout(send_data, 16, "move", game_data.my_racket)
+}
+
+function up()
+{
+    game_data.my_racket.up_pressed = true;
+    send_data("move" ,game_data.my_racket);
+    game_data.my_racket.up_pressed = false;
+    setTimeout(send_data, 16, "move", game_data.my_racket)
+}

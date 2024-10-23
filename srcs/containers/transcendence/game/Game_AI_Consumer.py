@@ -56,9 +56,12 @@ class GameAIConsumer(AsyncWebsocketConsumer):
 #utils
 
     async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        if text_data_json['action'] == 'move':
-            await self.update_cache(text_data_json)
+        try:
+            text_data_json = json.loads(text_data)
+            if text_data_json['action'] == 'move':
+                await self.update_cache(text_data_json)
+        except json.JSONDecodeError:
+            print("Received invalid JSON data")
 
 
     async def send_match_info(self, event):
@@ -201,7 +204,6 @@ class GameAIConsumer(AsyncWebsocketConsumer):
 
     async def recursive_ai(self, move_left):
         while move_left > 0:
-            print("kuku")
             if self.ball.ia_y + (self.ball.ia_dirY * move_left) > 1050 or self.ball.ia_y + (self.ball.ia_dirY * move_left) < 0:
                 if self.ball.ia_dirY > 0:
                     diff = 1050 - self.ball.ia_y
