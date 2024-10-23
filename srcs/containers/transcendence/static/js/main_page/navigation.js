@@ -2,6 +2,7 @@ function navigate(link, replace = false) {
     if (link[0] !== '/') link = '/' + link;
     const pageState = { page: link };
 
+    console.log(pageState, replace)
     if (replace) {
         history.replaceState(pageState, null, link);
     } else {
@@ -23,9 +24,17 @@ function change_page_name(page) {
 async function back_to_unspecified_page(page) {
     let div_content = document.getElementById('content');
 
-    if (!await fetching_html(page, div_content))
+    let error = await fetching_html_post(page, div_content)
+    if (error === 410)
+    {
+        history.replaceState(page, null, '/game');
+        page = '/game';
+    }
+    else if (error === 401 || error === 403)
+    {
         history.replaceState(page, null, '/');
         page = '/'
+    }
     reset_script(page);
     await reload_scripts(page, 0);
 }

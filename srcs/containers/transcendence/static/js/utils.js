@@ -145,6 +145,9 @@ async function fetching_html(link, element)
 
 async function fetching_html_post(link, element)
 {
+    if (!link.endsWith('/'))
+        link += '/';
+    console.log(link);
     try
     {
         const response = await fetch(link,{
@@ -158,6 +161,8 @@ async function fetching_html_post(link, element)
         {
             if (response.status === 401)
                 return 401;
+            else if (response.status === 410)
+                return 410;
             else if (response.status === 403)
                 return 403
             throw new TypeError("HTML fetch failed");

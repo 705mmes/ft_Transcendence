@@ -28,6 +28,7 @@ DEBUG = bool(os.environ.get("DEBUG", default=False))
 
 CSRF_TRUSTED_ORIGINS = generate_csrf_trusted_origins()
 
+
 # OAuth2 credentials    
 OAUTH_CLIENT_ID = os.getenv('VITE_UID')
 OAUTH_CLIENT_SECRET = os.getenv('VITE_SECRET')

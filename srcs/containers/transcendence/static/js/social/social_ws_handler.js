@@ -77,8 +77,8 @@ async function friend_profile_request(data)
     {
         document.getElementById('normal_games_btn').addEventListener('click', () =>{
             navigate('/')
-            fetching_html(`profile/normal_games/?target_name=${encodeURIComponent(data.target)}`, document.getElementById('full_history'))
-            navigate('social/');
+            fetching_html(`profile/normal_games?target_name=${encodeURIComponent(data.target)}`, document.getElementById('full_history'))
+            navigate('social/', true);
         })
     }
 
@@ -86,11 +86,11 @@ async function friend_profile_request(data)
     {
         document.getElementById('tournament_games_btn').addEventListener('click', () =>{
             navigate('/')
-            fetching_html(`profile/tournament_games/?target_name=${encodeURIComponent(data.target)}`, document.getElementById('full_history'))
-            navigate('social/');
+            fetching_html(`profile/tournament_games?target_name=${encodeURIComponent(data.target)}`, document.getElementById('full_history'))
+            navigate('social/', true);
         })
     }
-    await navigate('social/');
+    await navigate('social/', true);
 }
 
 

@@ -13,7 +13,8 @@ from django.http import JsonResponse
 from django_otp.forms import OTPTokenForm
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
-from authentication.decorators import custom_login_required
+from authentication.decorators import custom_login_required, logout_protection
+
 
 @custom_login_required
 def redirect_to_2fa_setup(request):
@@ -55,6 +56,7 @@ def redirect_to_2fa_setup(request):
     
     return render(request, 'accounts/setup.html', {'form': form, 'qr_url': qr_code_data})
 
+@logout_protection
 def redirect_to_login(request):
     if request.method == 'POST':
         redirect('login_session')
