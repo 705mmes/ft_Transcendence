@@ -32,7 +32,7 @@ document.getElementById('pending').addEventListener('click', function(event) {
 });
 
 function request_friend_list() {
-    if (window.location.pathname === '/social/') {
+    if (window.location.pathname === '/social') {
         if (socket.readyState === WebSocket.OPEN) {
             socket.send(JSON.stringify({ 'action': 'friend_list' }));
         } else {

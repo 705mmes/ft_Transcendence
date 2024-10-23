@@ -59,12 +59,9 @@ if (document.getElementById("btn_matchmaking_1v1")) {
         let mode_name = document.getElementById("mode_name");
         mode_name.innerHTML = "MatchMaking 1v1";
         mode_name.className = "match_1v1";
-        if (!document.getElementById("start_research"))
-            display_research_btn("SEARCH OPPONENT");
-        else {
-            let btn = document.getElementById("start_research");
-            btn.innerHTML = "SEARCH OPPONENT";
-        }
+        if (document.getElementById('start_research'))
+            document.getElementById('start_research').remove()
+        display_research_btn("SEARCH OPPONENT");
         let lobby_content = document.getElementById('lobby_content');
         fetching_html("/game/match_1v1", lobby_content);
     }
@@ -75,12 +72,9 @@ if (document.getElementById("btn_tournament")) {
         let mode_name = document.getElementById("mode_name");
         mode_name.innerHTML = "Tournament";
         mode_name.className = "match_tournament";
-        if (!document.getElementById("start_research"))
-            display_research_btn("SEARCH TOURNAMENT");
-        else {
-            let btn = document.getElementById("start_research");
-            btn.innerHTML = "SEARCH TOURNAMENT";
-        }
+        if (document.getElementById('start_research'))
+            document.getElementById('start_research').remove()
+        display_research_btn("SEARCH TOURNAMENT");
         let lobby_content = document.getElementById('lobby_content');
         fetching_html("/game/tournament", lobby_content);
     }
@@ -118,12 +112,9 @@ if (document.getElementById("btn_match_ai")) {
         let mode_name = document.getElementById("mode_name");
         mode_name.innerHTML = "Match vs AI";
         mode_name.className = "match_ai";
-        if (!document.getElementById("start_research"))
-            display_research_btn("LAUNCH GAME");
-        else {
-            let btn = document.getElementById("start_research");
-            btn.innerHTML = "LAUNCH GAME";
-        }
+        if (document.getElementById('start_research'))
+            document.getElementById('start_research').remove()
+        display_research_btn("LAUNCH GAME");
         let lobby_content = document.getElementById('lobby_content');
         fetching_html("/game/match_1v1", lobby_content);
     }
